@@ -43,6 +43,8 @@ DEBUG = False
 INSTALLED_APPS = [
     'ironcage',
 
+    'django_slack',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -152,10 +154,14 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
         },
+        'slack': {
+            'level': 'ERROR',
+            'class': 'django_slack.log.SlackExceptionHandler',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'mail_admins'],
+            'handlers': ['console', 'mail_admins', 'slack'],
             'level': os.getenv('LOG_LEVEL', 'INFO'),
             'propagate': False,
         },
@@ -165,3 +171,15 @@ LOGGING = {
         },
     },
 }
+
+
+# Slack
+
+SLACK_TOKEN = os.environ.get('SLACK_TOKEN', ENVVAR_SENTINAL)
+SLACK_CHANNEL = '#ironcage-logs'
+SLACK_USERNAME = 'ironcage-log-bot'
+
+
+# Admins for mailing errors to
+
+ADMINS = [['-', email_addr] for email_addr in os.environ.get('ADMINS', '').split(',')]
