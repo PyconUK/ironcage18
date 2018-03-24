@@ -1,2 +1,6 @@
+dj-database-url
 django
+django-dotenv
 pip-tools
+psycopg2-binary
+structlog[dev]  # the [dev] is for coloured output

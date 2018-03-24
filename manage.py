@@ -2,8 +2,15 @@
 import os
 import sys
 
+import dotenv
+
+
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ironcage18.settings")
+    if 'test' in sys.argv:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ironcage.settings.test")
+    else:
+        dotenv.read_dotenv()
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ironcage.settings.local")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
