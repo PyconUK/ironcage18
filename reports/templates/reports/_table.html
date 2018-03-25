@@ -1,0 +1,24 @@
+<table class="table">
+  <thead>
+    <tr>
+      {% for heading in headings %}
+      <th>{{ heading }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      {% for item in row %}
+      <td>
+        {% if item.href %}
+        <a href="{{ item.href }}">{{ item.text }}</a>
+        {% else %}
+        {{ item }}
+        {% endif %}
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

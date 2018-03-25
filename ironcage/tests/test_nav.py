@@ -26,7 +26,7 @@ class NavTests(TestCase):
         self.client.force_login(user)
 
         rsp = self.client.get('/')
-        self.assertContains(rsp, '<a href="#">Reports</a>', html=True)
+        self.assertContains(rsp, '<a href="/reports/">Reports</a>', html=True)
         self.assertContains(rsp, '<a href="/accounts/logout/">Sign out</a>', html=True)
         self.assertNotContains(rsp, 'Sign in')
         self.assertNotContains(rsp, 'Sign up')
