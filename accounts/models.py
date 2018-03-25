@@ -107,9 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             return None
 
     def profile_complete(self):
-        # TODO reinstate
-        # if self.get_ticket() is not None and self.is_ukpa_member is None:
-        if self.is_ukpa_member is None:
+        if self.get_ticket() is not None and self.is_ukpa_member is None:
             return False
 
         if any(v is None for v in [

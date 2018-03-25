@@ -88,13 +88,12 @@ class ProfileForm(forms.ModelForm):
             if value is not None and value not in choices:
                 widget.choices.insert(1, [value, value])
 
-        # TODO reinstate
-        # # If the user has not bought a ticket, we do not offer UKPA membership.
-        # # The option is hidden in the templates, but we also disable the field
-        # # here to prevent that control being bypassed by a request sent
-        # # directly to the server.
-        # if self.instance.get_ticket() is None:
-        #     self.fields['is_ukpa_member'].disabled = True
+        # If the user has not bought a ticket, we do not offer UKPA membership.
+        # The option is hidden in the templates, but we also disable the field
+        # here to prevent that control being bypassed by a request sent
+        # directly to the server.
+        if self.instance.get_ticket() is None:
+            self.fields['is_ukpa_member'].disabled = True
 
     def _post_clean(self):
         super()._post_clean()

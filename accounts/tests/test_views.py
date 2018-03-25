@@ -153,15 +153,14 @@ class LoginTests(TestCase):
         rsp = self.client.post('/accounts/login/', data, follow=True)
         self.assertContains(rsp, "Your email address and password didn't match")
 
-    # TODO reinstate
-    # def test_post_redirect(self):
-    #     data = {
-    #         'username': 'alice@example.com',
-    #         'password': 'Pa55w0rd',
-    #         'next': '/tickets/orders/new/'
-    #     }
-    #     rsp = self.client.post('/accounts/login/', data, follow=True)
-    #     self.assertRedirects(rsp, '/tickets/orders/new/')
+    def test_post_redirect(self):
+        data = {
+            'username': 'alice@example.com',
+            'password': 'Pa55w0rd',
+            'next': '/tickets/orders/new/'
+        }
+        rsp = self.client.post('/accounts/login/', data, follow=True)
+        self.assertRedirects(rsp, '/tickets/orders/new/')
 
 
 class RegisterTests(TestCase):
@@ -210,14 +209,13 @@ class RegisterTests(TestCase):
         rsp = self.client.post('/accounts/register/', data, follow=True)
         self.assertContains(rsp, 'That email address has already been registered')
 
-    # TODO reinstate
-    # def test_post_redirect(self):
-    #     data = {
-    #         'name': 'Alice',
-    #         'email_addr': 'alice@example.com',
-    #         'password1': 'Pa55w0rd',
-    #         'password2': 'Pa55w0rd',
-    #         'next': '/tickets/orders/new/'
-    #     }
-    #     rsp = self.client.post('/accounts/register/', data, follow=True)
-    #     self.assertRedirects(rsp, '/tickets/orders/new/')
+    def test_post_redirect(self):
+        data = {
+            'name': 'Alice',
+            'email_addr': 'alice@example.com',
+            'password1': 'Pa55w0rd',
+            'password2': 'Pa55w0rd',
+            'next': '/tickets/orders/new/'
+        }
+        rsp = self.client.post('/accounts/register/', data, follow=True)
+        self.assertRedirects(rsp, '/tickets/orders/new/')
