@@ -36,7 +36,7 @@ discussing it with the team via the issue tracker.
 We would be happy to offer assistance to newer coders
 (and particularly to members of the UK Python community).
 
-See CONTRIBUTORS.txt for a list of contributors.
+See CONTRIBUTORS.md for a list of contributors.
 
 ## Deployment
 
