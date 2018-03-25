@@ -41,8 +41,10 @@ DEBUG = False
 # Application definition
 
 INSTALLED_APPS = [
+    'accounts',
     'ironcage',
 
+    'bootstrap3',
     'django_slack',
 
     'django.contrib.admin',
@@ -111,6 +113,17 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Custom User model
+
+AUTH_USER_MODEL = 'accounts.User'
+
+
+# Post-login/out URLs
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
@@ -133,6 +146,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Logging

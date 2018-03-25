@@ -2,6 +2,11 @@ from .base import *  # flake8: noqa
 
 DEBUG = bool(os.environ.get('DEBUG'))
 
+ALLOWED_HOSTS = ['*']
+
+# Password validators are a pain when testing locally
+AUTH_PASSWORD_VALIDATORS = []
+
 # Write emails to the console
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

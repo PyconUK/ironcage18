@@ -27,10 +27,15 @@
 
           <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#">Reports</a></li>
-              <li><a href="#">Sign out</a></li>
-              <li><a href="#">Sign in</a></li>
-              <li><a href="#">Sign up</a></li>
+              {% if user.is_staff %}
+              <li><a href="#">Reports</a></li>  {# TODO reinstate this #}
+              {% endif %}
+              {% if user.is_authenticated %}
+              <li><a href="{% url 'logout' %}">Sign out</a></li>
+              {% else %}
+              <li><a href="{% url 'login' %}?next={{ request.path }}">Sign in</a></li>
+              <li><a href="{% url 'register' %}?next={{ request.path }}">Sign up</a></li>
+              {% endif %}
             </ul>
           </div>
         </div>
