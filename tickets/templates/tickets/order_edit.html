@@ -1,0 +1,21 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6">
+    {% include './_ticket_info.html' %}
+  </div>
+
+  <div class="col-md-6">
+    {% include './_ticket_price_table.html' %}
+  </div>
+</div>
+
+<div class="row">
+  {% include 'tickets/_order_form.html' %}
+</div>
+{% endblock %}
+
+{% block json_data %}
+var rates = {{ rates_data|safe }};
+{% endblock %}

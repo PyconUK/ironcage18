@@ -1,0 +1,20 @@
+#form-panel-self {
+  display: none;
+}
+
+#form-panel-others {
+  display: none;
+}
+
+#form-panel-company-details {
+  display: none;
+}
+
+#form-panel-submit {
+  display: none;
+}
+
+.btn-group.error {
+  border: #ff0000 solid 1px;
+  border-radius: 5px;
+}

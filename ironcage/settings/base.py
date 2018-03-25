@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
+from datetime import datetime, timedelta, timezone
 import os
 
 import dj_database_url
@@ -25,6 +26,8 @@ ENVVAR_SENTINAL = 'not-for-production'
 # Settings that must be set in production.
 ENVVAR_WATCHED = [
     'SECRET_KEY',
+    'STRIPE_API_KEY_PUBLISHABLE',
+    'STRIPE_API_KEY_SECRET',
 ]
 
 
@@ -42,6 +45,7 @@ DEBUG = False
 
 INSTALLED_APPS = [
     'accounts',
+    'tickets',
     'ironcage',
 
     'bootstrap3',
@@ -192,6 +196,12 @@ LOGGING = {
 }
 
 
+# Stripe
+
+STRIPE_API_KEY_PUBLISHABLE = os.environ.get('STRIPE_API_KEY_PUBLISHABLE', ENVVAR_SENTINAL)
+STRIPE_API_KEY_SECRET = os.environ.get('STRIPE_API_KEY_SECRET', ENVVAR_SENTINAL)
+
+
 # Slack
 
 SLACK_TOKEN = os.environ.get('SLACK_TOKEN', ENVVAR_SENTINAL)
@@ -209,3 +219,20 @@ DEFAULT_FROM_EMAIL = 'PyCon UK 2018 <noreply@pyconuk.org>'
 SERVER_EMAIL = 'PyCon UK 2018 <noreply@pyconuk.org>'
 EMAIL_FROM_ADDR = 'PyCon UK 2018 <noreply@pyconuk.org>'
 EMAIL_REPLY_TO_ADDR = 'PyCon UK 2018 <pyconuk-committee@uk.python.org>'
+
+
+# Last orders...
+
+# When testing locally, we probably don't want ticket sales to be closed
+CFP_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
+GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
+TICKET_SALES_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
+
+# Uncomment these lines if you do want ticket sales etc to be closed
+# CFP_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
+# GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
+# TICKET_SALES_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
+
+CFP_DEADLINE_BYPASS_TOKEN = os.environ.get('CFP_DEADLINE_BYPASS_TOKEN')
+GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN = os.environ.get('GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN')
+TICKET_DEADLINE_BYPASS_TOKEN = os.environ.get('TICKET_DEADLINE_BYPASS_TOKEN')

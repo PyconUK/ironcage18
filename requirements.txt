@@ -18,7 +18,8 @@ idna==2.6                 # via requests
 pip-tools==1.11.0
 psycopg2-binary==2.7.4
 pytz==2018.3              # via django
-requests==2.18.4          # via django-slack
+requests==2.18.4          # via django-slack, stripe
 six==1.11.0               # via django-slack, pip-tools, structlog
+stripe==1.79.1
 structlog[dev]==18.1.0
 urllib3==1.22             # via requests

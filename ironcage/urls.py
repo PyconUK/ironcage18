@@ -9,6 +9,7 @@ urlpatterns = [
     path('accounts/register/', accounts.views.register, name='register'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('profile/', include('accounts.urls')),
+    path('tickets/', include('tickets.urls')),
     path('500/', ironcage.views.error, name='error'),
     path('log/', ironcage.views.log, name='log'),
 ]

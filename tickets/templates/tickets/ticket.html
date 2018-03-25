@@ -1,0 +1,17 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>Details of your ticket ({{ ticket.ticket_id }})</h1>
+
+<div class="row">
+  <div class="col-md-6">
+    {% include './_ticket_details.html' %}
+
+    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">Update your profile</a>
+    {% if ticket.is_free_ticket %}
+    <a href="{% url 'tickets:ticket_edit' ticket_id=ticket.ticket_id %}" class="btn btn-primary">Update your ticket</a>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

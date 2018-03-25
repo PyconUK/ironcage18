@@ -4,6 +4,9 @@ DEBUG = bool(os.environ.get('DEBUG'))
 
 ALLOWED_HOSTS = ['*']
 
+# A custom setting for creating full URLs in links in emails
+DOMAIN = 'http://localhost:8000'
+
 # Password validators are a pain when testing locally
 AUTH_PASSWORD_VALIDATORS = []
 
