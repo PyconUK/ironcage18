@@ -7,5 +7,46 @@
 
 <p>Welcome to the PyCon UK 2018 conference HQ.</p>
 
+<p>The conference takes place at <a href="http://2018.pyconuk.org/venue/">Cardiff City Hall</a> Saturday 15th to Wednesday 19th September.  You can find out more about the conference <a href="http://2018.pyconuk.org/">on our website</a>.</p>
+
+{% if ticket %}
+<p>You have a ticket for {{ ticket.details.days }}.</p>
+{% endif %}
+
+<p>Here, you can:</p>
+<ul>
+{% if ticket %}
+<li><a href="{% url 'tickets:ticket' ticket.ticket_id %}">View your conference ticket</a></li>
+<li><a href="{% url 'accounts:profile' %}">Update your profile</a></li>
+{% endif %}
+
+{% if orders|length == 0 %}
+{% if ticket_sales_open %}
+<li><a href="{% url 'tickets:new_order' %}">Order conference tickets</a></li>
+{% endif %}
+{% elif orders|length == 1 %}
+<li><a href="{% url 'tickets:order' orders.0.order_id %}">View your order</a></li>
+{% if ticket_sales_open %}
+<li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
+{% endif %}
+{% else %}
+<li>View your orders:</li>
+<ul>
+  {% for order in orders %}
+  <li><a href="{% url 'tickets:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
+  {% endfor %}
+</ul>
+{% if ticket_sales_open %}
+<li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
+{% endif %}
+{% endif %}
+</ul>
+
+{% if ticket %}
+<p>We look forward to seeing you in Cardiff!</p>
+{% else %}
+<p>We hope to see you in Cardiff!</p>
+{% endif %}
+
 <p>~ The PyCon UK Committee</p>
 {% endblock %}
