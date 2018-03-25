@@ -1,0 +1,11 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+<p>Hello, {{ request.user.name }}</p>
+{% endif %}
+
+<p>Welcome to the PyCon UK 2018 conference HQ.</p>
+
+<p>~ The PyCon UK Committee</p>
+{% endblock %}
