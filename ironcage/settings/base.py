@@ -183,3 +183,10 @@ SLACK_USERNAME = 'ironcage-log-bot'
 # Admins for mailing errors to
 
 ADMINS = [['-', email_addr] for email_addr in os.environ.get('ADMINS', '').split(',')]
+
+# Email address to send mail from
+
+DEFAULT_FROM_EMAIL = 'PyCon UK 2018 <noreply@pyconuk.org>'
+SERVER_EMAIL = 'PyCon UK 2018 <noreply@pyconuk.org>'
+EMAIL_FROM_ADDR = 'PyCon UK 2018 <noreply@pyconuk.org>'
+EMAIL_REPLY_TO_ADDR = 'PyCon UK 2018 <pyconuk-committee@uk.python.org>'
