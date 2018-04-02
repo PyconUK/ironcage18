@@ -46,7 +46,7 @@ class Order(models.Model):
                 assert company_details is None
                 company_name = None
                 company_addr = None
-            else:
+            else:  # pragma: no cover
                 assert False
 
             unconfirmed_details = {
@@ -89,7 +89,7 @@ class Order(models.Model):
             assert company_details is None
             self.company_name = None
             self.company_addr = None
-        else:
+        else:  # pragma: no cover
             assert False
 
         self.rate = rate
@@ -128,12 +128,6 @@ class Order(models.Model):
         self.stripe_charge_id = charge_id
         self.stripe_charge_failure_reason = ''
         self.status = 'errored'
-
-        self.save()
-
-    def delete_tickets_and_mark_as_refunded(self):
-        self.tickets.all().delete()
-        self.status = 'refunded'
 
         self.save()
 
@@ -276,7 +270,7 @@ class Order(models.Model):
             return None
         elif len(tickets) == 1:
             return tickets[0]
-        else:
+        else:  # pragma: no cover
             assert False
 
     def tickets_for_others(self):
@@ -322,12 +316,6 @@ class Ticket(models.Model):
             ticket.invitations.create(email_addr=email_addr)
             return ticket
 
-        def create_free_with_invitation(self, email_addr, pot):
-            days = {day: False for day in DAYS}
-            ticket = self.create(pot=pot, **days)
-            ticket.invitations.create(email_addr=email_addr)
-            return ticket
-
     objects = Manager()
 
     def __str__(self):
@@ -342,19 +330,6 @@ class Ticket(models.Model):
     def get_absolute_url(self):
         return reverse('tickets:ticket', args=[self.ticket_id])
 
-    def reassign(self, email_addr):
-        if self.owner is not None:
-            self.owner = None
-            self.save()
-
-        try:
-            invitation = self.invitation()
-            invitation.delete()
-        except TicketInvitation.DoesNotExist:
-            pass
-
-        self.invitations.create(email_addr=email_addr)
-
     def details(self):
         return {
             'id': self.ticket_id,
@@ -367,9 +342,6 @@ class Ticket(models.Model):
     def days(self):
         return [DAYS[day] for day in DAYS if getattr(self, day)]
 
-    def days_abbrev(self):
-        return [day for day in DAYS if getattr(self, day)]
-
     def num_days(self):
         return len(self.days())
 
@@ -380,10 +352,7 @@ class Ticket(models.Model):
             return self.invitation().email_addr
 
     def rate(self):
-        if self.order is None:
-            return 'free'
-        else:
-            return self.order.rate
+        return self.order.rate
 
     def cost_incl_vat(self):
         return cost_incl_vat(self.rate(), self.num_days())
@@ -394,11 +363,6 @@ class Ticket(models.Model):
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
         return self.invitations.get()
-
-    def update_days(self, days):
-        for day in DAYS:
-            setattr(self, day, (day in days))
-        self.save()
 
 
 class UnconfirmedTicket:

@@ -20,7 +20,7 @@ from django.db.utils import IntegrityError
 
 from ironcage.stripe_integration import create_charge_for_order, refund_charge
 
-from .mailer import send_invitation_mail, send_order_confirmation_mail, send_order_refund_mail
+from .mailer import send_invitation_mail, send_order_confirmation_mail
 from .models import Order, Ticket
 
 import structlog

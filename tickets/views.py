@@ -42,7 +42,7 @@ def new_order(request):
                 if valid:
                     days_for_self = self_form.cleaned_data['days']
                     email_addrs_and_days_for_others = others_formset.email_addrs_and_days
-            else:
+            else:  # pragma: no cover
                 assert False
 
             if valid:
@@ -129,7 +129,7 @@ def order_edit(request, order_id):
                 if valid:
                     days_for_self = self_form.cleaned_data['days']
                     email_addrs_and_days_for_others = others_formset.email_addrs_and_days
-            else:
+            else:  # pragma: no cover
                 assert False
 
             if valid:
@@ -286,7 +286,7 @@ def ticket_invitation(request, token):
     elif invitation.status == 'claimed':
         assert ticket.owner is not None
         messages.info(request, 'This invitation has already been claimed')
-    else:
+    else:  # pragma: no cover
         assert False
 
     return redirect(ticket)
