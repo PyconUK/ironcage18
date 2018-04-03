@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models import Max
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.crypto import get_random_string
@@ -11,7 +12,7 @@ from django.utils.crypto import get_random_string
 from ironcage.utils import Scrambler
 
 from .constants import DAYS
-from .prices import cost_excl_vat, cost_incl_vat
+from . import prices
 
 
 class Order(models.Model):
@@ -215,10 +216,10 @@ class Order(models.Model):
                 summary.append({
                     'num_days': num_days,
                     'num_tickets': num_tickets,
-                    'per_item_cost_excl_vat': cost_excl_vat(self.rate, num_days),
-                    'per_item_cost_incl_vat': cost_incl_vat(self.rate, num_days),
-                    'total_cost_excl_vat': cost_excl_vat(self.rate, num_days) * num_tickets,
-                    'total_cost_incl_vat': cost_incl_vat(self.rate, num_days) * num_tickets,
+                    'per_item_cost_excl_vat': prices.cost_excl_vat(self.rate, num_days),
+                    'per_item_cost_incl_vat': prices.cost_incl_vat(self.rate, num_days),
+                    'total_cost_excl_vat': prices.cost_excl_vat(self.rate, num_days) * num_tickets,
+                    'total_cost_incl_vat': prices.cost_incl_vat(self.rate, num_days) * num_tickets,
                 })
 
         return summary
@@ -234,17 +235,21 @@ class Order(models.Model):
         # TODO remove this once we can accept multiple rates per order.
         return self.unconfirmed_details['rate']
 
+    @property
     def cost_excl_vat(self):
-        return sum(ticket.cost_excl_vat() for ticket in self.all_tickets())
+        return sum(ticket.cost_excl_vat for ticket in self.all_tickets())
 
+    @property
     def cost_incl_vat(self):
-        return sum(ticket.cost_incl_vat() for ticket in self.all_tickets())
+        return sum(ticket.cost_incl_vat for ticket in self.all_tickets())
 
+    @property
     def vat(self):
-        return self.cost_incl_vat() - self.cost_excl_vat()
+        return self.cost_incl_vat - self.cost_excl_vat
 
+    @property
     def cost_pence_incl_vat(self):
-        return 100 * self.cost_incl_vat()
+        return 100 * self.cost_incl_vat
 
     def num_tickets(self):
         return len(self.all_tickets())
@@ -274,8 +279,9 @@ class Order(models.Model):
 
 class Ticket(models.Model):
     order = models.ForeignKey('Order', related_name='tickets', null=True, on_delete=models.CASCADE)
-    rate = models.CharField(max_length=40)
+    cost_excl_vat = models.IntegerField()
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
+    rate = models.CharField(max_length=40)
     thu = models.BooleanField()
     fri = models.BooleanField()
     sat = models.BooleanField()
@@ -293,12 +299,14 @@ class Ticket(models.Model):
             return get_object_or_404(self.model, pk=id)
 
         def create_for_user(self, rate, user, days):
+            cost_excl_vat = prices.cost_excl_vat(rate, len(days))
             day_fields = {day: (day in days) for day in DAYS}
-            return self.create(rate=rate, owner=user, **day_fields)
+            return self.create(cost_excl_vat=cost_excl_vat, rate=rate, owner=user, **day_fields)
 
         def create_with_invitation(self, rate, email_addr, days):
+            cost_excl_vat = prices.cost_excl_vat(rate, len(days))
             day_fields = {day: (day in days) for day in DAYS}
-            ticket = self.create(rate=rate, **day_fields)
+            ticket = self.create(cost_excl_vat=cost_excl_vat, rate=rate, **day_fields)
             ticket.invitations.create(email_addr=email_addr)
             return ticket
 
@@ -321,8 +329,8 @@ class Ticket(models.Model):
             'id': self.ticket_id,
             'name': self.ticket_holder_name(),
             'days': ', '.join(self.days()),
-            'cost_excl_vat': self.cost_excl_vat(),
-            'cost_incl_vat': self.cost_incl_vat(),
+            'cost_excl_vat': self.cost_excl_vat,
+            'cost_incl_vat': self.cost_incl_vat,
         }
 
     def days(self):
@@ -337,11 +345,9 @@ class Ticket(models.Model):
         else:
             return self.invitation().email_addr
 
+    @property
     def cost_incl_vat(self):
-        return cost_incl_vat(self.rate, self.num_days())
-
-    def cost_excl_vat(self):
-        return cost_excl_vat(self.rate, self.num_days())
+        return int(self.cost_excl_vat * 1.2)
 
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
@@ -361,8 +367,8 @@ class UnconfirmedTicket:
         return {
             'name': self.ticket_holder_name(),
             'days': ', '.join(self.days),
-            'cost_excl_vat': self.cost_excl_vat(),
-            'cost_incl_vat': self.cost_incl_vat(),
+            'cost_excl_vat': self.cost_excl_vat,
+            'cost_incl_vat': self.cost_incl_vat,
         }
 
     def num_days(self):
@@ -374,11 +380,13 @@ class UnconfirmedTicket:
         else:
             return self.email_addr
 
+    @property
     def cost_incl_vat(self):
-        return cost_incl_vat(self.rate, self.num_days())
+        return prices.cost_incl_vat(self.rate, self.num_days())
 
+    @property
     def cost_excl_vat(self):
-        return cost_excl_vat(self.rate, self.num_days())
+        return prices.cost_excl_vat(self.rate, self.num_days())
 
 
 class TicketInvitation(models.Model):

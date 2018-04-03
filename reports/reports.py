@@ -163,7 +163,7 @@ class OrdersMixin:
             order.purchaser.name,
             order.purchaser.email_addr,
             order.num_tickets(),
-            f'£{order.cost_incl_vat()}',
+            f'£{order.cost_incl_vat}',
             order.status,
         ]
 
@@ -195,7 +195,7 @@ class TicketsMixin:
             ticket.rate,
             ticket.ticket_holder_name(),
             ', '.join(ticket.days()),
-            f'£{ticket.cost_incl_vat()}',
+            f'£{ticket.cost_incl_vat}',
             'Assigned' if ticket.owner else 'Unclaimed',
         ]
 
