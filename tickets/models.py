@@ -116,7 +116,7 @@ class Order(models.Model):
 
         self.save()
 
-    def march_as_errored_after_charge(self, charge_id):
+    def mark_as_errored_after_charge(self, charge_id):
         self.stripe_charge_id = charge_id
         self.stripe_charge_failure_reason = ''
         self.status = 'errored'

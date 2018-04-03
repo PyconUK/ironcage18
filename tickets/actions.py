@@ -76,7 +76,7 @@ def mark_order_as_failed(order, charge_failure_reason):
 def mark_order_as_errored_after_charge(order, charge_id):
     logger.info('mark_order_as_errored_after_charge', order=order.order_id, charge_id=charge_id)
     with transaction.atomic():
-        order.march_as_errored_after_charge(charge_id)
+        order.mark_as_errored_after_charge(charge_id)
 
 
 def send_receipt(order):
