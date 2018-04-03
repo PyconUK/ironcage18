@@ -153,17 +153,21 @@ class OrderTests(TestCase):
         }
         self.assertEqual(order.others_formset_data(), expected)
 
-    def test_company_details_form_data_for_individual_order(self):
+    def test_billing_details_form_data_for_individual_order(self):
         order = factories.create_pending_order_for_self()
-        self.assertEqual(order.company_details_form_data(), None)
+        expected = {
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
+        }
+        self.assertEqual(order.billing_details_form_data(), expected)
 
-    def test_company_details_form_data_for_corporate_order(self):
+    def test_billing_details_form_data_for_corporate_order(self):
         order = factories.create_pending_order_for_self(rate='corporate')
         expected = {
-            'company_name': 'Sirius Cybernetics Corp.',
-            'company_addr': 'Eadrax, Sirius Tau',
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
         }
-        self.assertEqual(order.company_details_form_data(), expected)
+        self.assertEqual(order.billing_details_form_data(), expected)
 
     def test_ticket_for_self_for_order_for_self(self):
         order = factories.create_confirmed_order_for_self()
@@ -189,11 +193,11 @@ class OrderTests(TestCase):
         order = factories.create_confirmed_order_for_others()
         self.assertEqual(len(order.tickets_for_others()), 2)
 
-    def test_company_addr_formatted(self):
+    def test_billing_addr_formatted(self):
         order = factories.create_pending_order_for_self(rate='corporate')
-        order.company_addr = '''
+        order.billing_addr = '''
 City Hall,
 Cathays Park
 Cardiff
 '''.strip()
-        self.assertEqual(order.company_addr_formatted(), 'City Hall, Cathays Park, Cardiff')
+        self.assertEqual(order.billing_addr_formatted(), 'City Hall, Cathays Park, Cardiff')

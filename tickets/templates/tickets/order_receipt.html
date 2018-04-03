@@ -5,11 +5,7 @@
 
 <p>Issued by the PyCon UK Society Ltd, c/o Acconomy, Arena Business Centre, Holyrood Close, Poole, BH17 7FJ, United Kingdom (VAT Number 249244982)</p>
 
-{% if order.rate == 'corporate' %}
-<p>Issued to {{ order.company_name }}, {{ order.company_addr_formatted }}</p>
-{% else %}
-<p>Issued to {{ order.purchaser.name }}, {{ order.purchaser.email_addr }}</p>
-{% endif %}
+<p>Issued to {{ order.purchaser.name }}, {{ order.billing_name }}, {{ order.billing_addr_formatted }}</p>
 
 <p>{{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} for PyCon UK 2018</p>
 

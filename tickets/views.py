@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from . import actions
-from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
+from .forms import BillingDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
 
@@ -21,7 +21,7 @@ def new_order(request):
         form = TicketForm(request.POST)
         self_form = TicketForSelfForm(request.POST)
         others_formset = TicketForOthersFormSet(request.POST)
-        company_details_form = CompanyDetailsForm(request.POST)
+        billing_details_form = BillingDetailsForm(request.POST)
 
         if form.is_valid():
             who = form.cleaned_data['who']
@@ -46,23 +46,20 @@ def new_order(request):
                 assert False
 
             if valid:
-                if rate == 'corporate':
-                    valid = company_details_form.is_valid()
-                    if valid:
-                        company_details = {
-                            'name': company_details_form.cleaned_data['company_name'],
-                            'addr': company_details_form.cleaned_data['company_addr'],
-                        }
-                else:
-                    company_details = None
+                valid = billing_details_form.is_valid()
+                if valid:
+                    billing_details = {
+                        'name': billing_details_form.cleaned_data['billing_name'],
+                        'addr': billing_details_form.cleaned_data['billing_addr'],
+                    }
 
             if valid:
                 order = actions.create_pending_order(
                     purchaser=request.user,
+                    billing_details=billing_details,
                     rate=rate,
                     days_for_self=days_for_self,
                     email_addrs_and_days_for_others=email_addrs_and_days_for_others,
-                    company_details=company_details,
                 )
 
                 return redirect(order)
@@ -76,13 +73,13 @@ def new_order(request):
         form = TicketForm()
         self_form = TicketForSelfForm()
         others_formset = TicketForOthersFormSet()
-        company_details_form = CompanyDetailsForm()
+        billing_details_form = BillingDetailsForm()
 
     context = {
         'form': form,
         'self_form': self_form,
         'others_formset': others_formset,
-        'company_details_form': company_details_form,
+        'billing_details_form': billing_details_form,
         'user_can_buy_for_self': request.user.is_authenticated and not request.user.get_ticket(),
         'rates_table_data': _rates_table_data(),
         'rates_data': _rates_data(),
@@ -108,7 +105,7 @@ def order_edit(request, order_id):
         form = TicketForm(request.POST)
         self_form = TicketForSelfForm(request.POST)
         others_formset = TicketForOthersFormSet(request.POST)
-        company_details_form = CompanyDetailsForm(request.POST)
+        billing_details_form = BillingDetailsForm(request.POST)
 
         if form.is_valid():
             who = form.cleaned_data['who']
@@ -133,23 +130,20 @@ def order_edit(request, order_id):
                 assert False
 
             if valid:
-                if rate == 'corporate':
-                    valid = company_details_form.is_valid()
-                    if valid:
-                        company_details = {
-                            'name': company_details_form.cleaned_data['company_name'],
-                            'addr': company_details_form.cleaned_data['company_addr'],
-                        }
-                else:
-                    company_details = None
+                valid = billing_details_form.is_valid()
+                if valid:
+                    billing_details = {
+                        'name': billing_details_form.cleaned_data['billing_name'],
+                        'addr': billing_details_form.cleaned_data['billing_addr'],
+                    }
 
             if valid:
                 actions.update_pending_order(
                     order,
+                    billing_details=billing_details,
                     rate=rate,
                     days_for_self=days_for_self,
                     email_addrs_and_days_for_others=email_addrs_and_days_for_others,
-                    company_details=company_details,
                 )
 
                 return redirect(order)
@@ -158,13 +152,13 @@ def order_edit(request, order_id):
         form = TicketForm(order.form_data())
         self_form = TicketForSelfForm(order.self_form_data())
         others_formset = TicketForOthersFormSet(order.others_formset_data())
-        company_details_form = CompanyDetailsForm(order.company_details_form_data())
+        billing_details_form = BillingDetailsForm(order.billing_details_form_data())
 
     context = {
         'form': form,
         'self_form': self_form,
         'others_formset': others_formset,
-        'company_details_form': company_details_form,
+        'billing_details_form': billing_details_form,
         'user_can_buy_for_self': not request.user.get_ticket(),
         'rates_table_data': _rates_table_data(),
         'rates_data': _rates_data(),

@@ -17,8 +17,9 @@ class CreatePendingOrderTests(TestCase):
 
     def test_order_for_self_individual(self):
         order = actions.create_pending_order(
-            self.alice,
-            'individual',
+            purchaser=self.alice,
+            billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
+            rate='individual',
             days_for_self=['thu', 'fri', 'sat']
         )
 
@@ -27,17 +28,16 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.billing_name, 'Alice Apple')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
 
     def test_order_for_self_corporate(self):
         order = actions.create_pending_order(
-            self.alice,
-            'corporate',
+            purchaser=self.alice,
+            billing_details={'name': 'Sirius Cybernetics Corp.', 'addr': 'Eadrax, Sirius Tau'},
+            rate='corporate',
             days_for_self=['thu', 'fri', 'sat'],
-            company_details={
-                'name': 'Sirius Cybernetics Corp.',
-                'addr': 'Eadrax, Sirius Tau',
-            },
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
@@ -45,14 +45,15 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.billing_name, 'Sirius Cybernetics Corp.')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'corporate')
-        self.assertEqual(order.company_name, 'Sirius Cybernetics Corp.')
-        self.assertEqual(order.company_addr, 'Eadrax, Sirius Tau')
 
     def test_order_for_others(self):
         order = actions.create_pending_order(
-            self.alice,
-            'individual',
+            purchaser=self.alice,
+            billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
+            rate='individual',
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),
@@ -64,12 +65,15 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.billing_name, 'Alice Apple')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
 
     def test_order_for_self_and_others(self):
         order = actions.create_pending_order(
-            self.alice,
-            'individual',
+            purchaser=self.alice,
+            billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
+            rate='individual',
             days_for_self=['thu', 'fri', 'sat'],
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['fri', 'sat']),
@@ -82,6 +86,8 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.billing_name, 'Alice Apple')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
 
 
@@ -90,11 +96,14 @@ class UpdatePendingOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         actions.update_pending_order(
             order,
-            'individual',
+            billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
+            rate='individual',
             days_for_self=['fri'],
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.billing_name, 'Alice Apple')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
         self.assertEqual(
             order.ticket_details(),
@@ -105,7 +114,8 @@ class UpdatePendingOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         actions.update_pending_order(
             order,
-            'individual',
+            billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
+            rate='individual',
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),
@@ -113,6 +123,8 @@ class UpdatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.billing_name, 'Alice Apple')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
         self.assertEqual(
             order.ticket_details(),
@@ -126,7 +138,8 @@ class UpdatePendingOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         actions.update_pending_order(
             order,
-            'individual',
+            billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
+            rate='individual',
             days_for_self=['fri', 'sat', 'sun'],
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['fri', 'sat']),
@@ -135,6 +148,8 @@ class UpdatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.billing_name, 'Alice Apple')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
         self.assertEqual(
             order.ticket_details(),
@@ -149,18 +164,15 @@ class UpdatePendingOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         actions.update_pending_order(
             order,
-            'corporate',
+            billing_details={'name': 'Sirius Cybernetics Corp.', 'addr': 'Eadrax, Sirius Tau'},
+            rate='corporate',
             days_for_self=['fri', 'sat', 'sun'],
-            company_details={
-                'name': 'Sirius Cybernetics Corp.',
-                'addr': 'Eadrax, Sirius Tau',
-            },
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.billing_name, 'Sirius Cybernetics Corp.')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'corporate')
-        self.assertEqual(order.company_name, 'Sirius Cybernetics Corp.')
-        self.assertEqual(order.company_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(
             order.ticket_details(),
             [
@@ -172,14 +184,15 @@ class UpdatePendingOrderTests(TestCase):
         order = factories.create_pending_order_for_self(rate='corporate')
         actions.update_pending_order(
             order,
-            'individual',
+            billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
+            rate='individual',
             days_for_self=['fri', 'sat', 'sun'],
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.billing_name, 'Alice Apple')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
-        self.assertEqual(order.company_name, None)
-        self.assertEqual(order.company_addr, None)
         self.assertEqual(
             order.ticket_details(),
             [

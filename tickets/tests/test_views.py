@@ -69,6 +69,8 @@ class NewOrderTests(TestCase):
             'who': 'self',
             'rate': 'individual',
             'days': ['thu', 'fri', 'sat'],
+            'billing_name': 'Alice Apple',
+            'billing_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -86,8 +88,8 @@ class NewOrderTests(TestCase):
             'who': 'self',
             'rate': 'corporate',
             'days': ['thu', 'fri', 'sat'],
-            'company_name': 'Sirius Cybernetics Corp.',
-            'company_addr': 'Eadrax, Sirius Tau',
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -104,6 +106,8 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'others',
             'rate': 'individual',
+            'billing_name': 'Alice Apple',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
@@ -122,6 +126,8 @@ class NewOrderTests(TestCase):
             'who': 'self and others',
             'rate': 'individual',
             'days': ['thu', 'fri', 'sat'],
+            'billing_name': 'Alice Apple',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
@@ -176,8 +182,8 @@ class OrderEditTests(TestCase):
         form_data = {
             'who': 'self',
             'rate': 'corporate',
-            'company_name': 'Sirius Cybernetics Corp.',
-            'company_addr': 'Eadrax, Sirius Tau',
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'days': ['fri', 'sat', 'sun'],
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
@@ -195,8 +201,8 @@ class OrderEditTests(TestCase):
         form_data = {
             'who': 'others',
             'rate': 'corporate',
-            'company_name': 'Sirius Cybernetics Corp.',
-            'company_addr': 'Eadrax, Sirius Tau',
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
@@ -214,8 +220,8 @@ class OrderEditTests(TestCase):
         form_data = {
             'who': 'self and others',
             'rate': 'corporate',
-            'company_name': 'Sirius Cybernetics Corp.',
-            'company_addr': 'Eadrax, Sirius Tau',
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'days': ['fri', 'sat', 'sun'],
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
