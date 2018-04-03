@@ -16,7 +16,6 @@ from .prices import cost_excl_vat, cost_incl_vat
 
 class Order(models.Model):
     purchaser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
-    rate = models.CharField(max_length=40)
     billing_name = models.CharField(max_length=200, null=True)
     billing_addr = models.TextField(null=True)
     status = models.CharField(max_length=10)
@@ -42,13 +41,13 @@ class Order(models.Model):
             billing_addr = billing_details['addr']
 
             unconfirmed_details = {
+                'rate': rate,
                 'days_for_self': days_for_self,
                 'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
             }
 
             return self.create(
                 purchaser=purchaser,
-                rate=rate,
                 billing_name=billing_name,
                 billing_addr=billing_addr,
                 status='pending',
@@ -75,8 +74,8 @@ class Order(models.Model):
 
         self.billing_name = billing_details['name']
         self.billing_addr = billing_details['addr']
-        self.rate = rate
         self.unconfirmed_details = {
+            'rate': rate,
             'days_for_self': days_for_self,
             'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
         }
@@ -85,14 +84,16 @@ class Order(models.Model):
     def confirm(self, charge_id, charge_created):
         assert self.payment_required()
 
+        rate = self.unconfirmed_details['rate']
+
         days_for_self = self.unconfirmed_details['days_for_self']
         if days_for_self is not None:
-            self.tickets.create_for_user(self.purchaser, days_for_self)
+            self.tickets.create_for_user(rate, self.purchaser, days_for_self)
 
         email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
         if email_addrs_and_days_for_others is not None:
             for email_addr, days in email_addrs_and_days_for_others:
-                self.tickets.create_with_invitation(email_addr, days)
+                self.tickets.create_with_invitation(rate, email_addr, days)
 
         self.stripe_charge_id = charge_id
         self.stripe_charge_created = datetime.fromtimestamp(charge_created, tz=timezone.utc)
@@ -122,6 +123,7 @@ class Order(models.Model):
             if days_for_self is not None:
                 ticket = UnconfirmedTicket(
                     order=self,
+                    rate=self.unconfirmed_details['rate'],
                     owner=self.purchaser,
                     days=days_for_self,
                 )
@@ -132,6 +134,7 @@ class Order(models.Model):
                 for email_addr, days in email_addrs_and_days_for_others:
                     ticket = UnconfirmedTicket(
                         order=self,
+                        rate=self.unconfirmed_details['rate'],
                         email_addr=email_addr,
                         days=days,
                     )
@@ -144,7 +147,7 @@ class Order(models.Model):
         assert self.payment_required()
 
         data = {
-            'rate': self.rate
+            'rate': self.unconfirmed_details['rate']
         }
 
         days_for_self = self.unconfirmed_details['days_for_self']
@@ -226,6 +229,11 @@ class Order(models.Model):
             summary += 's'
         return summary
 
+    @property
+    def rate(self):
+        # TODO remove this once we can accept multiple rates per order.
+        return self.unconfirmed_details['rate']
+
     def cost_excl_vat(self):
         return sum(ticket.cost_excl_vat() for ticket in self.all_tickets())
 
@@ -266,6 +274,7 @@ class Order(models.Model):
 
 class Ticket(models.Model):
     order = models.ForeignKey('Order', related_name='tickets', null=True, on_delete=models.CASCADE)
+    rate = models.CharField(max_length=40)
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     thu = models.BooleanField()
     fri = models.BooleanField()
@@ -283,13 +292,13 @@ class Ticket(models.Model):
             id = self.model.id_scrambler.backward(ticket_id)
             return get_object_or_404(self.model, pk=id)
 
-        def create_for_user(self, user, days):
+        def create_for_user(self, rate, user, days):
             day_fields = {day: (day in days) for day in DAYS}
-            return self.create(owner=user, **day_fields)
+            return self.create(rate=rate, owner=user, **day_fields)
 
-        def create_with_invitation(self, email_addr, days):
+        def create_with_invitation(self, rate, email_addr, days):
             day_fields = {day: (day in days) for day in DAYS}
-            ticket = self.create(**day_fields)
+            ticket = self.create(rate=rate, **day_fields)
             ticket.invitations.create(email_addr=email_addr)
             return ticket
 
@@ -328,14 +337,11 @@ class Ticket(models.Model):
         else:
             return self.invitation().email_addr
 
-    def rate(self):
-        return self.order.rate
-
     def cost_incl_vat(self):
-        return cost_incl_vat(self.rate(), self.num_days())
+        return cost_incl_vat(self.rate, self.num_days())
 
     def cost_excl_vat(self):
-        return cost_excl_vat(self.rate(), self.num_days())
+        return cost_excl_vat(self.rate, self.num_days())
 
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
@@ -343,9 +349,10 @@ class Ticket(models.Model):
 
 
 class UnconfirmedTicket:
-    def __init__(self, order, days, owner=None, email_addr=None):
+    def __init__(self, order, rate, days, owner=None, email_addr=None):
         assert owner or email_addr
         self.order = order
+        self.rate = rate
         self.days = [DAYS[day] for day in days]
         self.owner = owner
         self.email_addr = email_addr
@@ -368,10 +375,10 @@ class UnconfirmedTicket:
             return self.email_addr
 
     def cost_incl_vat(self):
-        return cost_incl_vat(self.order.rate, self.num_days())
+        return cost_incl_vat(self.rate, self.num_days())
 
     def cost_excl_vat(self):
-        return cost_excl_vat(self.order.rate, self.num_days())
+        return cost_excl_vat(self.rate, self.num_days())
 
 
 class TicketInvitation(models.Model):
