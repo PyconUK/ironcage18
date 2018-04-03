@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django_slack.utils import get_backend as get_slack_backend
 
 from django.core import mail
@@ -28,6 +30,7 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
@@ -45,6 +48,7 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Sirius Cybernetics Corp.')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'corporate')
@@ -65,6 +69,7 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
@@ -86,6 +91,7 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
@@ -102,6 +108,7 @@ class UpdatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
@@ -123,6 +130,7 @@ class UpdatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
@@ -148,6 +156,7 @@ class UpdatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
@@ -170,6 +179,7 @@ class UpdatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Sirius Cybernetics Corp.')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'corporate')
@@ -190,6 +200,7 @@ class UpdatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(order.rate, 'individual')
@@ -210,6 +221,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
         self.assertEqual(order.stripe_charge_failure_reason, '')
         self.assertEqual(order.status, 'successful')
+        self.assertEqual(order.invoice_number, 1)
 
         self.assertEqual(order.purchaser.orders.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
@@ -227,6 +239,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
         self.assertEqual(order.stripe_charge_failure_reason, '')
         self.assertEqual(order.status, 'successful')
+        self.assertEqual(order.invoice_number, 1)
 
         self.assertEqual(order.purchaser.orders.count(), 1)
         self.assertIsNone(order.purchaser.get_ticket())
@@ -247,6 +260,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
         self.assertEqual(order.stripe_charge_failure_reason, '')
         self.assertEqual(order.status, 'successful')
+        self.assertEqual(order.invoice_number, 1)
 
         self.assertEqual(order.purchaser.orders.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
@@ -272,12 +286,22 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
         self.assertEqual(order.stripe_charge_failure_reason, '')
         self.assertEqual(order.status, 'successful')
+        self.assertEqual(order.invoice_number, 1)
 
         self.assertEqual(order.purchaser.orders.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
         self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+
+    def test_invoice_number_increments(self):
+        order = factories.create_pending_order_for_self()
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+        self.assertEqual(order.invoice_number, 1)
+
+        order = factories.create_pending_order_for_self()
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvx', 1495355164)
+        self.assertEqual(order.invoice_number, 2)
 
     def test_sends_slack_message(self):
         backend = get_slack_backend()
@@ -330,11 +354,29 @@ class ProcessStripeChargeTests(TestCase):
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, 'failed')
 
-    def test_process_stripe_charge_error_after_charge(self):
+    def test_process_stripe_charge_error_after_charge_1(self):
+        # This test checks that an order is marked as errored if an
+        # IntegrityError is raised because a user creates an order for a ticket
+        # for themselves when they already have a ticket.
         factories.create_confirmed_order_for_self(self.order.purchaser)
         token = 'tok_abcdefghijklmnopqurstuvwx'
 
         with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected():
+            actions.process_stripe_charge(self.order, token)
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, 'errored')
+        self.assertEqual(self.order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+
+    def test_process_stripe_charge_error_after_charge_2(self):
+        # This test checks that an order is marked as errored if two orders are
+        # created at exactly the same time, leading to the race condition in
+        # Order.confirm.
+        order = factories.create_confirmed_order_for_others()
+        token = 'tok_abcdefghijklmnopqurstuvwx'
+
+        with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected(), patch('tickets.models.Order.get_next_invoice_number') as mock:
+            mock.return_value = order.invoice_number
             actions.process_stripe_charge(self.order, token)
 
         self.order.refresh_from_db()

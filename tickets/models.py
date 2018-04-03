@@ -19,6 +19,7 @@ class Order(models.Model):
     purchaser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
     billing_name = models.CharField(max_length=200, null=True)
     billing_addr = models.TextField(null=True)
+    invoice_number = models.IntegerField(null=True, unique=True)
     status = models.CharField(max_length=10)
     stripe_charge_id = models.CharField(max_length=80)
     stripe_charge_created = models.DateTimeField(null=True)
@@ -100,8 +101,14 @@ class Order(models.Model):
         self.stripe_charge_created = datetime.fromtimestamp(charge_created, tz=timezone.utc)
         self.stripe_charge_failure_reason = ''
         self.status = 'successful'
+        self.invoice_number = self.get_next_invoice_number()
 
         self.save()
+
+    @classmethod
+    def get_next_invoice_number(cls):
+        prev_invoice_number = cls.objects.aggregate(n=Max('invoice_number'))['n'] or 0
+        return prev_invoice_number + 1
 
     def mark_as_failed(self, charge_failure_reason):
         self.stripe_charge_failure_reason = charge_failure_reason
@@ -113,6 +120,7 @@ class Order(models.Model):
         self.stripe_charge_id = charge_id
         self.stripe_charge_failure_reason = ''
         self.status = 'errored'
+        self.invoice_number = None
 
         self.save()
 
