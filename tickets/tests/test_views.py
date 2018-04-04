@@ -423,6 +423,7 @@ class OrderReceiptTests(TestCase):
         self.assertContains(rsp, f'Receipt for PyCon UK 2018 order {self.order.order_id}')
         self.assertContains(rsp, '3 tickets for PyCon UK 2018')
         self.assertContains(rsp, '<th>Date</th><td>21 May 2018</td>', html=True)
+        self.assertContains(rsp, '<th>Invoice number</th><td>S-2018-0001</td>', html=True)
         self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£255</td>', html=True)
         self.assertContains(rsp, '<th>VAT at 20%</th><td>£51</td>', html=True)
         self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£306</td>', html=True)

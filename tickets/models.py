@@ -259,6 +259,10 @@ class Order(models.Model):
     def cost_pence_incl_vat(self):
         return 100 * self.cost_incl_vat
 
+    @property
+    def full_invoice_number(self):
+        return f'S-2018-{self.invoice_number:04d}'
+
     def num_tickets(self):
         return len(self.all_tickets())
 
