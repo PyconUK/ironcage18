@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'tickets',
     'ironcage',
 
-    'bootstrap3',
+    'bootstrap4',
     'django_slack',
 
     'django.contrib.admin',
