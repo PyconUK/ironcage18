@@ -1,6 +1,6 @@
 {% for group_name, group_choices, group_index in widget.optgroups %}
 {% for option in group_choices %}
-<label class="btn btn-default{% if option.selected %} active{% endif %}">
+<label class="btn btn-primary{% if option.selected %} active{% endif %}">
   <input type="radio" name="{{ option.name }}" value="{{ option.value }}"{% if option.selected %} checked{% endif %}>{{ option.label }}
 </label>
 {% endfor %}

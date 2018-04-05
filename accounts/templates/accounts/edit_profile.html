@@ -28,10 +28,10 @@
             <th class="col-md-4">Do you have any accessibility requirements?</th>
             <td>
               <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default{% if form.accessibility_reqs_yn.value == True %} active{% endif %}">
+                <label class="btn btn-primary{% if form.accessibility_reqs_yn.value == True %} active{% endif %}">
                   <input type="radio" name="accessibility_reqs_yn" value="2" {% if form.accessibility_reqs_yn.value == True %} checked{% endif %}>Yes
                 </label>
-                <label class="btn btn-default{% if form.accessibility_reqs_yn.value == False %} active{% endif %}">
+                <label class="btn btn-primary{% if form.accessibility_reqs_yn.value == False %} active{% endif %}">
                   <input type="radio" name="accessibility_reqs_yn" value="3" {% if form.accessibility_reqs_yn.value == False %} checked{% endif %}>No
                 </label>
               </div>
@@ -43,10 +43,10 @@
             <th class="col-md-4">Do you have any childcare requirements?</th>
             <td>
               <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default{% if form.childcare_reqs_yn.value == True %} active{% endif %}">
+                <label class="btn btn-primary{% if form.childcare_reqs_yn.value == True %} active{% endif %}">
                   <input type="radio" name="childcare_reqs_yn" value="2" {% if form.childcare_reqs_yn.value == True %} checked{% endif %}>Yes
                 </label>
-                <label class="btn btn-default{% if form.childcare_reqs_yn.value == False %} active{% endif %}">
+                <label class="btn btn-primary{% if form.childcare_reqs_yn.value == False %} active{% endif %}">
                   <input type="radio" name="childcare_reqs_yn" value="3" {% if form.childcare_reqs_yn.value == False %} checked{% endif %}>No
                 </label>
               </div>
@@ -58,10 +58,10 @@
             <th class="col-md-4">Do you have any dietary requirements?</th>
             <td>
               <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default{% if form.dietary_reqs_yn.value == True %} active{% endif %}">
+                <label class="btn btn-primary{% if form.dietary_reqs_yn.value == True %} active{% endif %}">
                   <input type="radio" name="dietary_reqs_yn" value="2" {% if form.dietary_reqs_yn.value == True %} checked{% endif %}>Yes
                 </label>
-                <label class="btn btn-default{% if form.dietary_reqs_yn.value == False %} active{% endif %}">
+                <label class="btn btn-primary{% if form.dietary_reqs_yn.value == False %} active{% endif %}">
                   <input type="radio" name="dietary_reqs_yn" value="3" {% if form.dietary_reqs_yn.value == False %} checked{% endif %}>No
                 </label>
               </div>
@@ -80,10 +80,10 @@
             <th class="col-md-4">Do you wish to become a member of the UKPA?</th>
             <td>
               <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default{% if form.is_ukpa_member.value == True %} active{% endif %}">
+                <label class="btn btn-primary{% if form.is_ukpa_member.value == True %} active{% endif %}">
                   <input type="radio" name="is_ukpa_member" value="2" {% if form.is_ukpa_member.value == True %} checked{% endif %}>Yes
                 </label>
-                <label class="btn btn-default{% if form.is_ukpa_member.value == False %} active{% endif %}">
+                <label class="btn btn-primary{% if form.is_ukpa_member.value == False %} active{% endif %}">
                   <input type="radio" name="is_ukpa_member" value="3" {% if form.is_ukpa_member.value == False %} checked{% endif %}>No
                 </label>
               </div>
