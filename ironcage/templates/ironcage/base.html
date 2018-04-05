@@ -15,10 +15,10 @@
   .card {
     margin-bottom: 20px;
   }
-  .card-body label {
+  form label {
     font-weight: bold;
   }
-  .card-body label.btn {
+  form label.btn {
     font-weight: normal;
   }
   </style>
@@ -76,12 +76,12 @@
         <ol class="breadcrumb" style="background-color: #ed1c24">
           <li class="breadcrumb-item">
             {% if user.is_staff %}
-            <span><a href="{% url 'reports:index' %}">Reports</a></span> |
+            <span><a href="{% url 'reports:index' %}">Reports</a></span> &bull;
             {% endif %}
             {% if user.is_authenticated %}
-            <span><a href="{% url 'logout' %}">Sign out</a></span>
+            <span><a href="{% url 'index' %}">Home</a></span> &bull; <span><a href="{% url 'logout' %}">Sign out</a></span>
             {% else %}
-            <span><a href="{% url 'login' %}?next={{ request.path }}">Sign in</a></span> |
+            <span><a href="{% url 'login' %}?next={{ request.path }}">Sign in</a></span> &bull;
             <span><a href="{% url 'register' %}?next={{ request.path }}">Sign up</a></span>
             {% endif %}
           </li>
