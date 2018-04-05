@@ -60,18 +60,13 @@
         <svg class="breadcrumb-python" xmlns="http://www.w3.org/2000/svg" width="55" height="82"><g fill="none" fill-rule="evenodd"><path fill="#ed1c24" fill-rule="nonzero" d="M54.4 12.1v12.6H27.6v57.2H1V14.6S-1.2 0 28 0c28.1 0 26.4 12.1 26.4 12.1z"></path><path fill="#FFF" d="M42.9 8.4a4.9 4.9 0 1 0 0 9.7 4.9 4.9 0 0 0 0-9.7z" class="blink"></path></g></svg>
         <ol class="breadcrumb" style="background-color: #ed1c24">
           <li class="breadcrumb-item">
-            <a href="/">PyCon UK 2018</a>
-          </li>
-          <li class="breadcrumb-item" aria-current="page">
-            <span>Code of conduct</span>
-
             {% if user.is_staff %}
-            <span><a href="{% url 'reports:index' %}">Reports</a></span>
+            <span><a href="{% url 'reports:index' %}">Reports</a></span> |
             {% endif %}
             {% if user.is_authenticated %}
             <span><a href="{% url 'logout' %}">Sign out</a></span>
             {% else %}
-            <span><a href="{% url 'login' %}?next={{ request.path }}">Sign in</a></span>
+            <span><a href="{% url 'login' %}?next={{ request.path }}">Sign in</a></span> |
             <span><a href="{% url 'register' %}?next={{ request.path }}">Sign up</a></span>
             {% endif %}
           </li>
@@ -79,11 +74,10 @@
       </nav>
     </div>
 
-
     <main>
       <div class="container">
         {% if not no_navbar %}
-        <nav class="navbar navbar-default navbar-static-top">
+        <!-- <nav class="navbar navbar-default navbar-static-top">
         <div class="container-fluid">
 
 
@@ -93,30 +87,27 @@
           </ul>
           </div>
         </div>
-        </nav>
+        </nav> -->
         {% endif %}
         <div class="row">
-        <div class="col-md-12">
-          {% for message in messages %}
-          {% if message.tags == 'error' %}
-          <div class="alert alert-danger" role="alert">{{ message }}</div>
-          {% else %}
-          <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
-          {% endif %}
-          {% endfor %}
-        </div>
+          <div class="col-md-12">
+            {% for message in messages %}
+              {% if message.tags == 'error' %}
+                <div class="alert alert-danger" role="alert">{{ message }}</div>
+              {% else %}
+                <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
         <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-          {% block content %}
-          {% endblock %}
+          <div class="col-md-10 col-md-offset-1">
+            {% block content %}
+            {% endblock %}
+          </div>
         </div>
-        </div>
-        <hr />
       </div>
-
     </main>
-
 
     <footer class="foot">
       <div class="pyconuk">
@@ -140,8 +131,6 @@
       </div>
       <div class="container pt-1 pb-3 clearfix">
         <p class="text-center">PyCon UK is a&nbsp;<a href="//2018.pyconuk.org/contact/" class="">volunteer-organised conference</a>, staged by and on behalf of the Python community in the UK.</p>
-
-        <p class="text-center">Hosting kindly donated by <a href="https://www.divio.com/en/" class="">Divio Cloud</a>.</p>
       </div>
     </footer>
   </body>
