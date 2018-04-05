@@ -1,16 +1,16 @@
 <div data-formset-form>
   <div class="row">
-    <div class="col-xs-4">
+    <div class="col-4">
       {{ form.email_addr }}
     </div>
-    <div class="col-xs-6">
-      <div class="btn-group{% if form.days.errors %} error{% endif %}" data-toggle="buttons">
+    <div class="col-6">
+      <div class="btn-group btn-group-toggle{% if form.days.errors %} error{% endif %}" data-toggle="buttons">
         {{ form.days }}
       </div>
     </div>
-    <div class="col-xs-1">
-      <div class="hidden">{{ form.DELETE }}</div>
-      <button type="button" data-formset-delete-button class="btn btn-primary">&times;</button>
+    <div class="col-1">
+      <button type="button" data-formset-delete-button class="btn btn-danger">&times;</button>
+      <div class="invisible">{{ form.DELETE }}</div>
     </div>
   </div>
 </div>

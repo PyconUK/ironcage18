@@ -1,15 +1,15 @@
 <form method="post" id="order-form">
   {% csrf_token %}
-  <div class="panel panel-default">
-    <div class="panel-heading">About your order</div>
-    <div class="panel-body">
+  <div class="card">
+    <div class="card-header">About your order</div>
+    <div class="card-body">
       {% if user_can_buy_for_self %}
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-4">
           <label>Who are you buying tickets for?</label>
         </div>
-        <div class="col-md-8">
-          <div class="btn-group" data-toggle="buttons">
+        <div class="col-8">
+          <div class="btn-group btn-group-toggle" data-toggle="buttons">
             {{ form.who }}
           </div>
         </div>
@@ -19,11 +19,11 @@
       {% endif %}
 
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-4">
           <label>What rate of tickets are you buying?</label>
         </div>
-        <div class="col-md-8">
-          <div class="btn-group" data-toggle="buttons">
+        <div class="col-8">
+          <div class="btn-group btn-group-toggle" data-toggle="buttons" role="group">
             {{ form.rate }}
           </div>
         </div>
@@ -31,15 +31,15 @@
     </div>
   </div>
 
-  <div class="panel panel-default" id="form-panel-self">
-    <div class="panel-heading">Your own ticket</div>
-    <div class="panel-body">
+  <div class="card" id="form-panel-self">
+    <div class="card-header">Your own ticket</div>
+    <div class="card-body">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-4">
           <label>Which days are you coming?</label>
         </div>
-        <div class="col-md-8">
-          <div class="btn-group{% if self_form.days.errors %} error{% endif %}" data-toggle="buttons">
+        <div class="col-8">
+          <div class="btn-group btn-group-toggle{% if self_form.days.errors %} error{% endif %}" data-toggle="buttons" role="group">
             {{ self_form.days }}
           </div>
         </div>
@@ -47,20 +47,20 @@
     </div>
   </div>
 
-  <div class="panel panel-default" id="form-panel-others">
-    <div class="panel-heading">Other people's tickets</div>
-    <div class="panel-body">
+  <div class="card" id="form-panel-others">
+    <div class="card-header">Other people's tickets</div>
+    <div class="card-body">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-12">
           <p>For each person you're buying a ticket for, enter their email address and the days which they are coming.</p>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-4">
           <label>Email address</label>
         </div>
-        <div class="col-md-8">
+        <div class="col-8">
           <label>Days</label>
         </div>
       </div>
@@ -83,34 +83,34 @@
     </div>
   </div>
 
-  <div class="panel panel-default" id="form-panel-company-details">
-    <div class="panel-heading">Company details</div>
-    <div class="panel-body">
+  <div class="card" id="form-panel-company-details">
+    <div class="card-header">Company details</div>
+    <div class="card-body">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-4">
           <label>Company name</label>
         </div>
-        <div class="col-md-6">
+        <div class="col-6">
           {{ company_details_form.company_name }}
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-4">
           <label>Company address</label>
         </div>
-        <div class="col-md-6">
+        <div class="col-6">
           {{ company_details_form.company_addr }}
         </div>
       </div>
     </div>
   </div>
 
-  <div class="panel panel-default" id="form-panel-submit">
-    <div class="panel-heading">Summary</div>
-    <div class="panel-body">
+  <div class="card" id="form-panel-submit">
+    <div class="card-header">Summary</div>
+    <div class="card-body">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-6">
           <table class="table">
             <tr>
               <th>Rate</th>
