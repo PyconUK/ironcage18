@@ -149,10 +149,13 @@ def order_edit(request, order_id):
                 return redirect(order)
 
     else:
-        form = TicketForm(order.form_data())
-        self_form = TicketForSelfForm(order.self_form_data())
-        others_formset = TicketForOthersFormSet(order.others_formset_data())
-        billing_details_form = BillingDetailsForm(order.billing_details_form_data())
+        form = TicketForm.from_pending_order(order)
+        self_form = TicketForSelfForm.from_pending_order(order)
+        others_formset = TicketForOthersFormSet.from_pending_order(order)
+        billing_details_form = BillingDetailsForm({
+            'billing_name': order.billing_name,
+            'billing_addr': order.billing_addr,
+        })
 
     context = {
         'form': form,

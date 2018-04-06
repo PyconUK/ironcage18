@@ -146,60 +146,6 @@ class Order(models.Model):
         else:
             return [order_row.ticket for order_row in self.order_rows.select_related('ticket')]
 
-    def form_data(self):
-        assert self.payment_required()
-
-        data = {
-            'rate': self.unconfirmed_details['rate']
-        }
-
-        days_for_self = self.unconfirmed_details['days_for_self']
-        email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
-
-        if days_for_self is None:
-            assert email_addrs_and_days_for_others is not None
-            data['who'] = 'others'
-        elif email_addrs_and_days_for_others is None:
-            assert days_for_self is not None
-            data['who'] = 'self'
-        else:
-            data['who'] = 'self and others'
-
-        return data
-
-    def self_form_data(self):
-        assert self.payment_required()
-
-        days_for_self = self.unconfirmed_details['days_for_self']
-        if days_for_self is None:
-            return None
-
-        return {'days': days_for_self}
-
-    def others_formset_data(self):
-        assert self.payment_required()
-
-        email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
-        if email_addrs_and_days_for_others is None:
-            return None
-
-        data = {
-            'form-TOTAL_FORMS': str(len(email_addrs_and_days_for_others)),
-            'form-INITIAL_FORMS': str(len(email_addrs_and_days_for_others)),
-        }
-
-        for ix, (email_addr, days) in enumerate(email_addrs_and_days_for_others):
-            data[f'form-{ix}-email_addr'] = email_addr
-            data[f'form-{ix}-days'] = days
-
-        return data
-
-    def billing_details_form_data(self):
-        return {
-            'billing_name': self.billing_name,
-            'billing_addr': self.billing_addr,
-        }
-
     def ticket_details(self):
         return [ticket.details() for ticket in self.all_tickets()]
 
