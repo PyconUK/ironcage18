@@ -132,8 +132,7 @@ class Order(models.Model):
 
             days_for_self = self.unconfirmed_details['days_for_self']
             if days_for_self is not None:
-                ticket = UnconfirmedTicket(
-                    order=self,
+                ticket = Ticket.objects.build(
                     rate=self.unconfirmed_details['rate'],
                     owner=self.purchaser,
                     days=days_for_self,
@@ -143,8 +142,7 @@ class Order(models.Model):
             email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
             if email_addrs_and_days_for_others is not None:
                 for email_addr, days in email_addrs_and_days_for_others:
-                    ticket = UnconfirmedTicket(
-                        order=self,
+                    ticket = Ticket.objects.build(
                         rate=self.unconfirmed_details['rate'],
                         email_addr=email_addr,
                         days=days,
@@ -330,13 +328,23 @@ class Ticket(models.Model):
             return get_object_or_404(self.model, pk=id)
 
         def create_for_user(self, rate, user, days):
-            day_fields = {day: (day in days) for day in DAYS}
-            return self.create(rate=rate, owner=user, **day_fields)
+            ticket = self.build(rate, days, owner=user)
+            ticket.save()
+            return ticket
 
         def create_with_invitation(self, rate, email_addr, days):
+            ticket = self.build(rate, days, email_addr=email_addr)
+            ticket.save()
+            return ticket
+
+        def build(self, rate, days, owner=None, email_addr=None):
+            assert bool(owner) ^ bool(email_addr)
             day_fields = {day: (day in days) for day in DAYS}
-            ticket = self.create(rate=rate, **day_fields)
-            ticket.invitations.create(email_addr=email_addr)
+            ticket = self.model(rate=rate, owner=owner, **day_fields)
+
+            if email_addr is not None:
+                ticket.email_addr = email_addr
+
             return ticket
 
     objects = Manager()
@@ -350,17 +358,26 @@ class Ticket(models.Model):
             return None
         return self.id_scrambler.forward(self.id)
 
+    def save(self):
+        super().save()
+        if hasattr(self, 'email_addr'):
+            self.invitations.create(email_addr=self.email_addr)
+
     def get_absolute_url(self):
         return reverse('tickets:ticket', args=[self.ticket_id])
 
     def details(self):
-        return {
-            'id': self.ticket_id,
+        details = {
             'name': self.ticket_holder_name(),
             'days': ', '.join(self.days()),
             'cost_excl_vat': self.cost_excl_vat,
             'cost_incl_vat': self.cost_incl_vat,
         }
+
+        if self.pk:
+            details['id'] = self.ticket_id
+
+        return details
 
     def days(self):
         return [DAYS[day] for day in DAYS if getattr(self, day)]
@@ -369,10 +386,13 @@ class Ticket(models.Model):
         return len(self.days())
 
     def ticket_holder_name(self):
+        # TODO this is a mess
         if self.owner:
             return self.owner.name
-        else:
+        elif self.pk:
             return self.invitation().email_addr
+        else:
+            return self.email_addr
 
     @property
     def order(self):
@@ -395,41 +415,6 @@ class Ticket(models.Model):
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
         return self.invitations.get()
-
-
-class UnconfirmedTicket:
-    def __init__(self, order, rate, days, owner=None, email_addr=None):
-        assert owner or email_addr
-        self.order = order
-        self.rate = rate
-        self.days = [DAYS[day] for day in days]
-        self.owner = owner
-        self.email_addr = email_addr
-
-    def details(self):
-        return {
-            'name': self.ticket_holder_name(),
-            'days': ', '.join(self.days),
-            'cost_excl_vat': self.cost_excl_vat,
-            'cost_incl_vat': self.cost_incl_vat,
-        }
-
-    def num_days(self):
-        return len(self.days)
-
-    def ticket_holder_name(self):
-        if self.owner:
-            return self.owner.name
-        else:
-            return self.email_addr
-
-    @property
-    def cost_incl_vat(self):
-        return prices.cost_incl_vat(self.rate, self.num_days())
-
-    @property
-    def cost_excl_vat(self):
-        return prices.cost_excl_vat(self.rate, self.num_days())
 
 
 class TicketInvitation(models.Model):
