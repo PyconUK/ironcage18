@@ -144,7 +144,7 @@ class Order(models.Model):
         if self.payment_required():
             return self.build_tickets()
         else:
-            return [order_row.ticket for order_row in self.order_rows.select_related('ticket')]
+            return [order_row.ticket for order_row in self.order_rows.select_related('ticket').order_by('ticket')]
 
     def ticket_details(self):
         return [ticket.details() for ticket in self.all_tickets()]
