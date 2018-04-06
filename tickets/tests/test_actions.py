@@ -223,12 +223,20 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.status, 'successful')
         self.assertEqual(order.invoice_number, 1)
 
-        self.assertEqual(order.purchaser.orders.count(), 1)
-        self.assertIsNotNone(order.purchaser.get_ticket())
+        self.assertEqual(order.order_rows.count(), 1)
+        [row] = order.order_rows.all()
 
-        ticket = order.purchaser.get_ticket()
+        self.assertEqual(row.cost_excl_vat, 105)
+        self.assertEqual(row.item_descr, '3-day individual-rate ticket')
+        self.assertEqual(row.item_descr_extra, 'Thursday, Friday, Saturday')
+
+        ticket = row.ticket
+        self.assertEqual(ticket.owner, order.purchaser)
+        self.assertEqual(ticket.rate, 'individual')
         self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
 
+        self.assertEqual(order.purchaser.orders.count(), 1)
+        self.assertIsNotNone(order.purchaser.get_ticket())
         self.assertEqual(len(mail.outbox), 1)
 
     def test_order_for_others(self):
@@ -241,15 +249,37 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.status, 'successful')
         self.assertEqual(order.invoice_number, 1)
 
+        self.assertEqual(order.order_rows.count(), 2)
+        [row1, row2] = order.order_rows.order_by('ticket')
+
+        self.assertEqual(row1.cost_excl_vat, 75)
+        self.assertEqual(row1.item_descr, '2-day individual-rate ticket')
+        self.assertEqual(row1.item_descr_extra, 'Friday, Saturday')
+
+        ticket1 = row1.ticket
+        self.assertIsNone(ticket1.owner)
+        self.assertEqual(ticket1.rate, 'individual')
+        self.assertEqual(ticket1.days(), ['Friday', 'Saturday'])
+
+        invitation1 = ticket1.invitation()
+        self.assertEqual(invitation1.email_addr, 'bob@example.com')
+        self.assertEqual(invitation1.status, 'unclaimed')
+
+        self.assertEqual(row2.cost_excl_vat, 75)
+        self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
+        self.assertEqual(row2.item_descr_extra, 'Saturday, Sunday')
+
+        ticket2 = row2.ticket
+        self.assertIsNone(ticket2.owner)
+        self.assertEqual(ticket2.rate, 'individual')
+        self.assertEqual(ticket2.days(), ['Saturday', 'Sunday'])
+
+        invitation2 = ticket2.invitation()
+        self.assertEqual(invitation2.email_addr, 'carol@example.com')
+        self.assertEqual(invitation2.status, 'unclaimed')
+
         self.assertEqual(order.purchaser.orders.count(), 1)
         self.assertIsNone(order.purchaser.get_ticket())
-
-        ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
-        self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
-
-        ticket = TicketInvitation.objects.get(email_addr='carol@example.com').ticket
-        self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
-
         self.assertEqual(len(mail.outbox), 3)
 
     def test_order_for_self_and_others(self):
@@ -262,18 +292,46 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.status, 'successful')
         self.assertEqual(order.invoice_number, 1)
 
+        self.assertEqual(order.order_rows.count(), 3)
+        [row1, row2, row3] = order.order_rows.order_by('ticket')
+
+        self.assertEqual(row1.cost_excl_vat, 105)
+        self.assertEqual(row1.item_descr, '3-day individual-rate ticket')
+        self.assertEqual(row1.item_descr_extra, 'Thursday, Friday, Saturday')
+
+        ticket1 = row1.ticket
+        self.assertEqual(ticket1.owner, order.purchaser)
+        self.assertEqual(ticket1.rate, 'individual')
+        self.assertEqual(ticket1.days(), ['Thursday', 'Friday', 'Saturday'])
+
+        self.assertEqual(row2.cost_excl_vat, 75)
+        self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
+        self.assertEqual(row2.item_descr_extra, 'Friday, Saturday')
+
+        ticket2 = row2.ticket
+        self.assertIsNone(ticket2.owner)
+        self.assertEqual(ticket2.rate, 'individual')
+        self.assertEqual(ticket2.days(), ['Friday', 'Saturday'])
+
+        invitation2 = ticket2.invitation()
+        self.assertEqual(invitation2.email_addr, 'bob@example.com')
+        self.assertEqual(invitation2.status, 'unclaimed')
+
+        self.assertEqual(row3.cost_excl_vat, 75)
+        self.assertEqual(row3.item_descr, '2-day individual-rate ticket')
+        self.assertEqual(row3.item_descr_extra, 'Saturday, Sunday')
+
+        ticket3 = row3.ticket
+        self.assertIsNone(ticket3.owner)
+        self.assertEqual(ticket3.rate, 'individual')
+        self.assertEqual(ticket3.days(), ['Saturday', 'Sunday'])
+
+        invitation3 = ticket3.invitation()
+        self.assertEqual(invitation3.email_addr, 'carol@example.com')
+        self.assertEqual(invitation3.status, 'unclaimed')
+
         self.assertEqual(order.purchaser.orders.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
-
-        ticket = order.purchaser.get_ticket()
-        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
-
-        ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
-        self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
-
-        ticket = TicketInvitation.objects.get(email_addr='carol@example.com').ticket
-        self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
-
         self.assertEqual(len(mail.outbox), 3)
 
     def test_after_order_marked_as_failed(self):

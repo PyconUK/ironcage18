@@ -233,13 +233,20 @@ class OrderRow(models.Model):
     order = models.ForeignKey('Order', related_name='order_rows', on_delete=models.CASCADE)
     cost_excl_vat = models.IntegerField()
     ticket = models.OneToOneField('Ticket', related_name='order_row', on_delete=models.DO_NOTHING)
+    item_descr = models.CharField(max_length=400)
+    item_descr_extra = models.CharField(max_length=400, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Manager(models.Manager):
         def create_for_ticket(self, ticket):
-            self.create(cost_excl_vat=ticket.cost_excl_vat, ticket=ticket)
+            self.create(
+                cost_excl_vat=ticket.cost_excl_vat,
+                ticket=ticket,
+                item_descr=ticket.descr_for_order,
+                item_descr_extra=ticket.descr_extra_for_order,
+            )
 
     objects = Manager()
 
@@ -323,6 +330,14 @@ class Ticket(models.Model):
             return self.invitation().email_addr
         else:
             return self.email_addr
+
+    @property
+    def descr_for_order(self):
+        return f'{self.num_days()}-day {self.rate}-rate ticket'
+
+    @property
+    def descr_extra_for_order(self):
+        return ', '.join(self.days())
 
     @property
     def order(self):
