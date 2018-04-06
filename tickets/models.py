@@ -86,18 +86,9 @@ class Order(models.Model):
     def confirm(self, charge_id, charge_created):
         assert self.payment_required()
 
-        rate = self.unconfirmed_details['rate']
-
-        days_for_self = self.unconfirmed_details['days_for_self']
-        if days_for_self is not None:
-            ticket = Ticket.objects.create_for_user(rate, self.purchaser, days_for_self)
+        for ticket in self.build_tickets():
+            ticket.save()
             self.order_rows.create_for_ticket(ticket)
-
-        email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
-        if email_addrs_and_days_for_others is not None:
-            for email_addr, days in email_addrs_and_days_for_others:
-                ticket = Ticket.objects.create_with_invitation(rate, email_addr, days)
-                self.order_rows.create_for_ticket(ticket)
 
         self.stripe_charge_id = charge_id
         self.stripe_charge_created = datetime.fromtimestamp(charge_created, tz=timezone.utc)
@@ -126,29 +117,32 @@ class Order(models.Model):
 
         self.save()
 
-    def all_tickets(self):
-        if self.payment_required():
-            tickets = []
+    def build_tickets(self):
+        tickets = []
 
-            days_for_self = self.unconfirmed_details['days_for_self']
-            if days_for_self is not None:
+        days_for_self = self.unconfirmed_details['days_for_self']
+        if days_for_self is not None:
+            ticket = Ticket.objects.build(
+                rate=self.unconfirmed_details['rate'],
+                owner=self.purchaser,
+                days=days_for_self,
+            )
+            tickets.append(ticket)
+
+        email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
+        if email_addrs_and_days_for_others is not None:
+            for email_addr, days in email_addrs_and_days_for_others:
                 ticket = Ticket.objects.build(
                     rate=self.unconfirmed_details['rate'],
-                    owner=self.purchaser,
-                    days=days_for_self,
+                    email_addr=email_addr,
+                    days=days,
                 )
                 tickets.append(ticket)
+        return tickets
 
-            email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
-            if email_addrs_and_days_for_others is not None:
-                for email_addr, days in email_addrs_and_days_for_others:
-                    ticket = Ticket.objects.build(
-                        rate=self.unconfirmed_details['rate'],
-                        email_addr=email_addr,
-                        days=days,
-                    )
-                    tickets.append(ticket)
-            return tickets
+    def all_tickets(self):
+        if self.payment_required():
+            return self.build_tickets()
         else:
             return [order_row.ticket for order_row in self.order_rows.select_related('ticket')]
 
@@ -326,16 +320,6 @@ class Ticket(models.Model):
         def get_by_ticket_id_or_404(self, ticket_id):
             id = self.model.id_scrambler.backward(ticket_id)
             return get_object_or_404(self.model, pk=id)
-
-        def create_for_user(self, rate, user, days):
-            ticket = self.build(rate, days, owner=user)
-            ticket.save()
-            return ticket
-
-        def create_with_invitation(self, rate, email_addr, days):
-            ticket = self.build(rate, days, email_addr=email_addr)
-            ticket.save()
-            return ticket
 
         def build(self, rate, days, owner=None, email_addr=None):
             assert bool(owner) ^ bool(email_addr)
