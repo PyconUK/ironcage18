@@ -90,12 +90,14 @@ class Order(models.Model):
 
         days_for_self = self.unconfirmed_details['days_for_self']
         if days_for_self is not None:
-            self.tickets.create_for_user(rate, self.purchaser, days_for_self)
+            ticket = Ticket.objects.create_for_user(rate, self.purchaser, days_for_self)
+            self.order_rows.create_for_ticket(ticket)
 
         email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
         if email_addrs_and_days_for_others is not None:
             for email_addr, days in email_addrs_and_days_for_others:
-                self.tickets.create_with_invitation(rate, email_addr, days)
+                ticket = Ticket.objects.create_with_invitation(rate, email_addr, days)
+                self.order_rows.create_for_ticket(ticket)
 
         self.stripe_charge_id = charge_id
         self.stripe_charge_created = datetime.fromtimestamp(charge_created, tz=timezone.utc)
@@ -150,7 +152,7 @@ class Order(models.Model):
                     tickets.append(ticket)
             return tickets
         else:
-            return self.tickets.order_by('id')
+            return [order_row.ticket for order_row in self.order_rows.select_related('ticket')]
 
     def form_data(self):
         assert self.payment_required()
@@ -267,7 +269,7 @@ class Order(models.Model):
         return len(self.all_tickets())
 
     def unclaimed_tickets(self):
-        return self.tickets.filter(owner=None)
+        return [ticket for ticket in self.all_tickets() if ticket.owner is None]
 
     def ticket_for_self(self):
         tickets = [ticket for ticket in self.all_tickets() if ticket.owner == self.purchaser]
@@ -289,9 +291,26 @@ class Order(models.Model):
         return ', '.join(lines)
 
 
-class Ticket(models.Model):
-    order = models.ForeignKey('Order', related_name='tickets', null=True, on_delete=models.CASCADE)
+class OrderRow(models.Model):
+    order = models.ForeignKey('Order', related_name='order_rows', on_delete=models.CASCADE)
     cost_excl_vat = models.IntegerField()
+    ticket = models.OneToOneField('Ticket', related_name='order_row', on_delete=models.DO_NOTHING)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Manager(models.Manager):
+        def create_for_ticket(self, ticket):
+            self.create(cost_excl_vat=ticket.cost_excl_vat, ticket=ticket)
+
+    objects = Manager()
+
+    @property
+    def cost_incl_vat(self):
+        return int(self.cost_excl_vat * 1.2)
+
+
+class Ticket(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     rate = models.CharField(max_length=40)
     thu = models.BooleanField()
@@ -311,14 +330,12 @@ class Ticket(models.Model):
             return get_object_or_404(self.model, pk=id)
 
         def create_for_user(self, rate, user, days):
-            cost_excl_vat = prices.cost_excl_vat(rate, len(days))
             day_fields = {day: (day in days) for day in DAYS}
-            return self.create(cost_excl_vat=cost_excl_vat, rate=rate, owner=user, **day_fields)
+            return self.create(rate=rate, owner=user, **day_fields)
 
         def create_with_invitation(self, rate, email_addr, days):
-            cost_excl_vat = prices.cost_excl_vat(rate, len(days))
             day_fields = {day: (day in days) for day in DAYS}
-            ticket = self.create(cost_excl_vat=cost_excl_vat, rate=rate, **day_fields)
+            ticket = self.create(rate=rate, **day_fields)
             ticket.invitations.create(email_addr=email_addr)
             return ticket
 
@@ -356,6 +373,20 @@ class Ticket(models.Model):
             return self.owner.name
         else:
             return self.invitation().email_addr
+
+    @property
+    def order(self):
+        try:
+            return self.order_row.order
+        except:
+            return None
+
+    @property
+    def cost_excl_vat(self):
+        try:
+            return self.order_row.cost_excl_vat
+        except OrderRow.DoesNotExist:
+            return prices.cost_excl_vat(self.rate, self.num_days())
 
     @property
     def cost_incl_vat(self):
