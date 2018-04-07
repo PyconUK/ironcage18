@@ -33,7 +33,6 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
-        self.assertEqual(order.rate, 'individual')
 
     def test_order_for_self_corporate(self):
         order = actions.create_pending_order(
@@ -51,7 +50,6 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Sirius Cybernetics Corp.')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
-        self.assertEqual(order.rate, 'corporate')
 
     def test_order_for_others(self):
         order = actions.create_pending_order(
@@ -72,7 +70,6 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
-        self.assertEqual(order.rate, 'individual')
 
     def test_order_for_self_and_others(self):
         order = actions.create_pending_order(
@@ -94,7 +91,6 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
-        self.assertEqual(order.rate, 'individual')
 
 
 class UpdatePendingOrderTests(TestCase):
@@ -111,7 +107,6 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
-        self.assertEqual(order.rate, 'individual')
 
         [row] = order.all_order_rows()
 
@@ -140,7 +135,6 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
-        self.assertEqual(order.rate, 'individual')
 
         [row1, row2] = order.all_order_rows()
 
@@ -179,7 +173,6 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
-        self.assertEqual(order.rate, 'individual')
 
         [row1, row2, row3] = order.all_order_rows()
 
@@ -223,7 +216,6 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Sirius Cybernetics Corp.')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
-        self.assertEqual(order.rate, 'corporate')
 
         [row] = order.all_order_rows()
 
@@ -249,7 +241,6 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(order.invoice_number, None)
         self.assertEqual(order.billing_name, 'Alice Apple')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
-        self.assertEqual(order.rate, 'individual')
 
         [row] = order.all_order_rows()
 
@@ -422,7 +413,7 @@ class ConfirmOrderTests(TestCase):
         messages = backend.retrieve_messages()
         self.assertEqual(len(messages), 1)
         text = messages[0]['text']
-        self.assertIn('Alice has just placed an order for 1 ticket at the individual rate', text)
+        self.assertIn('Alice has just placed an order for 1 ticket', text)
 
 
 class MarkOrderAsFailed(TestCase):

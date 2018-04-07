@@ -177,11 +177,6 @@ class Order(models.Model):
         return ', '.join(f'{record["quantity"]} × {record["item_descr"]}' for record in summary)
 
     @property
-    def rate(self):
-        # TODO remove this once we can accept multiple rates per order.
-        return self.unconfirmed_details['rate']
-
-    @property
     def cost_excl_vat(self):
         return sum(row.cost_excl_vat for row in self.all_order_rows())
 

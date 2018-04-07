@@ -3,5 +3,5 @@
 {% block text %}
 New order {{ order.order_id }}
 
-{{ order.purchaser.name }} has just placed an order for {{ order.num_tickets }} ticket{{ order.num_tickets.pluralize }} at the {{ order.rate }} rate.
+{{ order.purchaser.name }} has just placed an order for {{ order.num_tickets }} ticket{{ order.num_tickets.pluralize }}.
 {% endblock %}

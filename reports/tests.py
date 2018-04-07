@@ -133,10 +133,10 @@ class TestOrdersReport(ReportsTestCase):
         } for order in [self.order1, self.order2]]
         expected = {
             'title': 'All orders',
-            'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
+            'headings': ['ID', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [links[0], 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
-                [links[1], 'individual', 'Bob', 'bob@example.com', 1, '£90', 'successful'],
+                [links[0], 'Alice', 'alice@example.com', 1, '£54', 'pending'],
+                [links[1], 'Bob', 'bob@example.com', 1, '£90', 'successful'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -161,9 +161,9 @@ class TestUnpaidOrdersReport(ReportsTestCase):
         }
         expected = {
             'title': 'Unpaid orders',
-            'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
+            'headings': ['ID', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [link, 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
+                [link, 'Alice', 'alice@example.com', 1, '£54', 'pending'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)

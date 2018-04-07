@@ -150,7 +150,7 @@ class TicketSalesReport(ReportView):
 
 
 class OrdersMixin:
-    headings = ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status']
+    headings = ['ID', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status']
 
     def presenter(self, order):
         link = {
@@ -159,7 +159,6 @@ class OrdersMixin:
         }
         return [
             link,
-            order.rate,
             order.purchaser.name,
             order.purchaser.email_addr,
             order.num_tickets(),
