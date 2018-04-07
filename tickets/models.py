@@ -361,17 +361,21 @@ class Ticket(models.Model):
         return ', '.join(self.days())
 
     @property
+    def is_saved(self):
+        return self.pk is not None
+
+    @property
     def order(self):
-        try:
+        if self.is_saved:
             return self.order_row.order
-        except:
+        else:
             return None
 
     @property
     def cost_excl_vat(self):
-        try:
+        if self.is_saved:
             return self.order_row.cost_excl_vat
-        except OrderRow.DoesNotExist:
+        else:
             return prices.cost_excl_vat(self.rate, self.num_days())
 
     @property

@@ -51,6 +51,7 @@ class TicketForSelfFormTests(TestCase):
         }
         self.assertEqual(TicketForSelfForm.from_pending_order(order).data, expected)
 
+
 class TicketForOthersFormSetTests(TestCase):
     def test_from_pending_order_for_self(self):
         order = factories.create_pending_order_for_self()
