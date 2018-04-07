@@ -63,6 +63,6 @@ class IndexTests(TestCase):
         order2 = ticket_factories.create_confirmed_order_for_others(self.alice)
 
         rsp = self.client.get('/')
-        self.assertContains(rsp, f'<a href="/tickets/orders/{order1.order_id}/">Order {order1.order_id}</a> (1 individual-rate ticket)', html=True)
-        self.assertContains(rsp, f'<a href="/tickets/orders/{order2.order_id}/">Order {order2.order_id}</a> (2 individual-rate tickets)', html=True)
+        self.assertContains(rsp, f'<a href="/tickets/orders/{order1.order_id}/">Order {order1.order_id}</a> (1 × 3-day individual-rate ticket)', html=True)
+        self.assertContains(rsp, f'<a href="/tickets/orders/{order2.order_id}/">Order {order2.order_id}</a> (2 × 2-day individual-rate ticket)', html=True)
         self.assertContains(rsp, '<a href="/tickets/orders/new/">Order more conference tickets</a>', html=True)

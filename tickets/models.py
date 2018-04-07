@@ -173,10 +173,8 @@ class Order(models.Model):
         return sorted(summary, key=lambda record: record['total_cost_excl_vat'], reverse=True)
 
     def brief_summary(self):
-        summary = f'{self.num_tickets()} {self.rate}-rate ticket'
-        if self.num_tickets() > 1:
-            summary += 's'
-        return summary
+        summary = self.order_rows_summary()
+        return ', '.join(f'{record["quantity"]} × {record["item_descr"]}' for record in summary)
 
     @property
     def rate(self):
