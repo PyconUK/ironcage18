@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import Counter
 from datetime import datetime, timezone
 
 from django.conf import settings
@@ -152,28 +152,25 @@ class Order(models.Model):
     def all_tickets(self):
         return [order_row.ticket for order_row in self.all_order_rows()]
 
-    def ticket_summary(self):
-        num_tickets_by_num_days = defaultdict(int)
+    def order_rows_summary(self):
+        row_counts = Counter()
 
-        for ticket in self.all_tickets():
-            num_tickets_by_num_days[ticket.num_days()] += 1
+        for row in self.all_order_rows():
+            row_counts[(row.item_descr, row.cost_excl_vat, row.cost_incl_vat)] += 1
 
         summary = []
 
-        for ix in range(5):
-            num_days = ix + 1
-            if num_tickets_by_num_days[num_days]:
-                num_tickets = num_tickets_by_num_days[num_days]
-                summary.append({
-                    'num_days': num_days,
-                    'num_tickets': num_tickets,
-                    'per_item_cost_excl_vat': prices.cost_excl_vat(self.rate, num_days),
-                    'per_item_cost_incl_vat': prices.cost_incl_vat(self.rate, num_days),
-                    'total_cost_excl_vat': prices.cost_excl_vat(self.rate, num_days) * num_tickets,
-                    'total_cost_incl_vat': prices.cost_incl_vat(self.rate, num_days) * num_tickets,
-                })
+        for (item_descr, cost_excl_vat, cost_incl_vat), count in row_counts.items():
+            summary.append({
+                'item_descr': item_descr,
+                'quantity': count,
+                'per_item_cost_excl_vat': cost_excl_vat,
+                'per_item_cost_incl_vat': cost_incl_vat,
+                'total_cost_excl_vat': cost_excl_vat * count,
+                'total_cost_incl_vat': cost_incl_vat * count,
+            })
 
-        return summary
+        return sorted(summary, key=lambda record: record['total_cost_excl_vat'], reverse=True)
 
     def brief_summary(self):
         summary = f'{self.num_tickets()} {self.rate}-rate ticket'

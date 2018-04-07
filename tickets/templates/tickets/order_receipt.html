@@ -53,10 +53,10 @@
   </thead>
 
   <tbody>
-    {% for record in order.ticket_summary %}
+    {% for record in order.order_rows_summary %}
     <tr>
-      <td>Ticket for {{ record.num_days }} day{{ record.num_days|pluralize }}</td>
-      <td>{{ record.num_tickets }}</td>
+      <td>{{ record.item_descr }}</td>
+      <td>{{ record.quantity }}</td>
       <td>£{{ record.per_item_cost_excl_vat }}</td>
       <td>£{{ record.per_item_cost_incl_vat }}</td>
       <td>£{{ record.total_cost_excl_vat }}</td>

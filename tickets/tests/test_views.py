@@ -492,7 +492,7 @@ class OrderReceiptTests(TestCase):
         self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£306</td>', html=True)
         self.assertContains(rsp, '''
             <tr>
-                <td>Ticket for 2 days</td>
+                <td>2-day individual-rate ticket</td>
                 <td>2</td>
                 <td>£75</td>
                 <td>£90</td>
@@ -501,7 +501,7 @@ class OrderReceiptTests(TestCase):
             </tr>''', html=True)
         self.assertContains(rsp, '''
             <tr>
-                <td>Ticket for 3 days</td>
+                <td>3-day individual-rate ticket</td>
                 <td>1</td>
                 <td>£105</td>
                 <td>£126</td>

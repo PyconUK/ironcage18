@@ -20,24 +20,24 @@ class OrderTests(TestCase):
         order = factories.create_pending_order_for_self_and_others()
         self.assertEqual(order.cost_excl_vat, 255)  # 255 == 3 * 15 + 7 * 30
 
-    def test_ticket_summary(self):
+    def test_order_rows_summary(self):
         order = factories.create_confirmed_order_for_self_and_others()
         expected_summary = [{
-            'num_days': 2,
-            'num_tickets': 2,
+            'item_descr': '2-day individual-rate ticket',
+            'quantity': 2,
             'per_item_cost_excl_vat': 75,
             'per_item_cost_incl_vat': 90,
             'total_cost_excl_vat': 150,
             'total_cost_incl_vat': 180,
         }, {
-            'num_days': 3,
-            'num_tickets': 1,
+            'item_descr': '3-day individual-rate ticket',
+            'quantity': 1,
             'per_item_cost_excl_vat': 105,
             'per_item_cost_incl_vat': 126,
             'total_cost_excl_vat': 105,
             'total_cost_incl_vat': 126,
         }]
-        self.assertEqual(order.ticket_summary(), expected_summary)
+        self.assertEqual(order.order_rows_summary(), expected_summary)
 
     def test_ticket_for_self_for_order_for_self(self):
         order = factories.create_confirmed_order_for_self()
