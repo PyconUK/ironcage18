@@ -143,14 +143,14 @@ class Order(models.Model):
 
         return rows
 
-    def all_tickets(self):
+    def all_order_rows(self):
         if self.payment_required():
-            return [order_row.ticket for order_row in self.build_order_rows()]
+            return self.build_order_rows()
         else:
-            return [order_row.ticket for order_row in self.order_rows.select_related('ticket').order_by('ticket')]
+            return self.order_rows.select_related('ticket').order_by('ticket')
 
-    def ticket_details(self):
-        return [ticket.details() for ticket in self.all_tickets()]
+    def all_tickets(self):
+        return [order_row.ticket for order_row in self.all_order_rows()]
 
     def ticket_summary(self):
         num_tickets_by_num_days = defaultdict(int)
@@ -263,6 +263,21 @@ class OrderRow(models.Model):
     def cost_incl_vat(self):
         return int(self.cost_excl_vat * 1.2)
 
+    @property
+    def owner_name(self):
+        ticket = self.ticket
+
+        if ticket.pk:
+            if ticket.owner:
+                return ticket.owner.name
+            else:
+                return ticket.invitation().email_addr
+        else:
+            if ticket.owner:
+                return ticket.owner.name
+            else:
+                return ticket.email_addr
+
 
 class Ticket(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
@@ -312,19 +327,6 @@ class Ticket(models.Model):
     def get_absolute_url(self):
         return reverse('tickets:ticket', args=[self.ticket_id])
 
-    def details(self):
-        details = {
-            'name': self.ticket_holder_name(),
-            'days': ', '.join(self.days()),
-            'cost_excl_vat': self.cost_excl_vat,
-            'cost_incl_vat': self.cost_incl_vat,
-        }
-
-        if self.pk:
-            details['id'] = self.ticket_id
-
-        return details
-
     def days(self):
         return [DAYS[day] for day in DAYS if getattr(self, day)]
 
@@ -346,6 +348,10 @@ class Ticket(models.Model):
 
     @property
     def descr_extra_for_order(self):
+        return self.days_sentence
+
+    @property
+    def days_sentence(self):
         return ', '.join(self.days())
 
     @property

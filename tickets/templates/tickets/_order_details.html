@@ -34,12 +34,12 @@
     <h3>Ticket details</h3>
 
     <table class="table table-condensed">
-      {% for detail in order.ticket_details %}
+      {% for row in order.all_order_rows %}
       <tr>
-        <td>{{ detail.id }}</td>
-        <td>{{ detail.name }}</td>
-        <td>{{ detail.days }}</td>
-        <td>£{{ detail.cost_incl_vat }}</td>
+        <td>{{ row.owner_name }}</td>
+        <td>{{ row.item_descr }}</td>
+        <td>{{ row.item_descr_extra }}</td>
+        <td>£{{ row.cost_incl_vat }}</td>
       </tr>
       {% endfor %}
     </table>
