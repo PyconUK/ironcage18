@@ -188,11 +188,11 @@ class Order(models.Model):
 
     @property
     def cost_excl_vat(self):
-        return sum(ticket.cost_excl_vat for ticket in self.all_tickets())
+        return sum(row.cost_excl_vat for row in self.all_order_rows())
 
     @property
     def cost_incl_vat(self):
-        return sum(ticket.cost_incl_vat for ticket in self.all_tickets())
+        return sum(row.cost_incl_vat for row in self.all_order_rows())
 
     @property
     def vat(self):
