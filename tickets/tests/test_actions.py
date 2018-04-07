@@ -498,6 +498,9 @@ class RefundTicketTests(TestCase):
         order_row.refresh_from_db()
         self.assertIsNone(order_row.ticket)
         self.assertIsNotNone(order_row.refunded_at)
+        self.assertEqual(order_row.cost_excl_vat, 105)
+        self.assertEqual(order_row.item_descr, '3-day individual-rate ticket')
+        self.assertEqual(order_row.item_descr_extra, 'Thursday, Friday, Saturday')
 
     def test_ticket_purchase_after_refund(self):
         user = factories.create_user()
