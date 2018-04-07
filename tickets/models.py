@@ -225,9 +225,10 @@ class Order(models.Model):
 class OrderRow(models.Model):
     order = models.ForeignKey('Order', related_name='order_rows', on_delete=models.CASCADE)
     cost_excl_vat = models.IntegerField()
-    ticket = models.OneToOneField('Ticket', related_name='order_row', on_delete=models.DO_NOTHING)
+    ticket = models.OneToOneField('Ticket', related_name='order_row', on_delete=models.DO_NOTHING, null=True)
     item_descr = models.CharField(max_length=400)
     item_descr_extra = models.CharField(max_length=400, null=True)
+    refunded_at = models.DateTimeField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -249,15 +250,26 @@ class OrderRow(models.Model):
         self.ticket_id = self.ticket.id
         super().save()
 
+    def refund(self):
+        self.ticket = None
+        self.refunded_at = datetime.now(timezone.utc)
+        super().save()
+
     @property
     def cost_incl_vat(self):
         return int(self.cost_excl_vat * 1.2)
 
     @property
+    def cost_pence_incl_vat(self):
+        return 100 * self.cost_incl_vat
+
+    @property
     def owner_name(self):
         ticket = self.ticket
 
-        if ticket.pk:
+        if ticket is None:
+            return 'Refunded'
+        elif ticket.pk:
             if ticket.owner:
                 return ticket.owner.name
             else:
@@ -313,6 +325,10 @@ class Ticket(models.Model):
         super().save()
         if hasattr(self, 'email_addr'):
             self.invitations.create(email_addr=self.email_addr)
+
+    def refund(self):
+        self.order_row.refund()
+        self.delete()
 
     def get_absolute_url(self):
         return reverse('tickets:ticket', args=[self.ticket_id])

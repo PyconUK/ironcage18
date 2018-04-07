@@ -9,7 +9,7 @@ from . import factories
 from ironcage.tests import utils
 
 from tickets import actions
-from tickets.models import TicketInvitation
+from tickets.models import Ticket, TicketInvitation
 
 
 class CreatePendingOrderTests(TestCase):
@@ -482,6 +482,47 @@ class ProcessStripeChargeTests(TestCase):
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, 'errored')
         self.assertEqual(self.order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+
+
+class RefundTicketTests(TestCase):
+    def test_refund_ticket(self):
+        ticket = factories.create_ticket()
+        order_row = ticket.order_row
+
+        with utils.patched_refund_creation_expected():
+            actions.refund_ticket(ticket)
+
+        with self.assertRaises(Ticket.DoesNotExist):
+            ticket.refresh_from_db()
+
+        order_row.refresh_from_db()
+        self.assertIsNone(order_row.ticket)
+        self.assertIsNotNone(order_row.refunded_at)
+
+    def test_ticket_purchase_after_refund(self):
+        user = factories.create_user()
+        factories.create_confirmed_order_for_self(user)
+        ticket = user.get_ticket()
+
+        order = factories.create_pending_order_for_self(user)
+        token = 'tok_abcdefghijklmnopqurstuvwx'
+        with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected():
+            actions.process_stripe_charge(order, token)
+        self.assertEqual(order.status, 'errored')
+
+        with utils.patched_refund_creation_expected():
+            actions.refund_ticket(ticket)
+
+        user.refresh_from_db()
+        self.assertIsNone(user.get_ticket())
+
+        order = factories.create_pending_order_for_self(user)
+        with utils.patched_charge_creation_success():
+            actions.process_stripe_charge(order, token)
+        self.assertEqual(order.status, 'successful')
+
+        user.refresh_from_db()
+        self.assertIsNotNone(user.get_ticket())
 
 
 class TicketInvitationTests(TestCase):

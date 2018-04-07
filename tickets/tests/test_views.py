@@ -344,6 +344,46 @@ class OrderTests(TestCase):
         </tr>
         ''', html=True)
 
+    def test_for_partially_refunded_order_for_self_and_others(self):
+        order = factories.create_confirmed_order_for_self_and_others()
+        ticket = order.all_tickets()[-1]
+
+        with utils.patched_refund_creation_expected():
+            actions.refund_ticket(ticket)
+
+        self.client.force_login(order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your order ({order.order_id})')
+        self.assertNotContains(rsp, '<div id="stripe-form">')
+        self.assertContains(rsp, 'View your ticket')
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>Alice</td>
+            <td>3-day individual-rate ticket</td>
+            <td>Thursday, Friday, Saturday</td>
+            <td>£126</td>
+        </tr>
+        ''', html=True)
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>bob@example.com</td>
+            <td>2-day individual-rate ticket</td>
+            <td>Friday, Saturday</td>
+            <td>£90</td>
+        </tr>
+        ''', html=True)
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>Refunded</td>
+            <td>2-day individual-rate ticket</td>
+            <td>Saturday, Sunday</td>
+            <td>£90</td>
+        </tr>
+        ''', html=True)
+
     def test_for_pending_order(self):
         user = factories.create_user(email_addr='alice@example.com')
         order = factories.create_pending_order_for_self(user)
