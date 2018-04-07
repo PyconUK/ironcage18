@@ -86,9 +86,8 @@ class Order(models.Model):
     def confirm(self, charge_id, charge_created):
         assert self.payment_required()
 
-        for ticket in self.build_tickets():
-            ticket.save()
-            self.order_rows.create_for_ticket(ticket)
+        for row in self.build_order_rows():
+            row.save()
 
         self.stripe_charge_id = charge_id
         self.stripe_charge_created = datetime.fromtimestamp(charge_created, tz=timezone.utc)
@@ -117,8 +116,10 @@ class Order(models.Model):
 
         self.save()
 
-    def build_tickets(self):
-        tickets = []
+    def build_order_rows(self):
+        assert self.payment_required()
+
+        rows = []
 
         days_for_self = self.unconfirmed_details['days_for_self']
         if days_for_self is not None:
@@ -127,7 +128,8 @@ class Order(models.Model):
                 owner=self.purchaser,
                 days=days_for_self,
             )
-            tickets.append(ticket)
+            row = self.order_rows.build_for_ticket(ticket)
+            rows.append(row)
 
         email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
         if email_addrs_and_days_for_others is not None:
@@ -137,12 +139,13 @@ class Order(models.Model):
                     email_addr=email_addr,
                     days=days,
                 )
-                tickets.append(ticket)
-        return tickets
+                rows.append(self.order_rows.build_for_ticket(ticket))
+
+        return rows
 
     def all_tickets(self):
         if self.payment_required():
-            return self.build_tickets()
+            return [order_row.ticket for order_row in self.build_order_rows()]
         else:
             return [order_row.ticket for order_row in self.order_rows.select_related('ticket').order_by('ticket')]
 
@@ -240,8 +243,9 @@ class OrderRow(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Manager(models.Manager):
-        def create_for_ticket(self, ticket):
-            self.create(
+        def build_for_ticket(self, ticket):
+            return self.model(
+                order=self.instance,
                 cost_excl_vat=ticket.cost_excl_vat,
                 ticket=ticket,
                 item_descr=ticket.descr_for_order,
@@ -249,6 +253,11 @@ class OrderRow(models.Model):
             )
 
     objects = Manager()
+
+    def save(self):
+        self.ticket.save()
+        self.ticket_id = self.ticket.id
+        super().save()
 
     @property
     def cost_incl_vat(self):
