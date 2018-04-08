@@ -43,22 +43,22 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="nav navbar-nav">
             <li class="nav-item child first">
-              <a href="/sponsorship/" class="nav-link">
+              <a href="https://2018.pyconuk.org/sponsorship/" class="nav-link">
                 Sponsorship
               </a>
             </li>
             <li class="nav-item child">
-              <a href="/diversity-inclusion-accessibility/" class="nav-link">
+              <a href="https://2018.pyconuk.org/diversity-inclusion-accessibility/" class="nav-link">
                 Diversity, inclusion, accessibility
               </a>
             </li>
             <li class="nav-item child">
-              <a href="/code-conduct/" class="nav-link">
+              <a href="https://2018.pyconuk.org/code-conduct/" class="nav-link">
                 Code of conduct
               </a>
             </li>
             <li class="nav-item child last">
-              <a href="/contact/" class="nav-link">
+              <a href="https://2018.pyconuk.org/contact/" class="nav-link">
                 Contact
               </a>
             </li>
@@ -83,7 +83,7 @@
             <span><a href="{% url 'reports:index' %}">Reports</a></span> &bull;
             {% endif %}
             {% if user.is_authenticated %}
-            <span><a href="{% url 'index' %}">Home</a></span> &bull; <span><a href="{% url 'logout' %}">Sign out</a></span>
+            <span><a href="{% url 'index' %}">Registration Office</a></span> &bull; <span><a href="{% url 'logout' %}">Sign out</a></span>
             {% else %}
             <span><a href="{% url 'login' %}?next={{ request.path }}">Sign in</a></span> &bull;
             <span><a href="{% url 'register' %}?next={{ request.path }}">Sign up</a></span>
