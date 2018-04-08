@@ -1,0 +1,12 @@
+.card {
+  margin-bottom: 20px;
+}
+form label {
+  font-weight: bold;
+}
+form label.btn {
+  font-weight: normal;
+}
+.field-name {
+  font-weight: bold;
+}
