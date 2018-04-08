@@ -108,7 +108,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(row.item_descr, '1-day individual-rate ticket')
         self.assertEqual(row.item_descr_extra, 'Friday')
 
-        ticket = row.ticket
+        ticket = row.item
         self.assertEqual(ticket.owner, order.purchaser)
         self.assertEqual(ticket.rate, 'individual')
         self.assertEqual(ticket.days(), ['Friday'])
@@ -136,7 +136,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(row1.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row1.item_descr_extra, 'Friday, Saturday')
 
-        ticket1 = row1.ticket
+        ticket1 = row1.item
         self.assertEqual(ticket1.owner, None)
         self.assertEqual(ticket1.rate, 'individual')
         self.assertEqual(ticket1.days(), ['Friday', 'Saturday'])
@@ -145,7 +145,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row2.item_descr_extra, 'Saturday, Sunday')
 
-        ticket2 = row2.ticket
+        ticket2 = row2.item
         self.assertEqual(ticket1.owner, None)
         self.assertEqual(ticket2.rate, 'individual')
         self.assertEqual(ticket2.days(), ['Saturday', 'Sunday'])
@@ -174,7 +174,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(row1.item_descr, '3-day individual-rate ticket')
         self.assertEqual(row1.item_descr_extra, 'Friday, Saturday, Sunday')
 
-        ticket1 = row1.ticket
+        ticket1 = row1.item
         self.assertEqual(ticket1.owner, order.purchaser)
         self.assertEqual(ticket1.rate, 'individual')
         self.assertEqual(ticket1.days(), ['Friday', 'Saturday', 'Sunday'])
@@ -183,7 +183,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row2.item_descr_extra, 'Friday, Saturday')
 
-        ticket2 = row2.ticket
+        ticket2 = row2.item
         self.assertEqual(ticket2.owner, None)
         self.assertEqual(ticket2.rate, 'individual')
         self.assertEqual(ticket2.days(), ['Friday', 'Saturday'])
@@ -192,7 +192,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(row3.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row3.item_descr_extra, 'Saturday, Sunday')
 
-        ticket3 = row3.ticket
+        ticket3 = row3.item
         self.assertEqual(ticket3.owner, None)
         self.assertEqual(ticket3.rate, 'individual')
         self.assertEqual(ticket3.days(), ['Saturday', 'Sunday'])
@@ -217,7 +217,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(row.item_descr, '3-day corporate-rate ticket')
         self.assertEqual(row.item_descr_extra, 'Friday, Saturday, Sunday')
 
-        ticket = row.ticket
+        ticket = row.item
         self.assertEqual(ticket.owner, order.purchaser)
         self.assertEqual(ticket.rate, 'corporate')
         self.assertEqual(ticket.days(), ['Friday', 'Saturday', 'Sunday'])
@@ -242,7 +242,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(row.item_descr, '3-day individual-rate ticket')
         self.assertEqual(row.item_descr_extra, 'Friday, Saturday, Sunday')
 
-        ticket = row.ticket
+        ticket = row.item
         self.assertEqual(ticket.owner, order.purchaser)
         self.assertEqual(ticket.rate, 'individual')
         self.assertEqual(ticket.days(), ['Friday', 'Saturday', 'Sunday'])

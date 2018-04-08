@@ -36,11 +36,11 @@ def confirm_order(order, charge_id, charge_created):
     slack_message('orders/order_created.slack', {'order': order})
 
 
-def refund_ticket(ticket, reason):
-    logger.info('refund_ticket', ticket=ticket.ticket_id)
-    stripe_refund = stripe_integration.refund_ticket(ticket)
+def refund_item(item, reason):
+    logger.info('refund_item', item=item.ticket_id)
+    stripe_refund = stripe_integration.refund_item(item)
     with transaction.atomic():
-        Refund.objects.create_for_ticket(ticket, reason, stripe_refund.id, stripe_refund.created)
+        Refund.objects.create_for_item(item, reason, stripe_refund.id, stripe_refund.created)
 
 
 def mark_order_as_failed(order, charge_failure_reason):

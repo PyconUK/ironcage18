@@ -2,6 +2,8 @@ from collections import Counter
 from datetime import datetime, timezone
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Max
@@ -182,7 +184,7 @@ class Order(models.Model, SalesRecord):
                 owner=self.purchaser,
                 days=days_for_self,
             )
-            row = self.order_rows.build_for_ticket(ticket)
+            row = self.order_rows.build_for_item(ticket)
             rows.append(row)
 
         email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
@@ -193,7 +195,7 @@ class Order(models.Model, SalesRecord):
                     email_addr=email_addr,
                     days=days,
                 )
-                rows.append(self.order_rows.build_for_ticket(ticket))
+                rows.append(self.order_rows.build_for_item(ticket))
 
         return rows
 
@@ -201,10 +203,13 @@ class Order(models.Model, SalesRecord):
         if self.payment_required():
             return self.build_order_rows()
         else:
-            return self.order_rows.select_related('ticket').order_by('ticket')
+            return self.order_rows.order_by('content_type', 'object_id')
+
+    def all_items(self):
+        return [order_row.item for order_row in self.all_order_rows()]
 
     def all_tickets(self):
-        return [order_row.ticket for order_row in self.all_order_rows()]
+        return [item for item in self.all_items() if isinstance(item, Ticket)]
 
     def num_tickets(self):
         return len(self.all_tickets())
@@ -244,7 +249,7 @@ class Refund(models.Model, SalesRecord):
             id = self.model.id_scrambler.backward(refund_id)
             return get_object_or_404(self.model, pk=id)
 
-        def create_for_ticket(self, ticket, reason, stripe_refund_id, stripe_refund_created):
+        def create_for_item(self, item, reason, stripe_refund_id, stripe_refund_created):
             refund = self.create(
                 reason=reason,
                 stripe_refund_id=stripe_refund_id,
@@ -255,15 +260,16 @@ class Refund(models.Model, SalesRecord):
                 credit_note_number=0
             )
 
-            order_row = ticket.order_row
-            order_row.ticket = None
+            order_row = item.order_row
+            order_row.object_id = None
+            order_row.content_type = None
             order_row.refund = refund
             order_row.save()
 
             refund.credit_note_number = refund.get_next_credit_note_number()
             refund.save()
 
-            ticket.delete()
+            item.delete()
             return refund
 
     objects = Manager()
@@ -287,7 +293,7 @@ class Refund(models.Model, SalesRecord):
         return self.order_rows.count()
 
     def all_order_rows(self):
-        return self.order_rows.select_related('ticket').order_by('ticket')
+        return self.order_rows.order_by('content_type', 'object_id')
 
 
 class OrderRow(models.Model):
@@ -295,7 +301,9 @@ class OrderRow(models.Model):
     refund = models.ForeignKey('Refund', related_name='order_rows', on_delete=models.DO_NOTHING, null=True)
 
     cost_excl_vat = models.IntegerField()
-    ticket = models.OneToOneField('tickets.Ticket', related_name='order_row', on_delete=models.DO_NOTHING, null=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING, null=True)
+    object_id = models.PositiveIntegerField(null=True)
+    item = GenericForeignKey('content_type', 'object_id')
     item_descr = models.CharField(max_length=400)
     item_descr_extra = models.CharField(max_length=400, null=True)
 
@@ -303,21 +311,23 @@ class OrderRow(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Manager(models.Manager):
-        def build_for_ticket(self, ticket):
+        def build_for_item(self, item):
             return self.model(
                 order=self.instance,
-                cost_excl_vat=ticket.cost_excl_vat,
-                ticket=ticket,
-                item_descr=ticket.descr_for_order,
-                item_descr_extra=ticket.descr_extra_for_order,
+                cost_excl_vat=item.cost_excl_vat,
+                item=item,
+                item_descr=item.descr_for_order,
+                item_descr_extra=item.descr_extra_for_order,
             )
 
     objects = Manager()
 
     def save(self):
-        if self.ticket is not None:
-            self.ticket.save()
-            self.ticket_id = self.ticket.id
+        if self.item is not None:
+            # I have no idea why this dance is needed, but it is
+            item = self.item
+            item.save()
+            self.item = item
         super().save()
 
     @property
@@ -330,17 +340,17 @@ class OrderRow(models.Model):
 
     @property
     def owner_name(self):
-        ticket = self.ticket
+        item = self.item
 
-        if ticket is None:
+        if item is None:
             return 'Refunded'
-        elif ticket.pk:
-            if ticket.owner:
-                return ticket.owner.name
+        elif item.pk:
+            if item.owner:
+                return item.owner.name
             else:
-                return ticket.invitation().email_addr
+                return item.invitation().email_addr
         else:
-            if ticket.owner:
-                return ticket.owner.name
+            if item.owner:
+                return item.owner.name
             else:
-                return ticket.email_addr
+                return item.email_addr

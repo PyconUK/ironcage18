@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -18,6 +19,7 @@ class Ticket(models.Model):
     sat = models.BooleanField()
     sun = models.BooleanField()
     mon = models.BooleanField()
+    order_rows = GenericRelation('orders.OrderRow')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -42,7 +44,7 @@ class Ticket(models.Model):
     objects = Manager()
 
     def __str__(self):
-        return self.ticket_id
+        return self.ticket_id or 'Unsaved'
 
     @property
     def ticket_id(self):
@@ -88,6 +90,11 @@ class Ticket(models.Model):
     @property
     def is_saved(self):
         return self.pk is not None
+
+    @property
+    def order_row(self):
+        # We expect there to only ever be a single OrderRow, so this should never fail
+        return self.order_rows.get()
 
     @property
     def order(self):

@@ -30,7 +30,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(row.item_descr, '3-day individual-rate ticket')
         self.assertEqual(row.item_descr_extra, 'Thursday, Friday, Saturday')
 
-        ticket = row.ticket
+        ticket = row.item
         self.assertEqual(ticket.owner, order.purchaser)
         self.assertEqual(ticket.rate, 'individual')
         self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
@@ -56,7 +56,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(row1.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row1.item_descr_extra, 'Friday, Saturday')
 
-        ticket1 = row1.ticket
+        ticket1 = row1.item
         self.assertIsNone(ticket1.owner)
         self.assertEqual(ticket1.rate, 'individual')
         self.assertEqual(ticket1.days(), ['Friday', 'Saturday'])
@@ -69,7 +69,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row2.item_descr_extra, 'Saturday, Sunday')
 
-        ticket2 = row2.ticket
+        ticket2 = row2.item
         self.assertIsNone(ticket2.owner)
         self.assertEqual(ticket2.rate, 'individual')
         self.assertEqual(ticket2.days(), ['Saturday', 'Sunday'])
@@ -99,7 +99,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(row1.item_descr, '3-day individual-rate ticket')
         self.assertEqual(row1.item_descr_extra, 'Thursday, Friday, Saturday')
 
-        ticket1 = row1.ticket
+        ticket1 = row1.item
         self.assertEqual(ticket1.owner, order.purchaser)
         self.assertEqual(ticket1.rate, 'individual')
         self.assertEqual(ticket1.days(), ['Thursday', 'Friday', 'Saturday'])
@@ -108,7 +108,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row2.item_descr_extra, 'Friday, Saturday')
 
-        ticket2 = row2.ticket
+        ticket2 = row2.item
         self.assertIsNone(ticket2.owner)
         self.assertEqual(ticket2.rate, 'individual')
         self.assertEqual(ticket2.days(), ['Friday', 'Saturday'])
@@ -121,7 +121,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(row3.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row3.item_descr_extra, 'Saturday, Sunday')
 
-        ticket3 = row3.ticket
+        ticket3 = row3.item
         self.assertIsNone(ticket3.owner)
         self.assertEqual(ticket3.rate, 'individual')
         self.assertEqual(ticket3.days(), ['Saturday', 'Sunday'])
@@ -243,18 +243,18 @@ class ProcessStripeChargeTests(TestCase):
 
 
 class RefundTicketTests(TestCase):
-    def test_refund_ticket(self):
+    def test_refund_item(self):
         ticket = factories.create_ticket()
         order_row = ticket.order_row
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(ticket, 'Refund requested by user')
+            actions.refund_item(ticket, 'Refund requested by user')
 
         with self.assertRaises(Ticket.DoesNotExist):
             ticket.refresh_from_db()
 
         order_row.refresh_from_db()
-        self.assertIsNone(order_row.ticket)
+        self.assertIsNone(order_row.item)
         self.assertEqual(order_row.cost_excl_vat, 105)
         self.assertEqual(order_row.item_descr, '3-day individual-rate ticket')
         self.assertEqual(order_row.item_descr_extra, 'Thursday, Friday, Saturday')
@@ -270,13 +270,13 @@ class RefundTicketTests(TestCase):
         tickets2 = order2.all_tickets()
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(tickets1[0], 'Refund requested by user')
+            actions.refund_item(tickets1[0], 'Refund requested by user')
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(tickets2[0], 'Refund requested by user')
+            actions.refund_item(tickets2[0], 'Refund requested by user')
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(tickets1[1], 'Refund requested by user')
+            actions.refund_item(tickets1[1], 'Refund requested by user')
 
         refunds = Refund.objects.order_by('id')
         credit_note_numbers = [refund.full_credit_note_number for refund in refunds]
@@ -298,7 +298,7 @@ class RefundTicketTests(TestCase):
         self.assertEqual(order.status, 'errored')
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(ticket, 'Refund requested by user')
+            actions.refund_item(ticket, 'Refund requested by user')
 
         user.refresh_from_db()
         self.assertIsNone(user.get_ticket())

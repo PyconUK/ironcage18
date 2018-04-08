@@ -37,7 +37,7 @@ def refund_charge(charge_id, amount_pence=None):
         return stripe.Refund.create(charge=charge_id)
 
 
-def refund_ticket(ticket):
-    order_row = ticket.order_row
+def refund_item(item):
+    order_row = item.order_row
     charge_id = order_row.order.stripe_charge_id
     return refund_charge(charge_id, order_row.cost_pence_incl_vat)

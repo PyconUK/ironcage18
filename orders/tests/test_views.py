@@ -90,7 +90,7 @@ class OrderTests(TestCase):
         ticket = order.all_tickets()[-1]
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(ticket, 'Refund requested by user')
+            actions.refund_item(ticket, 'Refund requested by user')
 
         self.client.force_login(order.purchaser)
         rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
@@ -328,7 +328,7 @@ class RefundCreditNoteTests(TestCase):
         ticket = cls.order.all_tickets()[0]
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(ticket, 'Refund requested by user')
+            actions.refund_item(ticket, 'Refund requested by user')
 
         cls.refund = cls.order.refunds.get()
 
