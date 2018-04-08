@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from tickets import views
+from . import views
 
 app_name = 'orders'
 
