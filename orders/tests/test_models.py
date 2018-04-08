@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from . import factories
+from tickets.tests import factories
 
 
 class OrderTests(TestCase):
