@@ -8,37 +8,37 @@
   {% csrf_token %}
   <input type="hidden" name="next" value="{{ next }}" />
 
-  <div class="form-group">
-    <label for="{{ form.name.auto_id }}" class="col-sm-2 control-label">{{ form.name.label }}</label>
+  <div class="form-group row">
+    <label for="{{ form.name.auto_id }}" class="col-sm-2 col-form-label">{{ form.name.label }}</label>
     <div class="col-sm-10">
       {{ form.name }}
     </div>
   </div>
 
-  <div class="form-group">
-    <label for="{{ form.email_addr.auto_id }}" class="col-sm-2 control-label">{{ form.email_addr.label }}</label>
+  <div class="form-group row">
+    <label for="{{ form.email_addr.auto_id }}" class="col-sm-2 col-form-label">{{ form.email_addr.label }}</label>
     <div class="col-sm-10">
       {{ form.email_addr }}
     </div>
   </div>
 
-  <div class="form-group">
-    <label for="{{ form.password1.auto_id }}" class="col-sm-2 control-label">{{ form.password1.label }}</label>
+  <div class="form-group row">
+    <label for="{{ form.password1.auto_id }}" class="col-sm-2 col-form-label">{{ form.password1.label }}</label>
     <div class="col-sm-10">
       {{ form.password1 }}
     </div>
   </div>
 
-  <div class="form-group">
-    <label for="{{ form.password2.auto_id }}" class="col-sm-2 control-label">{{ form.password2.label }}</label>
+  <div class="form-group row">
+    <label for="{{ form.password2.auto_id }}" class="col-sm-2 col-form-label">{{ form.password2.label }}</label>
     <div class="col-sm-10">
       {{ form.password2 }}
     </div>
   </div>
 
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">Create your account</button>
+  <div class="form-group row">
+    <div class="offset-sm-2 col-sm-10">
+      <button type="submit" class="btn btn-primary">Create your account</button>
     </div>
   </div>
 </form>

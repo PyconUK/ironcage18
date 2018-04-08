@@ -1,6 +1,6 @@
 dj-database-url
 django
-django-bootstrap3
+django-bootstrap4
 django-dotenv
 django_slack
 pip-tools
