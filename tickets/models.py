@@ -15,7 +15,51 @@ from .constants import DAYS
 from . import prices
 
 
-class Order(models.Model):
+class SalesRecord:
+    '''Mixin for behaviour common to Order and Refund'''
+
+    @property
+    def cost_excl_vat(self):
+        return sum(row.cost_excl_vat for row in self.all_order_rows())
+
+    @property
+    def cost_incl_vat(self):
+        return sum(row.cost_incl_vat for row in self.all_order_rows())
+
+    @property
+    def vat(self):
+        return self.cost_incl_vat - self.cost_excl_vat
+
+    def order_rows_summary(self):
+        row_counts = Counter()
+
+        for row in self.all_order_rows():
+            row_counts[(row.item_descr, row.cost_excl_vat, row.cost_incl_vat)] += 1
+
+        summary = []
+
+        for (item_descr, cost_excl_vat, cost_incl_vat), count in row_counts.items():
+            summary.append({
+                'item_descr': item_descr,
+                'quantity': count,
+                'per_item_cost_excl_vat': cost_excl_vat,
+                'per_item_cost_incl_vat': cost_incl_vat,
+                'total_cost_excl_vat': cost_excl_vat * count,
+                'total_cost_incl_vat': cost_incl_vat * count,
+            })
+
+        return sorted(summary, key=lambda record: record['total_cost_excl_vat'], reverse=True)
+
+    def brief_summary(self):
+        summary = self.order_rows_summary()
+        return ', '.join(f'{record["quantity"]} × {record["item_descr"]}' for record in summary)
+
+    def billing_addr_formatted(self):
+        lines = [line.strip(',') for line in self.billing_addr.splitlines() if line]
+        return ', '.join(lines)
+
+
+class Order(models.Model, SalesRecord):
     purchaser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
     billing_name = models.CharField(max_length=200, null=True)
     billing_addr = models.TextField(null=True)
@@ -102,6 +146,14 @@ class Order(models.Model):
         prev_invoice_number = cls.objects.aggregate(n=Max('invoice_number'))['n'] or 0
         return prev_invoice_number + 1
 
+    @property
+    def cost_pence_incl_vat(self):
+        return 100 * self.cost_incl_vat
+
+    @property
+    def full_invoice_number(self):
+        return f'S-2018-{self.invoice_number:04d}'
+
     def mark_as_failed(self, charge_failure_reason):
         self.stripe_charge_failure_reason = charge_failure_reason
         self.status = 'failed'
@@ -152,50 +204,6 @@ class Order(models.Model):
     def all_tickets(self):
         return [order_row.ticket for order_row in self.all_order_rows()]
 
-    def order_rows_summary(self):
-        row_counts = Counter()
-
-        for row in self.all_order_rows():
-            row_counts[(row.item_descr, row.cost_excl_vat, row.cost_incl_vat)] += 1
-
-        summary = []
-
-        for (item_descr, cost_excl_vat, cost_incl_vat), count in row_counts.items():
-            summary.append({
-                'item_descr': item_descr,
-                'quantity': count,
-                'per_item_cost_excl_vat': cost_excl_vat,
-                'per_item_cost_incl_vat': cost_incl_vat,
-                'total_cost_excl_vat': cost_excl_vat * count,
-                'total_cost_incl_vat': cost_incl_vat * count,
-            })
-
-        return sorted(summary, key=lambda record: record['total_cost_excl_vat'], reverse=True)
-
-    def brief_summary(self):
-        summary = self.order_rows_summary()
-        return ', '.join(f'{record["quantity"]} × {record["item_descr"]}' for record in summary)
-
-    @property
-    def cost_excl_vat(self):
-        return sum(row.cost_excl_vat for row in self.all_order_rows())
-
-    @property
-    def cost_incl_vat(self):
-        return sum(row.cost_incl_vat for row in self.all_order_rows())
-
-    @property
-    def vat(self):
-        return self.cost_incl_vat - self.cost_excl_vat
-
-    @property
-    def cost_pence_incl_vat(self):
-        return 100 * self.cost_incl_vat
-
-    @property
-    def full_invoice_number(self):
-        return f'S-2018-{self.invoice_number:04d}'
-
     def num_tickets(self):
         return len(self.all_tickets())
 
@@ -217,12 +225,8 @@ class Order(models.Model):
     def payment_required(self):
         return self.status in ['pending', 'failed']
 
-    def billing_addr_formatted(self):
-        lines = [line.strip(',') for line in self.billing_addr.splitlines() if line]
-        return ', '.join(lines)
 
-
-class Refund(models.Model):
+class Refund(models.Model, SalesRecord):
     reason = models.CharField(max_length=400)
     credit_note_number = models.IntegerField()
 
@@ -254,7 +258,7 @@ class Refund(models.Model):
 
     @property
     def order(self):
-        row_ids = [row.id for row in self.order_rows.all()]
+        row_ids = [row.id for row in self.all_order_rows()]
         return Order.objects.get(order_rows__id__in=row_ids)
 
     @property
@@ -263,6 +267,9 @@ class Refund(models.Model):
 
     def get_next_credit_note_number(self):
         return self.order_rows.count()
+
+    def all_order_rows(self):
+        return self.order_rows.select_related('ticket').order_by('ticket')
 
 
 class OrderRow(models.Model):
