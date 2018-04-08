@@ -37,12 +37,46 @@ class TicketForm(forms.Form):
         widget=ButtonsRadio
     )
 
+    @classmethod
+    def from_pending_order(cls, order):
+        assert order.payment_required()
+        unconfirmed_details = order.unconfirmed_details
+
+        data = {
+            'rate': unconfirmed_details['rate']
+        }
+
+        days_for_self = unconfirmed_details['days_for_self']
+        email_addrs_and_days_for_others = unconfirmed_details['email_addrs_and_days_for_others']
+
+        if days_for_self is None:
+            assert email_addrs_and_days_for_others is not None
+            data['who'] = 'others'
+        elif email_addrs_and_days_for_others is None:
+            assert days_for_self is not None
+            data['who'] = 'self'
+        else:
+            data['who'] = 'self and others'
+
+        return cls(data)
+
 
 class TicketForSelfForm(forms.Form):
     days = forms.MultipleChoiceField(
         choices=DAY_CHOICES,
         widget=ButtonsCheckbox
     )
+
+    @classmethod
+    def from_pending_order(cls, order):
+        assert order.payment_required()
+        unconfirmed_details = order.unconfirmed_details
+
+        days_for_self = unconfirmed_details['days_for_self']
+        if days_for_self is None:
+            return cls()
+
+        return cls({'days': days_for_self})
 
 
 class TicketForOtherForm(forms.Form):
@@ -73,6 +107,26 @@ class BaseTicketForOthersFormset(forms.BaseFormSet):
         if not self.email_addrs_and_days:
             raise ValidationError('No valid forms')
 
+    @classmethod
+    def from_pending_order(cls, order):
+        assert order.payment_required()
+        unconfirmed_details = order.unconfirmed_details
+
+        email_addrs_and_days_for_others = unconfirmed_details['email_addrs_and_days_for_others']
+        if email_addrs_and_days_for_others is None:
+            return cls()
+
+        data = {
+            'form-TOTAL_FORMS': str(len(email_addrs_and_days_for_others)),
+            'form-INITIAL_FORMS': str(len(email_addrs_and_days_for_others)),
+        }
+
+        for ix, (email_addr, days) in enumerate(email_addrs_and_days_for_others):
+            data[f'form-{ix}-email_addr'] = email_addr
+            data[f'form-{ix}-days'] = days
+
+        return cls(data)
+
 
 TicketForOthersFormSet = forms.formset_factory(
     TicketForOtherForm,
@@ -83,10 +137,10 @@ TicketForOthersFormSet = forms.formset_factory(
 )
 
 
-class CompanyDetailsForm(forms.Form):
-    company_name = forms.CharField(
+class BillingDetailsForm(forms.Form):
+    billing_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    company_addr = forms.CharField(
+    billing_addr = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control'})
     )

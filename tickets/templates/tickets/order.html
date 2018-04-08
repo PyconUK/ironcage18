@@ -6,9 +6,9 @@
 <h1>Details of your order ({{ order.order_id }})</h1>
 
 {% if order.payment_required %}
-<p>You are ordering {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} at the {{ order.rate }} rate.</p>
+<p>You are ordering {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }}.</p>
 {% else %}
-<p>You have ordered {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} at the {{ order.rate }} rate.</p>
+<p>You have ordered {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }}.</p>
 {% endif %}
 
 {% include './_order_details.html' %}

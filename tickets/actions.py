@@ -18,43 +18,43 @@ import stripe
 from django.db import transaction
 from django.db.utils import IntegrityError
 
-from ironcage.stripe_integration import create_charge_for_order, refund_charge
+from ironcage import stripe_integration
 
-from .mailer import send_invitation_mail, send_order_confirmation_mail, send_order_refund_mail
-from .models import Order, Ticket
+from .mailer import send_invitation_mail, send_order_confirmation_mail
+from .models import Order, Refund
 
 import structlog
 logger = structlog.get_logger()
 
 
-def create_pending_order(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
+def create_pending_order(purchaser, billing_details, rate, days_for_self=None, email_addrs_and_days_for_others=None):
     logger.info('create_pending_order', purchaser=purchaser.id, rate=rate)
     with transaction.atomic():
         return Order.objects.create_pending(
             purchaser,
+            billing_details,
             rate,
             days_for_self,
             email_addrs_and_days_for_others,
-            company_details=company_details,
         )
 
 
-def update_pending_order(order, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
+def update_pending_order(order, billing_details, rate, days_for_self=None, email_addrs_and_days_for_others=None):
     logger.info('update_pending_order', order=order.order_id, rate=rate)
     with transaction.atomic():
-        order.update(rate, days_for_self, email_addrs_and_days_for_others, company_details)
+        order.update(billing_details, rate, days_for_self, email_addrs_and_days_for_others)
 
 
 def process_stripe_charge(order, token):
     logger.info('process_stripe_charge', order=order.order_id, token=token)
     assert order.payment_required()
     try:
-        charge = create_charge_for_order(order, token)
+        charge = stripe_integration.create_charge_for_order(order, token)
         confirm_order(order, charge.id, charge.created)
     except stripe.error.CardError as e:
         mark_order_as_failed(order, e._message)
     except IntegrityError:
-        refund_charge(charge.id)
+        stripe_integration.refund_charge(charge.id)
         mark_order_as_errored_after_charge(order, charge.id)
 
 
@@ -76,7 +76,14 @@ def mark_order_as_failed(order, charge_failure_reason):
 def mark_order_as_errored_after_charge(order, charge_id):
     logger.info('mark_order_as_errored_after_charge', order=order.order_id, charge_id=charge_id)
     with transaction.atomic():
-        order.march_as_errored_after_charge(charge_id)
+        order.mark_as_errored_after_charge(charge_id)
+
+
+def refund_ticket(ticket, reason):
+    logger.info('refund_ticket', ticket=ticket.ticket_id)
+    stripe_refund = stripe_integration.refund_ticket(ticket)
+    with transaction.atomic():
+        Refund.objects.create_for_ticket(ticket, reason, stripe_refund.id, stripe_refund.created)
 
 
 def send_receipt(order):

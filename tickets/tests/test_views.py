@@ -69,6 +69,8 @@ class NewOrderTests(TestCase):
             'who': 'self',
             'rate': 'individual',
             'days': ['thu', 'fri', 'sat'],
+            'billing_name': 'Alice Apple',
+            'billing_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -86,8 +88,8 @@ class NewOrderTests(TestCase):
             'who': 'self',
             'rate': 'corporate',
             'days': ['thu', 'fri', 'sat'],
-            'company_name': 'Sirius Cybernetics Corp.',
-            'company_addr': 'Eadrax, Sirius Tau',
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -104,6 +106,8 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'others',
             'rate': 'individual',
+            'billing_name': 'Alice Apple',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
@@ -122,6 +126,8 @@ class NewOrderTests(TestCase):
             'who': 'self and others',
             'rate': 'individual',
             'days': ['thu', 'fri', 'sat'],
+            'billing_name': 'Alice Apple',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
@@ -176,8 +182,8 @@ class OrderEditTests(TestCase):
         form_data = {
             'who': 'self',
             'rate': 'corporate',
-            'company_name': 'Sirius Cybernetics Corp.',
-            'company_addr': 'Eadrax, Sirius Tau',
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'days': ['fri', 'sat', 'sun'],
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
@@ -195,8 +201,8 @@ class OrderEditTests(TestCase):
         form_data = {
             'who': 'others',
             'rate': 'corporate',
-            'company_name': 'Sirius Cybernetics Corp.',
-            'company_addr': 'Eadrax, Sirius Tau',
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
@@ -214,8 +220,8 @@ class OrderEditTests(TestCase):
         form_data = {
             'who': 'self and others',
             'rate': 'corporate',
-            'company_name': 'Sirius Cybernetics Corp.',
-            'company_addr': 'Eadrax, Sirius Tau',
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
             'days': ['fri', 'sat', 'sun'],
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -268,6 +274,15 @@ class OrderTests(TestCase):
         self.assertNotContains(rsp, '<div id="stripe-form">')
         self.assertContains(rsp, 'View your ticket')
 
+        self.assertContains(rsp, '''
+        <tr>
+            <td>Alice</td>
+            <td>3-day individual-rate ticket</td>
+            <td>Thursday, Friday, Saturday</td>
+            <td>£126</td>
+        </tr>
+        ''', html=True)
+
     def test_for_confirmed_order_for_others(self):
         order = factories.create_confirmed_order_for_others()
         self.client.force_login(order.purchaser)
@@ -276,6 +291,24 @@ class OrderTests(TestCase):
         self.assertNotContains(rsp, '<div id="stripe-form">')
         self.assertNotContains(rsp, 'View your ticket')
 
+        self.assertContains(rsp, '''
+        <tr>
+            <td>bob@example.com</td>
+            <td>2-day individual-rate ticket</td>
+            <td>Friday, Saturday</td>
+            <td>£90</td>
+        </tr>
+        ''', html=True)
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>carol@example.com</td>
+            <td>2-day individual-rate ticket</td>
+            <td>Saturday, Sunday</td>
+            <td>£90</td>
+        </tr>
+        ''', html=True)
+
     def test_for_confirmed_order_for_self_and_others(self):
         order = factories.create_confirmed_order_for_self_and_others()
         self.client.force_login(order.purchaser)
@@ -283,6 +316,73 @@ class OrderTests(TestCase):
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertNotContains(rsp, '<div id="stripe-form">')
         self.assertContains(rsp, 'View your ticket')
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>Alice</td>
+            <td>3-day individual-rate ticket</td>
+            <td>Thursday, Friday, Saturday</td>
+            <td>£126</td>
+        </tr>
+        ''', html=True)
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>bob@example.com</td>
+            <td>2-day individual-rate ticket</td>
+            <td>Friday, Saturday</td>
+            <td>£90</td>
+        </tr>
+        ''', html=True)
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>carol@example.com</td>
+            <td>2-day individual-rate ticket</td>
+            <td>Saturday, Sunday</td>
+            <td>£90</td>
+        </tr>
+        ''', html=True)
+
+    def test_for_partially_refunded_order_for_self_and_others(self):
+        order = factories.create_confirmed_order_for_self_and_others()
+        ticket = order.all_tickets()[-1]
+
+        with utils.patched_refund_creation():
+            actions.refund_ticket(ticket, 'Refund requested by user')
+
+        self.client.force_login(order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your order ({order.order_id})')
+        self.assertNotContains(rsp, '<div id="stripe-form">')
+        self.assertContains(rsp, 'View your ticket')
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>Alice</td>
+            <td>3-day individual-rate ticket</td>
+            <td>Thursday, Friday, Saturday</td>
+            <td>£126</td>
+        </tr>
+        ''', html=True)
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>bob@example.com</td>
+            <td>2-day individual-rate ticket</td>
+            <td>Friday, Saturday</td>
+            <td>£90</td>
+        </tr>
+        ''', html=True)
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>Refunded</td>
+            <td>2-day individual-rate ticket</td>
+            <td>Saturday, Sunday</td>
+            <td>£90</td>
+        </tr>
+        ''', html=True)
 
     def test_for_pending_order(self):
         user = factories.create_user(email_addr='alice@example.com')
@@ -293,6 +393,15 @@ class OrderTests(TestCase):
         self.assertContains(rsp, '<div id="stripe-form">')
         self.assertContains(rsp, 'data-amount="12600"')
         self.assertContains(rsp, 'data-email="alice@example.com"')
+
+        self.assertContains(rsp, '''
+        <tr>
+            <td>Alice</td>
+            <td>3-day individual-rate ticket</td>
+            <td>Thursday, Friday, Saturday</td>
+            <td>£126</td>
+        </tr>
+        ''', html=True)
 
     def test_for_pending_order_for_self_when_already_has_ticket(self):
         user = factories.create_user(email_addr='alice@example.com')
@@ -417,12 +526,13 @@ class OrderReceiptTests(TestCase):
         self.assertContains(rsp, f'Receipt for PyCon UK 2018 order {self.order.order_id}')
         self.assertContains(rsp, '3 tickets for PyCon UK 2018')
         self.assertContains(rsp, '<th>Date</th><td>21 May 2018</td>', html=True)
+        self.assertContains(rsp, '<th>Invoice number</th><td>S-2018-0001</td>', html=True)
         self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£255</td>', html=True)
         self.assertContains(rsp, '<th>VAT at 20%</th><td>£51</td>', html=True)
         self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£306</td>', html=True)
         self.assertContains(rsp, '''
             <tr>
-                <td>Ticket for 2 days</td>
+                <td>2-day individual-rate ticket</td>
                 <td>2</td>
                 <td>£75</td>
                 <td>£90</td>
@@ -431,7 +541,7 @@ class OrderReceiptTests(TestCase):
             </tr>''', html=True)
         self.assertContains(rsp, '''
             <tr>
-                <td>Ticket for 3 days</td>
+                <td>3-day individual-rate ticket</td>
                 <td>1</td>
                 <td>£105</td>
                 <td>£126</td>
@@ -459,13 +569,67 @@ class OrderReceiptTests(TestCase):
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can view the receipt')
 
-    def test_when_already_paid(self):
+    def test_when_not_paid(self):
         bob = factories.create_user('Bob')
         order = factories.create_pending_order_for_self(user=bob)
         self.client.force_login(bob)
         rsp = self.client.get(f'/tickets/orders/{order.order_id}/receipt/', follow=True)
         self.assertRedirects(rsp, f'/tickets/orders/{order.order_id}/')
         self.assertContains(rsp, 'This order has not been paid')
+
+
+class RefundCreditNoteTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.order = factories.create_confirmed_order_for_self_and_others()
+        ticket = cls.order.all_tickets()[0]
+
+        with utils.patched_refund_creation():
+            actions.refund_ticket(ticket, 'Refund requested by user')
+
+        cls.refund = cls.order.refunds.get()
+
+        cls.url = f'/tickets/orders/{cls.order.order_id}/credit-note/{cls.refund.refund_id}/'
+
+    def test_refund_credit_note(self):
+        self.client.force_login(self.order.purchaser)
+        rsp = self.client.get(self.url, follow=True)
+        self.assertContains(rsp, f'Credit note for PyCon UK 2018 order {self.order.order_id}')
+        self.assertContains(rsp, '<th>Date</th><td>21 May 2018</td>', html=True)
+        self.assertContains(rsp, '<th>Original invoice number</th><td>S-2018-0001</td>', html=True)
+        self.assertContains(rsp, '<th>Credit note number</th><td>R-2018-0001-01</td>', html=True)
+        self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£105</td>', html=True)
+        self.assertContains(rsp, '<th>VAT at 20%</th><td>£21</td>', html=True)
+        self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£126</td>', html=True)
+        self.assertContains(rsp, '''
+            <tr>
+                <td>3-day individual-rate ticket</td>
+                <td>1</td>
+                <td>£105</td>
+                <td>£126</td>
+                <td>£105</td>
+                <td>£126</td>
+            </tr>''', html=True)
+        self.assertContains(rsp, '''
+            <tr>
+                <th>Total</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>£105</th>
+                <th>£126</th>
+            </tr>''', html=True)
+
+    def test_when_not_authenticated(self):
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next={self.url}')
+
+    def test_when_not_authorized(self):
+        bob = factories.create_user('Bob')
+        self.client.force_login(bob)
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, '/')
+        self.assertContains(rsp, 'Only the purchaser of an order can view a credit note')
 
 
 class TicketTests(TestCase):

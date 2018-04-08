@@ -1,8 +1,10 @@
+coverage
 dj-database-url
 django
 django-bootstrap4
 django-dotenv
 django_slack
+flake8
 pip-tools
 psycopg2-binary
 stripe

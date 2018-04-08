@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -71,7 +69,7 @@ class AttendanceByDayReport(ReportView):
 
             for ticket in tickets:
                 if getattr(ticket, day):
-                    num_tickets[ticket.rate()] += 1
+                    num_tickets[ticket.rate] += 1
 
             rows.append([
                 DAYS[day],
@@ -123,7 +121,7 @@ class TicketSalesReport(ReportView):
 
             for ticket in tickets:
                 if sum(getattr(ticket, day) for day in DAYS) == num_days:
-                    num_tickets[ticket.rate()] += 1
+                    num_tickets[ticket.rate] += 1
 
             num_tickets_rows.append([
                 num_days,
@@ -152,7 +150,7 @@ class TicketSalesReport(ReportView):
 
 
 class OrdersMixin:
-    headings = ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status']
+    headings = ['ID', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status']
 
     def presenter(self, order):
         link = {
@@ -161,11 +159,10 @@ class OrdersMixin:
         }
         return [
             link,
-            order.rate,
             order.purchaser.name,
             order.purchaser.email_addr,
             order.num_tickets(),
-            f'£{order.cost_incl_vat()}',
+            f'£{order.cost_incl_vat}',
             order.status,
         ]
 
@@ -194,10 +191,10 @@ class TicketsMixin:
         }
         return [
             link,
-            ticket.rate(),
+            ticket.rate,
             ticket.ticket_holder_name(),
             ', '.join(ticket.days()),
-            f'£{ticket.cost_incl_vat()}',
+            f'£{ticket.cost_incl_vat}',
             'Assigned' if ticket.owner else 'Unclaimed',
         ]
 

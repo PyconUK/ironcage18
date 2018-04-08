@@ -22,13 +22,22 @@ def create_charge(amount_pence, description, statement_descriptor, token):
 def create_charge_for_order(order, token):
     assert order.payment_required()
     return create_charge(
-        order.cost_pence_incl_vat(),
+        order.cost_pence_incl_vat,
         f'PyCon UK order {order.order_id}',
         f'PyCon UK {order.order_id}',
         token,
     )
 
 
-def refund_charge(charge_id):
+def refund_charge(charge_id, amount_pence=None):
     set_stripe_api_key()
-    stripe.Refund.create(charge=charge_id)
+    if amount_pence is not None:
+        return stripe.Refund.create(charge=charge_id, amount=amount_pence)
+    else:
+        return stripe.Refund.create(charge=charge_id)
+
+
+def refund_ticket(ticket):
+    order_row = ticket.order_row
+    charge_id = order_row.order.stripe_charge_id
+    return refund_charge(charge_id, order_row.cost_pence_incl_vat)

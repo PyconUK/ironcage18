@@ -3,13 +3,14 @@ from datetime import datetime, timezone
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from . import actions
-from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
-from .models import Order, Ticket, TicketInvitation
+from .forms import BillingDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
+from .models import Order, Refund, Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
 
 
@@ -21,7 +22,7 @@ def new_order(request):
         form = TicketForm(request.POST)
         self_form = TicketForSelfForm(request.POST)
         others_formset = TicketForOthersFormSet(request.POST)
-        company_details_form = CompanyDetailsForm(request.POST)
+        billing_details_form = BillingDetailsForm(request.POST)
 
         if form.is_valid():
             who = form.cleaned_data['who']
@@ -42,27 +43,24 @@ def new_order(request):
                 if valid:
                     days_for_self = self_form.cleaned_data['days']
                     email_addrs_and_days_for_others = others_formset.email_addrs_and_days
-            else:
+            else:  # pragma: no cover
                 assert False
 
             if valid:
-                if rate == 'corporate':
-                    valid = company_details_form.is_valid()
-                    if valid:
-                        company_details = {
-                            'name': company_details_form.cleaned_data['company_name'],
-                            'addr': company_details_form.cleaned_data['company_addr'],
-                        }
-                else:
-                    company_details = None
+                valid = billing_details_form.is_valid()
+                if valid:
+                    billing_details = {
+                        'name': billing_details_form.cleaned_data['billing_name'],
+                        'addr': billing_details_form.cleaned_data['billing_addr'],
+                    }
 
             if valid:
                 order = actions.create_pending_order(
                     purchaser=request.user,
+                    billing_details=billing_details,
                     rate=rate,
                     days_for_self=days_for_self,
                     email_addrs_and_days_for_others=email_addrs_and_days_for_others,
-                    company_details=company_details,
                 )
 
                 return redirect(order)
@@ -76,13 +74,13 @@ def new_order(request):
         form = TicketForm()
         self_form = TicketForSelfForm()
         others_formset = TicketForOthersFormSet()
-        company_details_form = CompanyDetailsForm()
+        billing_details_form = BillingDetailsForm()
 
     context = {
         'form': form,
         'self_form': self_form,
         'others_formset': others_formset,
-        'company_details_form': company_details_form,
+        'billing_details_form': billing_details_form,
         'user_can_buy_for_self': request.user.is_authenticated and not request.user.get_ticket(),
         'rates_table_data': _rates_table_data(),
         'rates_data': _rates_data(),
@@ -108,7 +106,7 @@ def order_edit(request, order_id):
         form = TicketForm(request.POST)
         self_form = TicketForSelfForm(request.POST)
         others_formset = TicketForOthersFormSet(request.POST)
-        company_details_form = CompanyDetailsForm(request.POST)
+        billing_details_form = BillingDetailsForm(request.POST)
 
         if form.is_valid():
             who = form.cleaned_data['who']
@@ -129,42 +127,42 @@ def order_edit(request, order_id):
                 if valid:
                     days_for_self = self_form.cleaned_data['days']
                     email_addrs_and_days_for_others = others_formset.email_addrs_and_days
-            else:
+            else:  # pragma: no cover
                 assert False
 
             if valid:
-                if rate == 'corporate':
-                    valid = company_details_form.is_valid()
-                    if valid:
-                        company_details = {
-                            'name': company_details_form.cleaned_data['company_name'],
-                            'addr': company_details_form.cleaned_data['company_addr'],
-                        }
-                else:
-                    company_details = None
+                valid = billing_details_form.is_valid()
+                if valid:
+                    billing_details = {
+                        'name': billing_details_form.cleaned_data['billing_name'],
+                        'addr': billing_details_form.cleaned_data['billing_addr'],
+                    }
 
             if valid:
                 actions.update_pending_order(
                     order,
+                    billing_details=billing_details,
                     rate=rate,
                     days_for_self=days_for_self,
                     email_addrs_and_days_for_others=email_addrs_and_days_for_others,
-                    company_details=company_details,
                 )
 
                 return redirect(order)
 
     else:
-        form = TicketForm(order.form_data())
-        self_form = TicketForSelfForm(order.self_form_data())
-        others_formset = TicketForOthersFormSet(order.others_formset_data())
-        company_details_form = CompanyDetailsForm(order.company_details_form_data())
+        form = TicketForm.from_pending_order(order)
+        self_form = TicketForSelfForm.from_pending_order(order)
+        others_formset = TicketForOthersFormSet.from_pending_order(order)
+        billing_details_form = BillingDetailsForm({
+            'billing_name': order.billing_name,
+            'billing_addr': order.billing_addr,
+        })
 
     context = {
         'form': form,
         'self_form': self_form,
         'others_formset': others_formset,
-        'company_details_form': company_details_form,
+        'billing_details_form': billing_details_form,
         'user_can_buy_for_self': not request.user.get_ticket(),
         'rates_table_data': _rates_table_data(),
         'rates_data': _rates_data(),
@@ -251,6 +249,27 @@ def order_receipt(request, order_id):
 
 
 @login_required
+def refund_credit_note(request, order_id, refund_id):
+    refund = Refund.objects.get_by_refund_id_or_404(refund_id)
+    order = refund.order
+
+    if order.order_id != order_id:
+        raise Http404
+
+    if request.user != order.purchaser:
+        messages.warning(request, 'Only the purchaser of an order can view a credit note')
+        return redirect('index')
+
+    context = {
+        'order': order,
+        'refund': refund,
+        'title': f'PyCon UK 2018 credit note {refund.refund_id} for order {order.order_id}',
+        'no_navbar': True,
+    }
+    return render(request, 'tickets/refund_credit_note.html', context)
+
+
+@login_required
 def ticket(request, ticket_id):
     ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
 
@@ -286,7 +305,7 @@ def ticket_invitation(request, token):
     elif invitation.status == 'claimed':
         assert ticket.owner is not None
         messages.info(request, 'This invitation has already been claimed')
-    else:
+    else:  # pragma: no cover
         assert False
 
     return redirect(ticket)

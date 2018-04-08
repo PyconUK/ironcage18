@@ -7,28 +7,30 @@ def create_pending_order_for_self(user=None, rate=None, num_days=None):
     user = user or create_user()
     rate = rate or 'individual'
     num_days = num_days or 3
-
-    if rate == 'corporate':
-        company_details = {
-            'name': 'Sirius Cybernetics Corp.',
-            'addr': 'Eadrax, Sirius Tau',
-        }
-    else:
-        company_details = None
+    billing_details = {
+        'name': 'Sirius Cybernetics Corp.',
+        'addr': 'Eadrax, Sirius Tau',
+    }
 
     return actions.create_pending_order(
         purchaser=user,
+        billing_details=billing_details,
         rate=rate,
         days_for_self=['thu', 'fri', 'sat', 'sun', 'mon'][:num_days],
-        company_details=company_details,
     )
 
 
 def create_pending_order_for_others(user=None, rate=None):
     user = user or create_user()
     rate = rate or 'individual'
+    billing_details = {
+        'name': 'Sirius Cybernetics Corp.',
+        'addr': 'Eadrax, Sirius Tau',
+    }
+
     return actions.create_pending_order(
         purchaser=user,
+        billing_details=billing_details,
         rate=rate,
         email_addrs_and_days_for_others=[
             ('bob@example.com', ['fri', 'sat']),
@@ -40,8 +42,14 @@ def create_pending_order_for_others(user=None, rate=None):
 def create_pending_order_for_self_and_others(user=None, rate=None):
     user = user or create_user()
     rate = rate or 'individual'
+    billing_details = {
+        'name': 'Sirius Cybernetics Corp.',
+        'addr': 'Eadrax, Sirius Tau',
+    }
+
     return actions.create_pending_order(
         purchaser=user,
+        billing_details=billing_details,
         rate=rate,
         days_for_self=['thu', 'fri', 'sat'],
         email_addrs_and_days_for_others=[
