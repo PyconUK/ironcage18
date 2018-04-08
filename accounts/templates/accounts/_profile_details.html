@@ -1,23 +1,34 @@
-<div>
-  <h3>Basic information</h3>
-  <table class="table">
-    <tr>
-      <th class="col-md-4">Name</th>
-      <td>{{ user.name }}</td>
-    </tr>
-    <tr>
-      <th class="col-md-4">Email</th>
-      <td>{{ user.email_addr }}</td>
-    </tr>
-  </table>
+<div class="card">
+  <div class="card-header">Basic information</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-4 field-name">
+        Name
+      </div>
+      <div class="col-4">
+        {{ user.name }}
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-4 field-name">
+        Email
+      </div>
+      <div class="col-4">
+        {{ user.email_addr }}
+      </div>
+    </div>
+  </div>
 </div>
 
-<div>
-  <h3>Requirements</h3>
-  <table class="table">
-    <tr>
-      <th class="col-md-4">Accessibility</th>
-      <td>
+<div class="card">
+  <div class="card-header">Requirements</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-4 field-name">
+        Accessibility
+      </div>
+      <div class="col-4">
         {% if user.accessibility_reqs_yn == None %}
         unknown
         {% elif user.accessibility_reqs_yn %}
@@ -25,11 +36,14 @@
         {% else %}
         none
         {% endif %}
-      </td>
-    </tr>
-    <tr>
-      <th class="col-md-4">Childcare</th>
-      <td>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-4 field-name">
+        Childcare
+      </div>
+      <div class="col-4">
         {% if user.childcare_reqs_yn == None %}
         unknown
         {% elif user.childcare_reqs_yn %}
@@ -37,11 +51,14 @@
         {% else %}
         none
         {% endif %}
-      </td>
-    </tr>
-    <tr>
-      <th class="col-md-4">Dietary</th>
-      <td>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-4 field-name">
+        Dietary
+      </div>
+      <div class="col-4">
         {% if user.dietary_reqs_yn == None %}
         unknown
         {% elif user.dietary_reqs_yn %}
@@ -49,63 +66,87 @@
         {% else %}
         none
         {% endif %}
-      </td>
-    </tr>
-  </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% if user.get_ticket is not None %}
-<div>
-  <h3>UK Python Association</h3>
-    <table class="table">
-      <tr>
-        <th class="col-md-4">Membership</th>
-        <td>
-          {% if user.is_ukpa_member == None %}
-          unknown
-          {% elif user.is_ukpa_member %}
-          Yes
-          {% else %}
-          No
-          {% endif %}
-        </td>
-      </tr>
-    </table>
+<div class="card">
+  <div class="card-header">UK Python Association</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-4 field-name">
+        Membership
+      </div>
+      <div class="col-4">
+        {% if user.is_ukpa_member == None %}
+        unknown
+        {% elif user.is_ukpa_member %}
+        Yes
+        {% else %}
+        No
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
 
-<div>
-  <h3>Demographics</h3>
-  {% if user.dont_ask_demographics %}
-  <p>You have opted not to share demographic information with us.</p>
-  {% else %}
-  <table class="table">
-    <tr>
-      <th class="col-md-4">Year of birth</th>
-      <td>{{ user.year_of_birth|default:"unknown" }}</td>
-    </tr>
-    <tr>
-      <th class="col-md-4">Gender</th>
-      <td>{{ user.gender|default:"unknown" }}</td>
-    </tr>
-    <tr>
-      <th class="col-md-4">Ethnicity</th>
-      <td>
-        {% if 'please describe' in user.ethnicity %}
-        {{ user.ethnicity_free_text }}
-        {% else %}
-        {{ user.ethnicity|default:"unknown" }}
-        {% endif %}
-      </td>
-    </tr>
-    <tr>
-      <th class="col-md-4">Nationality</th>
-      <td>{{ user.nationality|default:"unknown" }}</td>
-    </tr>
-    <tr>
-      <th class="col-md-4">Country of residence</th>
-      <td>{{ user.country_of_residence|default:"unknown" }}</td>
-    </tr>
-  </table>
-  {% endif %}
+<div class="card">
+  <div class="card-header">Demographics</div>
+  <div class="card-body">
+    {% if user.dont_ask_demographics %}
+      <p>You have opted not to share demographic information with us.</p>
+    {% else %}
+      <div class="row">
+        <div class="col-4 field-name">
+          Year of birth
+        </div>
+        <div class="col-4">
+          {{ user.year_of_birth|default:"unknown" }}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-4 field-name">
+          Gender
+        </div>
+        <div class="col-4">
+          {{ user.gender|default:"unknown" }}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-4 field-name">
+          Ethnicity
+        </div>
+        <div class="col-4">
+          {% if 'please describe' in user.ethnicity %}
+            {{ user.ethnicity_free_text }}
+          {% else %}
+            {{ user.ethnicity|default:"unknown" }}
+          {% endif %}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-4 field-name">
+          Nationality
+        </div>
+        <div class="col-4">
+          {{ user.nationality|default:"unknown" }}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-4 field-name">
+          Country of residence
+        </div>
+        <div class="col-4">
+          {{ user.country_of_residence|default:"unknown" }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
 </div>

@@ -11,7 +11,7 @@
   $('#id_ethnicity').change(maybeShowEthnicityFreeText);
 
   function toggleAccessibilityField() {
-    var formGroup = $('input[name=accessibility_reqs_yn]').closest('td').find('.form-group');
+    var formGroup = $('input[name=accessibility_reqs_yn]').closest('div.col-8').find('.form-group');
     if ($('input[name=accessibility_reqs_yn]:checked').val() == '2') {
       $(formGroup).show();
     } else {
@@ -20,7 +20,7 @@
   }
 
   function toggleChildcareField() {
-    var formGroup = $('input[name=childcare_reqs_yn]').closest('td').find('.form-group');
+    var formGroup = $('input[name=childcare_reqs_yn]').closest('div.col-8').find('.form-group');
     if ($('input[name=childcare_reqs_yn]:checked').val() == '2') {
       $(formGroup).show();
     } else {
@@ -29,7 +29,7 @@
   }
 
   function toggleDietaryField() {
-    var formGroup = $('input[name=dietary_reqs_yn]').closest('td').find('.form-group');
+    var formGroup = $('input[name=dietary_reqs_yn]').closest('div.col-8').find('.form-group');
     if ($('input[name=dietary_reqs_yn]:checked').val() == '2') {
       $(formGroup).show();
     } else {
