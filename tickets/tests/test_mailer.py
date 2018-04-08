@@ -5,7 +5,8 @@ from django.test import TestCase
 
 from . import factories
 
-from tickets.mailer import send_invitation_mail, send_order_confirmation_mail
+from orders.mailer import send_order_confirmation_mail
+from tickets.mailer import send_invitation_mail
 from tickets.models import TicketInvitation
 
 

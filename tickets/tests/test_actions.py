@@ -9,6 +9,8 @@ from . import factories
 from ironcage.tests import utils
 
 from orders.models import Refund
+from orders import actions as order_actions
+
 from tickets import actions
 from tickets.models import Ticket, TicketInvitation
 
@@ -258,7 +260,7 @@ class UpdatePendingOrderTests(TestCase):
 class ConfirmOrderTests(TestCase):
     def test_order_for_self(self):
         order = factories.create_pending_order_for_self()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+        order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
         self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
@@ -284,7 +286,7 @@ class ConfirmOrderTests(TestCase):
 
     def test_order_for_others(self):
         order = factories.create_pending_order_for_others()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+        order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
         self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
@@ -327,7 +329,7 @@ class ConfirmOrderTests(TestCase):
 
     def test_order_for_self_and_others(self):
         order = factories.create_pending_order_for_self_and_others()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+        order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
         self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
@@ -379,9 +381,9 @@ class ConfirmOrderTests(TestCase):
 
     def test_after_order_marked_as_failed(self):
         order = factories.create_pending_order_for_self()
-        actions.mark_order_as_failed(order, 'There was a problem')
+        order_actions.mark_order_as_failed(order, 'There was a problem')
 
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+        order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
         self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
@@ -397,11 +399,11 @@ class ConfirmOrderTests(TestCase):
 
     def test_invoice_number_increments(self):
         order = factories.create_pending_order_for_self()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+        order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
         self.assertEqual(order.invoice_number, 1)
 
         order = factories.create_pending_order_for_self()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvx', 1495355164)
+        order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvx', 1495355164)
         self.assertEqual(order.invoice_number, 2)
 
     def test_sends_slack_message(self):
@@ -409,7 +411,7 @@ class ConfirmOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         backend.reset_messages()
 
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+        order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
         messages = backend.retrieve_messages()
         self.assertEqual(len(messages), 1)
@@ -421,7 +423,7 @@ class MarkOrderAsFailed(TestCase):
     def test_mark_order_as_failed(self):
         order = factories.create_pending_order_for_self()
 
-        actions.mark_order_as_failed(order, 'There was a problem')
+        order_actions.mark_order_as_failed(order, 'There was a problem')
 
         self.assertEqual(order.stripe_charge_failure_reason, 'There was a problem')
         self.assertEqual(order.status, 'failed')
@@ -431,7 +433,7 @@ class MarkOrderAsErroredAfterCharge(TestCase):
     def test_mark_order_as_errored_after_charge(self):
         order = factories.create_pending_order_for_self()
 
-        actions.mark_order_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+        order_actions.mark_order_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw')
 
         self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(order.status, 'errored')
@@ -444,14 +446,14 @@ class ProcessStripeChargeTests(TestCase):
     def test_process_stripe_charge_success(self):
         token = 'tok_abcdefghijklmnopqurstuvwx'
         with utils.patched_charge_creation_success():
-            actions.process_stripe_charge(self.order, token)
+            order_actions.process_stripe_charge(self.order, token)
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, 'successful')
 
     def test_process_stripe_charge_failure(self):
         token = 'tok_abcdefghijklmnopqurstuvwx'
         with utils.patched_charge_creation_failure():
-            actions.process_stripe_charge(self.order, token)
+            order_actions.process_stripe_charge(self.order, token)
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, 'failed')
 
@@ -463,7 +465,7 @@ class ProcessStripeChargeTests(TestCase):
         token = 'tok_abcdefghijklmnopqurstuvwx'
 
         with utils.patched_charge_creation_success(), utils.patched_refund_creation():
-            actions.process_stripe_charge(self.order, token)
+            order_actions.process_stripe_charge(self.order, token)
 
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, 'errored')
@@ -478,7 +480,7 @@ class ProcessStripeChargeTests(TestCase):
 
         with utils.patched_charge_creation_success(), utils.patched_refund_creation(), patch('orders.models.Order.get_next_invoice_number') as mock:
             mock.return_value = order.invoice_number
-            actions.process_stripe_charge(self.order, token)
+            order_actions.process_stripe_charge(self.order, token)
 
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, 'errored')
@@ -491,7 +493,7 @@ class RefundTicketTests(TestCase):
         order_row = ticket.order_row
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(ticket, 'Refund requested by user')
+            order_actions.refund_ticket(ticket, 'Refund requested by user')
 
         with self.assertRaises(Ticket.DoesNotExist):
             ticket.refresh_from_db()
@@ -513,13 +515,13 @@ class RefundTicketTests(TestCase):
         tickets2 = order2.all_tickets()
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(tickets1[0], 'Refund requested by user')
+            order_actions.refund_ticket(tickets1[0], 'Refund requested by user')
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(tickets2[0], 'Refund requested by user')
+            order_actions.refund_ticket(tickets2[0], 'Refund requested by user')
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(tickets1[1], 'Refund requested by user')
+            order_actions.refund_ticket(tickets1[1], 'Refund requested by user')
 
         refunds = Refund.objects.order_by('id')
         credit_note_numbers = [refund.full_credit_note_number for refund in refunds]
@@ -537,18 +539,18 @@ class RefundTicketTests(TestCase):
         order = factories.create_pending_order_for_self(user)
         token = 'tok_abcdefghijklmnopqurstuvwx'
         with utils.patched_charge_creation_success(), utils.patched_refund_creation():
-            actions.process_stripe_charge(order, token)
+            order_actions.process_stripe_charge(order, token)
         self.assertEqual(order.status, 'errored')
 
         with utils.patched_refund_creation():
-            actions.refund_ticket(ticket, 'Refund requested by user')
+            order_actions.refund_ticket(ticket, 'Refund requested by user')
 
         user.refresh_from_db()
         self.assertIsNone(user.get_ticket())
 
         order = factories.create_pending_order_for_self(user)
         with utils.patched_charge_creation_success():
-            actions.process_stripe_charge(order, token)
+            order_actions.process_stripe_charge(order, token)
         self.assertEqual(order.status, 'successful')
 
         user.refresh_from_db()

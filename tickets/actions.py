@@ -12,16 +12,10 @@
 #    functions in this module.  This means that test data should always be
 #    in a consistent state.
 
-from django_slack import slack_message
-import stripe
-
 from django.db import transaction
-from django.db.utils import IntegrityError
 
-from ironcage import stripe_integration
-
-from .mailer import send_invitation_mail, send_order_confirmation_mail
-from orders.models import Order, Refund
+from .mailer import send_invitation_mail
+from orders.models import Order
 
 import structlog
 logger = structlog.get_logger()
@@ -43,52 +37,6 @@ def update_pending_order(order, billing_details, rate, days_for_self=None, email
     logger.info('update_pending_order', order=order.order_id, rate=rate)
     with transaction.atomic():
         order.update(billing_details, rate, days_for_self, email_addrs_and_days_for_others)
-
-
-def process_stripe_charge(order, token):
-    logger.info('process_stripe_charge', order=order.order_id, token=token)
-    assert order.payment_required()
-    try:
-        charge = stripe_integration.create_charge_for_order(order, token)
-        confirm_order(order, charge.id, charge.created)
-    except stripe.error.CardError as e:
-        mark_order_as_failed(order, e._message)
-    except IntegrityError:
-        stripe_integration.refund_charge(charge.id)
-        mark_order_as_errored_after_charge(order, charge.id)
-
-
-def confirm_order(order, charge_id, charge_created):
-    logger.info('confirm_order', order=order.order_id, charge_id=charge_id)
-    with transaction.atomic():
-        order.confirm(charge_id, charge_created)
-    send_receipt(order)
-    send_ticket_invitations(order)
-    slack_message('tickets/order_created.slack', {'order': order})
-
-
-def mark_order_as_failed(order, charge_failure_reason):
-    logger.info('mark_order_as_failed', order=order.order_id, charge_failure_reason=charge_failure_reason)
-    with transaction.atomic():
-        order.mark_as_failed(charge_failure_reason)
-
-
-def mark_order_as_errored_after_charge(order, charge_id):
-    logger.info('mark_order_as_errored_after_charge', order=order.order_id, charge_id=charge_id)
-    with transaction.atomic():
-        order.mark_as_errored_after_charge(charge_id)
-
-
-def refund_ticket(ticket, reason):
-    logger.info('refund_ticket', ticket=ticket.ticket_id)
-    stripe_refund = stripe_integration.refund_ticket(ticket)
-    with transaction.atomic():
-        Refund.objects.create_for_ticket(ticket, reason, stripe_refund.id, stripe_refund.created)
-
-
-def send_receipt(order):
-    logger.info('send_receipt', order=order.order_id)
-    send_order_confirmation_mail(order)
 
 
 def send_ticket_invitations(order):

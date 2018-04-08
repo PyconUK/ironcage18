@@ -5,7 +5,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from tickets import actions
+from . import actions
 from .models import Order, Refund
 
 
