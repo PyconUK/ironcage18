@@ -222,13 +222,57 @@ class Order(models.Model):
         return ', '.join(lines)
 
 
+class Refund(models.Model):
+    reason = models.CharField(max_length=400)
+    credit_note_number = models.IntegerField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    id_scrambler = Scrambler(3000)
+
+    class Manager(models.Manager):
+        def get_by_refund_id_or_404(self, refund_id):
+            id = self.model.id_scrambler.backward(refund_id)
+            return get_object_or_404(self.model, pk=id)
+
+        def create_for_ticket(self, ticket, reason):
+            refund = self.create(reason=reason, credit_note_number=0)
+
+            order_row = ticket.order_row
+            order_row.ticket = None
+            order_row.refund = refund
+            order_row.save()
+
+            refund.credit_note_number = refund.get_next_credit_note_number()
+            refund.save()
+
+            ticket.delete()
+            return refund
+
+    objects = Manager()
+
+    @property
+    def order(self):
+        row_ids = [row.id for row in self.order_rows.all()]
+        return Order.objects.get(order_rows__id__in=row_ids)
+
+    @property
+    def full_credit_note_number(self):
+        return f'R-2018-{self.order.invoice_number:04d}-{self.credit_note_number:02d}'
+
+    def get_next_credit_note_number(self):
+        return self.order_rows.count()
+
+
 class OrderRow(models.Model):
     order = models.ForeignKey('Order', related_name='order_rows', on_delete=models.CASCADE)
+    refund = models.ForeignKey('Refund', related_name='order_rows', on_delete=models.DO_NOTHING, null=True)
+
     cost_excl_vat = models.IntegerField()
     ticket = models.OneToOneField('Ticket', related_name='order_row', on_delete=models.DO_NOTHING, null=True)
     item_descr = models.CharField(max_length=400)
     item_descr_extra = models.CharField(max_length=400, null=True)
-    refunded_at = models.DateTimeField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -246,13 +290,9 @@ class OrderRow(models.Model):
     objects = Manager()
 
     def save(self):
-        self.ticket.save()
-        self.ticket_id = self.ticket.id
-        super().save()
-
-    def refund(self):
-        self.ticket = None
-        self.refunded_at = datetime.now(timezone.utc)
+        if self.ticket is not None:
+            self.ticket.save()
+            self.ticket_id = self.ticket.id
         super().save()
 
     @property
@@ -325,10 +365,6 @@ class Ticket(models.Model):
         super().save()
         if hasattr(self, 'email_addr'):
             self.invitations.create(email_addr=self.email_addr)
-
-    def refund(self):
-        self.order_row.refund()
-        self.delete()
 
     def get_absolute_url(self):
         return reverse('tickets:ticket', args=[self.ticket_id])

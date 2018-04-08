@@ -21,7 +21,7 @@ from django.db.utils import IntegrityError
 from ironcage import stripe_integration
 
 from .mailer import send_invitation_mail, send_order_confirmation_mail
-from .models import Order
+from .models import Order, Refund
 
 import structlog
 logger = structlog.get_logger()
@@ -79,11 +79,11 @@ def mark_order_as_errored_after_charge(order, charge_id):
         order.mark_as_errored_after_charge(charge_id)
 
 
-def refund_ticket(ticket):
+def refund_ticket(ticket, reason):
     logger.info('refund_ticket', ticket=ticket.ticket_id)
     stripe_integration.refund_ticket(ticket)
     with transaction.atomic():
-        ticket.refund()
+        Refund.objects.create_for_ticket(ticket, reason)
 
 
 def send_receipt(order):

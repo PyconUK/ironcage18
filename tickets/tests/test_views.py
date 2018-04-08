@@ -349,7 +349,7 @@ class OrderTests(TestCase):
         ticket = order.all_tickets()[-1]
 
         with utils.patched_refund_creation_expected():
-            actions.refund_ticket(ticket)
+            actions.refund_ticket(ticket, 'Refund requested by user')
 
         self.client.force_login(order.purchaser)
         rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)

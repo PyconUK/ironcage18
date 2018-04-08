@@ -9,7 +9,7 @@ from . import factories
 from ironcage.tests import utils
 
 from tickets import actions
-from tickets.models import Ticket, TicketInvitation
+from tickets.models import Refund, Ticket, TicketInvitation
 
 
 class CreatePendingOrderTests(TestCase):
@@ -490,17 +490,43 @@ class RefundTicketTests(TestCase):
         order_row = ticket.order_row
 
         with utils.patched_refund_creation_expected():
-            actions.refund_ticket(ticket)
+            actions.refund_ticket(ticket, 'Refund requested by user')
 
         with self.assertRaises(Ticket.DoesNotExist):
             ticket.refresh_from_db()
 
         order_row.refresh_from_db()
         self.assertIsNone(order_row.ticket)
-        self.assertIsNotNone(order_row.refunded_at)
         self.assertEqual(order_row.cost_excl_vat, 105)
         self.assertEqual(order_row.item_descr, '3-day individual-rate ticket')
         self.assertEqual(order_row.item_descr_extra, 'Thursday, Friday, Saturday')
+        self.assertIsNotNone(order_row.refund)
+        self.assertEqual(order_row.refund.reason, 'Refund requested by user')
+        self.assertEqual(order_row.refund.credit_note_number, 1)
+
+    def test_multiple_refunds_have_correct_credit_note_numbers(self):
+        order1 = factories.create_confirmed_order_for_others()
+        order2 = factories.create_confirmed_order_for_self()
+
+        tickets1 = order1.all_tickets()
+        tickets2 = order2.all_tickets()
+
+        with utils.patched_refund_creation_expected():
+            actions.refund_ticket(tickets1[0], 'Refund requested by user')
+
+        with utils.patched_refund_creation_expected():
+            actions.refund_ticket(tickets2[0], 'Refund requested by user')
+
+        with utils.patched_refund_creation_expected():
+            actions.refund_ticket(tickets1[1], 'Refund requested by user')
+
+        refunds = Refund.objects.order_by('id')
+        credit_note_numbers = [refund.full_credit_note_number for refund in refunds]
+
+        self.assertEqual(
+            credit_note_numbers,
+            ['R-2018-0001-01', 'R-2018-0002-01', 'R-2018-0001-01']
+        )
 
     def test_ticket_purchase_after_refund(self):
         user = factories.create_user()
@@ -514,7 +540,7 @@ class RefundTicketTests(TestCase):
         self.assertEqual(order.status, 'errored')
 
         with utils.patched_refund_creation_expected():
-            actions.refund_ticket(ticket)
+            actions.refund_ticket(ticket, 'Refund requested by user')
 
         user.refresh_from_db()
         self.assertIsNone(user.get_ticket())
