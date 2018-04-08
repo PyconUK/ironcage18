@@ -32,12 +32,12 @@ def create_charge_for_order(order, token):
 def refund_charge(charge_id, amount_pence=None):
     set_stripe_api_key()
     if amount_pence is not None:
-        stripe.Refund.create(charge=charge_id, amount=amount_pence)
+        return stripe.Refund.create(charge=charge_id, amount=amount_pence)
     else:
-        stripe.Refund.create(charge=charge_id)
+        return stripe.Refund.create(charge=charge_id)
 
 
 def refund_ticket(ticket):
     order_row = ticket.order_row
     charge_id = order_row.order.stripe_charge_id
-    refund_charge(charge_id, order_row.cost_pence_incl_vat)
+    return refund_charge(charge_id, order_row.cost_pence_incl_vat)

@@ -348,7 +348,7 @@ class OrderTests(TestCase):
         order = factories.create_confirmed_order_for_self_and_others()
         ticket = order.all_tickets()[-1]
 
-        with utils.patched_refund_creation_expected():
+        with utils.patched_refund_creation():
             actions.refund_ticket(ticket, 'Refund requested by user')
 
         self.client.force_login(order.purchaser)
@@ -569,7 +569,7 @@ class OrderReceiptTests(TestCase):
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can view the receipt')
 
-    def test_when_already_paid(self):
+    def test_when_not_paid(self):
         bob = factories.create_user('Bob')
         order = factories.create_pending_order_for_self(user=bob)
         self.client.force_login(bob)

@@ -461,7 +461,7 @@ class ProcessStripeChargeTests(TestCase):
         factories.create_confirmed_order_for_self(self.order.purchaser)
         token = 'tok_abcdefghijklmnopqurstuvwx'
 
-        with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected():
+        with utils.patched_charge_creation_success(), utils.patched_refund_creation():
             actions.process_stripe_charge(self.order, token)
 
         self.order.refresh_from_db()
@@ -475,7 +475,7 @@ class ProcessStripeChargeTests(TestCase):
         order = factories.create_confirmed_order_for_others()
         token = 'tok_abcdefghijklmnopqurstuvwx'
 
-        with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected(), patch('tickets.models.Order.get_next_invoice_number') as mock:
+        with utils.patched_charge_creation_success(), utils.patched_refund_creation(), patch('tickets.models.Order.get_next_invoice_number') as mock:
             mock.return_value = order.invoice_number
             actions.process_stripe_charge(self.order, token)
 
@@ -489,7 +489,7 @@ class RefundTicketTests(TestCase):
         ticket = factories.create_ticket()
         order_row = ticket.order_row
 
-        with utils.patched_refund_creation_expected():
+        with utils.patched_refund_creation():
             actions.refund_ticket(ticket, 'Refund requested by user')
 
         with self.assertRaises(Ticket.DoesNotExist):
@@ -511,13 +511,13 @@ class RefundTicketTests(TestCase):
         tickets1 = order1.all_tickets()
         tickets2 = order2.all_tickets()
 
-        with utils.patched_refund_creation_expected():
+        with utils.patched_refund_creation():
             actions.refund_ticket(tickets1[0], 'Refund requested by user')
 
-        with utils.patched_refund_creation_expected():
+        with utils.patched_refund_creation():
             actions.refund_ticket(tickets2[0], 'Refund requested by user')
 
-        with utils.patched_refund_creation_expected():
+        with utils.patched_refund_creation():
             actions.refund_ticket(tickets1[1], 'Refund requested by user')
 
         refunds = Refund.objects.order_by('id')
@@ -535,11 +535,11 @@ class RefundTicketTests(TestCase):
 
         order = factories.create_pending_order_for_self(user)
         token = 'tok_abcdefghijklmnopqurstuvwx'
-        with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected():
+        with utils.patched_charge_creation_success(), utils.patched_refund_creation():
             actions.process_stripe_charge(order, token)
         self.assertEqual(order.status, 'errored')
 
-        with utils.patched_refund_creation_expected():
+        with utils.patched_refund_creation():
             actions.refund_ticket(ticket, 'Refund requested by user')
 
         user.refresh_from_db()

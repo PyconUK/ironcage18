@@ -29,12 +29,12 @@ class StripeIntegrationTests(TestCase):
                 stripe_integration.create_charge_for_order(self.order, token)
 
     def test_refund_charge(self):
-        with utils.patched_refund_creation_expected() as mock:
+        with utils.patched_refund_creation() as mock:
             stripe_integration.refund_charge('ch_abcdefghijklmnopqurstuvw')
         mock.assert_called_with(charge='ch_abcdefghijklmnopqurstuvw')
 
     def test_refund_ticket(self):
         factories.confirm_order(self.order)
-        with utils.patched_refund_creation_expected() as mock:
+        with utils.patched_refund_creation() as mock:
             stripe_integration.refund_ticket(self.order.all_tickets()[0])
         mock.assert_called_with(charge='ch_abcdefghijklmnopqurstuvw', amount=12600)

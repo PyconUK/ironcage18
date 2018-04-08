@@ -229,6 +229,8 @@ class Order(models.Model, SalesRecord):
 class Refund(models.Model, SalesRecord):
     reason = models.CharField(max_length=400)
     credit_note_number = models.IntegerField()
+    stripe_refund_id = models.CharField(max_length=80)
+    stripe_refund_created = models.DateTimeField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -240,8 +242,16 @@ class Refund(models.Model, SalesRecord):
             id = self.model.id_scrambler.backward(refund_id)
             return get_object_or_404(self.model, pk=id)
 
-        def create_for_ticket(self, ticket, reason):
-            refund = self.create(reason=reason, credit_note_number=0)
+        def create_for_ticket(self, ticket, reason, stripe_refund_id, stripe_refund_created):
+            refund = self.create(
+                reason=reason,
+                stripe_refund_id=stripe_refund_id,
+                stripe_refund_created=datetime.fromtimestamp(
+                    stripe_refund_created,
+                    tz=timezone.utc
+                ),
+                credit_note_number=0
+            )
 
             order_row = ticket.order_row
             order_row.ticket = None

@@ -81,9 +81,9 @@ def mark_order_as_errored_after_charge(order, charge_id):
 
 def refund_ticket(ticket, reason):
     logger.info('refund_ticket', ticket=ticket.ticket_id)
-    stripe_integration.refund_ticket(ticket)
+    stripe_refund = stripe_integration.refund_ticket(ticket)
     with transaction.atomic():
-        Refund.objects.create_for_ticket(ticket, reason)
+        Refund.objects.create_for_ticket(ticket, reason, stripe_refund.id, stripe_refund.created)
 
 
 def send_receipt(order):
