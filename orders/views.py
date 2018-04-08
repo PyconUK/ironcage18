@@ -36,7 +36,7 @@ def order(request, order_id):
         'ticket': ticket,
         'stripe_api_key': settings.STRIPE_API_KEY_PUBLISHABLE,
     }
-    return render(request, 'tickets/order.html', context)
+    return render(request, 'orders/order.html', context)
 
 
 @login_required
@@ -82,7 +82,7 @@ def order_receipt(request, order_id):
         'title': f'PyCon UK 2018 receipt for order {order.order_id}',
         'no_navbar': True,
     }
-    return render(request, 'tickets/order_receipt.html', context)
+    return render(request, 'orders/order_receipt.html', context)
 
 
 @login_required
@@ -103,4 +103,4 @@ def refund_credit_note(request, order_id, refund_id):
         'title': f'PyCon UK 2018 credit note {refund.refund_id} for order {order.order_id}',
         'no_navbar': True,
     }
-    return render(request, 'tickets/refund_credit_note.html', context)
+    return render(request, 'orders/refund_credit_note.html', context)
