@@ -8,8 +8,9 @@ from django.test import TestCase
 from . import factories
 from ironcage.tests import utils
 
+from orders.models import Refund
 from tickets import actions
-from tickets.models import Refund, Ticket, TicketInvitation
+from tickets.models import Ticket, TicketInvitation
 
 
 class CreatePendingOrderTests(TestCase):
@@ -475,7 +476,7 @@ class ProcessStripeChargeTests(TestCase):
         order = factories.create_confirmed_order_for_others()
         token = 'tok_abcdefghijklmnopqurstuvwx'
 
-        with utils.patched_charge_creation_success(), utils.patched_refund_creation(), patch('tickets.models.Order.get_next_invoice_number') as mock:
+        with utils.patched_charge_creation_success(), utils.patched_refund_creation(), patch('orders.models.Order.get_next_invoice_number') as mock:
             mock.return_value = order.invoice_number
             actions.process_stripe_charge(self.order, token)
 

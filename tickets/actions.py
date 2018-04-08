@@ -21,7 +21,7 @@ from django.db.utils import IntegrityError
 from ironcage import stripe_integration
 
 from .mailer import send_invitation_mail, send_order_confirmation_mail
-from .models import Order, Refund
+from orders.models import Order, Refund
 
 import structlog
 logger = structlog.get_logger()

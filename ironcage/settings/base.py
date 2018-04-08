@@ -46,6 +46,7 @@ DEBUG = False
 INSTALLED_APPS = [
     'accounts',
     'reports',
+    'orders',
     'tickets',
     'ironcage',
 

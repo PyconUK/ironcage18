@@ -10,8 +10,9 @@ from django.views.decorators.http import require_POST
 
 from . import actions
 from .forms import BillingDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
-from .models import Order, Refund, Ticket, TicketInvitation
+from .models import Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
+from orders.models import Order, Refund
 
 
 def new_order(request):
