@@ -14,10 +14,11 @@ class NewOrderTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.alice = factories.create_user()
+        cls.url = '/tickets/orders/new/'
 
     def test_get(self):
         self.client.force_login(self.alice)
-        rsp = self.client.get('/tickets/orders/new/')
+        rsp = self.client.get(self.url)
         self.assertContains(rsp, '<tr><td class="text-center">5 days</td><td class="text-center">£198</td><td class="text-center">£396</td><td class="text-center">£66</td></tr>', html=True)
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'to buy a ticket')
@@ -25,7 +26,7 @@ class NewOrderTests(TestCase):
     @override_settings(TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
     def test_get_when_ticket_sales_have_closed(self):
         self.client.force_login(self.alice)
-        rsp = self.client.get('/tickets/orders/new/', follow=True)
+        rsp = self.client.get(self.url, follow=True)
         self.assertContains(rsp, 'ticket sales have closed')
         self.assertRedirects(rsp, '/')
 
@@ -35,7 +36,7 @@ class NewOrderTests(TestCase):
     )
     def test_get_when_ticket_sales_have_closed_but_correct_token_is_provided(self):
         self.client.force_login(self.alice)
-        rsp = self.client.get('/tickets/orders/new/?deadline-bypass-token=abc123', follow=True)
+        rsp = self.client.get(f'{self.url}?deadline-bypass-token=abc123', follow=True)
         self.assertNotContains(rsp, 'ticket sales have closed')
         self.assertContains(rsp, '<form method="post" id="order-form">')
 
@@ -45,21 +46,21 @@ class NewOrderTests(TestCase):
     )
     def test_get_when_ticket_sales_have_closed_and_incorrect_token_is_provided(self):
         self.client.force_login(self.alice)
-        rsp = self.client.get('/tickets/orders/new/?deadline-bypass-token=321cba', follow=True)
+        rsp = self.client.get(f'{self.url}?deadline-bypass-token=321cba', follow=True)
         self.assertContains(rsp, 'ticket sales have closed')
         self.assertRedirects(rsp, '/')
 
     def test_get_when_user_has_order_for_self(self):
         self.client.force_login(self.alice)
         factories.create_confirmed_order_for_self(self.alice)
-        rsp = self.client.get('/tickets/orders/new/')
+        rsp = self.client.get(self.url)
         self.assertNotContains(rsp, '<input type="radio" name="who" value="self">')
         self.assertContains(rsp, '<input type="hidden" name="who" value="others">')
 
     def test_get_when_user_has_order_but_not_for_self(self):
         self.client.force_login(self.alice)
         factories.create_confirmed_order_for_others(self.alice)
-        rsp = self.client.get('/tickets/orders/new/')
+        rsp = self.client.get(self.url)
         self.assertContains(rsp, '<input type="radio" name="who" value="self">')
         self.assertNotContains(rsp, '<input type="hidden" name="who" value="others">')
 
@@ -79,7 +80,7 @@ class NewOrderTests(TestCase):
             'form-0-email_addr': '',
             'form-1-email_addr': '',
         }
-        rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
+        rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 1 ticket')
 
     def test_post_for_self_corporate(self):
@@ -98,7 +99,7 @@ class NewOrderTests(TestCase):
             'form-0-email_addr': '',
             'form-1-email_addr': '',
         }
-        rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
+        rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 1 ticket')
 
     def test_post_for_others(self):
@@ -117,7 +118,7 @@ class NewOrderTests(TestCase):
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
-        rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
+        rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 2 tickets')
 
     def test_post_for_self_and_others(self):
@@ -137,17 +138,17 @@ class NewOrderTests(TestCase):
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
-        rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
+        rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 3 tickets')
 
     def test_get_when_not_authenticated(self):
-        rsp = self.client.get('/tickets/orders/new/')
+        rsp = self.client.get(self.url)
         self.assertContains(rsp, '<tr><td class="text-center">5 days</td><td class="text-center">£198</td><td class="text-center">£396</td><td class="text-center">£66</td></tr>', html=True)
         self.assertNotContains(rsp, '<form method="post" id="order-form">')
         self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/tickets/orders/new/">sign up</a> or <a href="/accounts/login/?next=/tickets/orders/new/">sign in</a> to buy a ticket.', html=True)
 
     def test_post_when_not_authenticated(self):
-        rsp = self.client.post('/tickets/orders/new/', follow=True)
+        rsp = self.client.post(self.url, follow=True)
         self.assertRedirects(rsp, '/accounts/login/')
 
 
@@ -155,10 +156,11 @@ class OrderEditTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.order = factories.create_pending_order_for_self()
+        cls.url = f'/tickets/orders/{cls.order.order_id}/edit/'
 
     def test_get(self):
         self.client.force_login(self.order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
+        rsp = self.client.get(self.url)
         self.assertContains(rsp, '<tr><td class="text-center">5 days</td><td class="text-center">£198</td><td class="text-center">£396</td><td class="text-center">£66</td></tr>', html=True)
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'Please create an account to buy a ticket.')
@@ -166,14 +168,14 @@ class OrderEditTests(TestCase):
     def test_get_when_user_has_order_for_self(self):
         self.client.force_login(self.order.purchaser)
         factories.create_confirmed_order_for_self(self.order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
+        rsp = self.client.get(self.url)
         self.assertNotContains(rsp, '<input type="radio" name="who" value="self">')
         self.assertContains(rsp, '<input type="hidden" name="who" value="others">')
 
     def test_get_when_user_has_order_but_not_for_self(self):
         self.client.force_login(self.order.purchaser)
         factories.create_confirmed_order_for_others(self.order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
+        rsp = self.client.get(self.url)
         self.assertContains(rsp, '<input type="radio" name="who" value="self" checked>')
         self.assertNotContains(rsp, '<input type="hidden" name="who" value="others">')
 
@@ -193,7 +195,7 @@ class OrderEditTests(TestCase):
             'form-0-email_addr': '',
             'form-1-email_addr': '',
         }
-        rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', form_data, follow=True)
+        rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 1 ticket')
 
     def test_post_for_others(self):
@@ -212,7 +214,7 @@ class OrderEditTests(TestCase):
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
-        rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', form_data, follow=True)
+        rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 2 tickets')
 
     def test_post_for_self_and_others(self):
@@ -232,36 +234,36 @@ class OrderEditTests(TestCase):
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
-        rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', form_data, follow=True)
+        rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 3 tickets')
 
     def test_get_when_not_authenticated(self):
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
-        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/edit/')
+        rsp = self.client.get(self.url)
+        self.assertRedirects(rsp, f'/accounts/login/?next={self.url}')
 
     def test_post_when_not_authenticated(self):
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
-        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/edit/')
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next={self.url}')
 
     def test_get_when_not_authorized(self):
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
+        rsp = self.client.get(self.url, follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can update the order')
 
     def test_post_when_not_authorized(self):
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
-        rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
+        rsp = self.client.post(self.url, follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can update the order')
 
     def test_get_when_already_paid(self):
         factories.confirm_order(self.order)
         self.client.force_login(self.order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
-        self.assertRedirects(rsp, f'/tickets/orders/{self.order.order_id}/')
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, f'/orders/{self.order.order_id}/')
         self.assertContains(rsp, 'This order has already been paid')
 
 
@@ -269,7 +271,7 @@ class OrderTests(TestCase):
     def test_for_confirmed_order_for_self(self):
         order = factories.create_confirmed_order_for_self()
         self.client.force_login(order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertNotContains(rsp, '<div id="stripe-form">')
         self.assertContains(rsp, 'View your ticket')
@@ -286,7 +288,7 @@ class OrderTests(TestCase):
     def test_for_confirmed_order_for_others(self):
         order = factories.create_confirmed_order_for_others()
         self.client.force_login(order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertNotContains(rsp, '<div id="stripe-form">')
         self.assertNotContains(rsp, 'View your ticket')
@@ -312,7 +314,7 @@ class OrderTests(TestCase):
     def test_for_confirmed_order_for_self_and_others(self):
         order = factories.create_confirmed_order_for_self_and_others()
         self.client.force_login(order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertNotContains(rsp, '<div id="stripe-form">')
         self.assertContains(rsp, 'View your ticket')
@@ -352,7 +354,7 @@ class OrderTests(TestCase):
             actions.refund_ticket(ticket, 'Refund requested by user')
 
         self.client.force_login(order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertNotContains(rsp, '<div id="stripe-form">')
         self.assertContains(rsp, 'View your ticket')
@@ -388,7 +390,7 @@ class OrderTests(TestCase):
         user = factories.create_user(email_addr='alice@example.com')
         order = factories.create_pending_order_for_self(user)
         self.client.force_login(user)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertContains(rsp, '<div id="stripe-form">')
         self.assertContains(rsp, 'data-amount="12600"')
@@ -408,14 +410,14 @@ class OrderTests(TestCase):
         factories.create_confirmed_order_for_self(user)
         order = factories.create_pending_order_for_self(user)
         self.client.force_login(user)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertRedirects(rsp, f'/tickets/orders/{order.order_id}/edit/')
         self.assertContains(rsp, 'You already have a ticket.  Please amend your order.')
 
     def test_for_failed_order(self):
         order = factories.create_failed_order()
         self.client.force_login(order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertContains(rsp, 'Payment for this order failed (Your card was declined.)')
         self.assertContains(rsp, '<div id="stripe-form">')
@@ -424,7 +426,7 @@ class OrderTests(TestCase):
     def test_for_errored_order(self):
         order = factories.create_errored_order()
         self.client.force_login(order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertContains(rsp, 'There was an error creating your order')
         self.assertNotContains(rsp, '<div id="stripe-form">')
@@ -432,14 +434,14 @@ class OrderTests(TestCase):
 
     def test_when_not_authenticated(self):
         order = factories.create_confirmed_order_for_self()
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
-        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{order.order_id}/')
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next=/orders/{order.order_id}/')
 
     def test_when_not_authorized(self):
         order = factories.create_confirmed_order_for_self()
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can view the order')
 
@@ -448,12 +450,13 @@ class OrderPaymentTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.order = factories.create_pending_order_for_self()
+        cls.url = f'/orders/{cls.order.order_id}/payment/'
 
     def test_stripe_success(self):
         self.client.force_login(self.order.purchaser)
         with utils.patched_charge_creation_success():
             rsp = self.client.post(
-                f'/tickets/orders/{self.order.order_id}/payment/',
+                self.url,
                 {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
                 follow=True,
             )
@@ -465,7 +468,7 @@ class OrderPaymentTests(TestCase):
         self.client.force_login(self.order.purchaser)
         with utils.patched_charge_creation_failure():
             rsp = self.client.post(
-                f'/tickets/orders/{self.order.order_id}/payment/',
+                self.url,
                 {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
                 follow=True,
             )
@@ -477,7 +480,7 @@ class OrderPaymentTests(TestCase):
         factories.create_confirmed_order_for_self(self.order.purchaser)
         self.client.force_login(self.order.purchaser)
         rsp = self.client.post(
-            f'/tickets/orders/{self.order.order_id}/payment/',
+            self.url,
             {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
             follow=True,
         )
@@ -488,26 +491,26 @@ class OrderPaymentTests(TestCase):
         factories.confirm_order(self.order)
         self.client.force_login(self.order.purchaser)
         rsp = self.client.post(
-            f'/tickets/orders/{self.order.order_id}/payment/',
+            self.url,
             {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
             follow=True,
         )
-        self.assertRedirects(rsp, f'/tickets/orders/{self.order.order_id}/')
+        self.assertRedirects(rsp, f'/orders/{self.order.order_id}/')
         self.assertContains(rsp, 'This order has already been paid')
 
     def test_when_not_authenticated(self):
         rsp = self.client.post(
-            f'/tickets/orders/{self.order.order_id}/payment/',
+            self.url,
             {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
             follow=True,
         )
-        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/payment/')
+        self.assertRedirects(rsp, f'/accounts/login/?next={self.url}')
 
     def test_when_not_authorized(self):
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.post(
-            f'/tickets/orders/{self.order.order_id}/payment/',
+            self.url,
             {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
             follow=True,
         )
@@ -519,10 +522,11 @@ class OrderReceiptTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.order = factories.create_confirmed_order_for_self_and_others()
+        cls.url = f'/orders/{cls.order.order_id}/receipt/'
 
     def test_order_receipt(self):
         self.client.force_login(self.order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/receipt/', follow=True)
+        rsp = self.client.get(self.url, follow=True)
         self.assertContains(rsp, f'Receipt for PyCon UK 2018 order {self.order.order_id}')
         self.assertContains(rsp, '3 tickets for PyCon UK 2018')
         self.assertContains(rsp, '<th>Date</th><td>21 May 2018</td>', html=True)
@@ -559,13 +563,13 @@ class OrderReceiptTests(TestCase):
             </tr>''', html=True)
 
     def test_when_not_authenticated(self):
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/receipt/', follow=True)
-        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/receipt/')
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next={self.url}')
 
     def test_when_not_authorized(self):
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/receipt/', follow=True)
+        rsp = self.client.get(self.url, follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can view the receipt')
 
@@ -573,8 +577,8 @@ class OrderReceiptTests(TestCase):
         bob = factories.create_user('Bob')
         order = factories.create_pending_order_for_self(user=bob)
         self.client.force_login(bob)
-        rsp = self.client.get(f'/tickets/orders/{order.order_id}/receipt/', follow=True)
-        self.assertRedirects(rsp, f'/tickets/orders/{order.order_id}/')
+        rsp = self.client.get(f'/orders/{order.order_id}/receipt/', follow=True)
+        self.assertRedirects(rsp, f'/orders/{order.order_id}/')
         self.assertContains(rsp, 'This order has not been paid')
 
 
@@ -589,7 +593,7 @@ class RefundCreditNoteTests(TestCase):
 
         cls.refund = cls.order.refunds.get()
 
-        cls.url = f'/tickets/orders/{cls.order.order_id}/credit-note/{cls.refund.refund_id}/'
+        cls.url = f'/orders/{cls.order.order_id}/credit-note/{cls.refund.refund_id}/'
 
     def test_refund_credit_note(self):
         self.client.force_login(self.order.purchaser)

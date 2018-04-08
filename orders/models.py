@@ -109,7 +109,7 @@ class Order(models.Model, SalesRecord):
         return self.id_scrambler.forward(self.id)
 
     def get_absolute_url(self):
-        return reverse('tickets:order', args=[self.order_id])
+        return reverse('orders:order', args=[self.order_id])
 
     @property
     def refunds(self):
