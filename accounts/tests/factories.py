@@ -14,6 +14,7 @@ def create_user(name='Alice', **kwargs):
 
 def create_user_with_full_profile(name='Alice', email_addr=None):
     kwargs = {
+        'last_name': 'In Wonderland',
         'year_of_birth': 1985,
         'gender': 'Female',
         'ethnicity': 'White and Black Caribbean',

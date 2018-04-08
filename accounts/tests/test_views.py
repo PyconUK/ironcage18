@@ -30,7 +30,7 @@ class ProfileTests(TestCase):
         self.client.force_login(factories.create_user_with_full_profile(email_addr='alice@example.com'))
         rsp = self.client.get('/profile/')
         for k, v in [
-            ['Name', 'Alice'],
+            ['Name', 'Alice In Wonderland'],
             ['Email', 'alice@example.com'],
             ['Accessibility', 'none'],
             ['Childcare', 'none'],

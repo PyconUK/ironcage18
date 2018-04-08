@@ -13,10 +13,21 @@
         <div class="card-body">
           <div class="row">
             <div class="col-4">
-              <label>Name (this will appear on your conference badge)</label>
+              <label>First Name</label>
+              <small class="form-text text-muted">This will appear on your conference badge</small>
             </div>
             <div class="col-8">
               {% bootstrap_field form.name layout='inline' %}
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-4">
+              <label>Last Name</label>
+              <small class="form-text text-muted">Optional; will appear on your conference badge</small>
+            </div>
+            <div class="col-8">
+              {% bootstrap_field form.last_name layout='inline' %}
             </div>
           </div>
           <hr>
