@@ -114,6 +114,11 @@ class Order(models.Model, SalesRecord):
     def get_absolute_url(self):
         return reverse('tickets:order', args=[self.order_id])
 
+    @property
+    def refunds(self):
+        row_ids = [row.id for row in self.all_order_rows()]
+        return Refund.objects.filter(order_rows__id__in=row_ids)
+
     def update(self, billing_details, rate, days_for_self=None, email_addrs_and_days_for_others=None):
         assert self.payment_required()
         assert days_for_self is not None or email_addrs_and_days_for_others is not None
@@ -265,6 +270,12 @@ class Refund(models.Model, SalesRecord):
             return refund
 
     objects = Manager()
+
+    @property
+    def refund_id(self):
+        if self.id is None:
+            return None
+        return self.id_scrambler.forward(self.id)
 
     @property
     def order(self):

@@ -1,0 +1,85 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>Credit note for PyCon UK 2018 order {{ order.order_id }}</h1>
+
+<p>Issued by the PyCon UK Society Ltd, c/o Acconomy, Arena Business Centre, Holyrood Close, Poole, BH17 7FJ, United Kingdom (VAT Number 249244982)</p>
+
+<p>Issued to {{ order.purchaser.name }}, {{ order.billing_name }}, {{ order.billing_addr_formatted }}</p>
+
+<div class="row">
+  <div class="col-6">
+    <table class="table table-condensed">
+      <tr>
+        <th>Date</th>
+        <td>{{ refund.stripe_refund_created|date }}</td>
+      </tr>
+
+      <tr>
+        <th>Original invoice number</th>
+        <td>{{ order.full_invoice_number }}</td>
+      </tr>
+
+      <tr>
+        <th>Credit note number</th>
+        <td>{{ refund.full_credit_note_number }}</td>
+      </tr>
+
+      <tr>
+        <th>Reason</th>
+        <td>{{ refund.reason }}</td>
+      </tr>
+
+      <tr>
+        <th>Total (excl. VAT)</th>
+        <td>£{{ refund.cost_excl_vat }}</td>
+      </tr>
+
+      <tr>
+        <th>VAT at 20%</th>
+        <td>£{{ refund.vat }}</td>
+      </tr>
+
+      <tr>
+        <th>Total (incl. VAT)</th>
+        <td>£{{ refund.cost_incl_vat }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Quantity</th>
+      <th>Price per item (excl. VAT)</th>
+      <th>Price per item (incl. VAT)</th>
+      <th>Total (excl. VAT)</th>
+      <th>Total (incl. VAT)</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for record in refund.order_rows_summary %}
+    <tr>
+      <td>{{ record.item_descr }}</td>
+      <td>{{ record.quantity }}</td>
+      <td>£{{ record.per_item_cost_excl_vat }}</td>
+      <td>£{{ record.per_item_cost_incl_vat }}</td>
+      <td>£{{ record.total_cost_excl_vat }}</td>
+      <td>£{{ record.total_cost_incl_vat }}</td>
+    </tr>
+    {% endfor %}
+
+    <tr>
+      <th>Total</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th>£{{ refund.cost_excl_vat }}</th>
+      <th>£{{ refund.cost_incl_vat }}</th>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}

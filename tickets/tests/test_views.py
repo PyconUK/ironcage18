@@ -578,6 +578,60 @@ class OrderReceiptTests(TestCase):
         self.assertContains(rsp, 'This order has not been paid')
 
 
+class RefundCreditNoteTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.order = factories.create_confirmed_order_for_self_and_others()
+        ticket = cls.order.all_tickets()[0]
+
+        with utils.patched_refund_creation():
+            actions.refund_ticket(ticket, 'Refund requested by user')
+
+        cls.refund = cls.order.refunds.get()
+
+        cls.url = f'/tickets/orders/{cls.order.order_id}/credit-note/{cls.refund.refund_id}/'
+
+    def test_refund_credit_note(self):
+        self.client.force_login(self.order.purchaser)
+        rsp = self.client.get(self.url, follow=True)
+        self.assertContains(rsp, f'Credit note for PyCon UK 2018 order {self.order.order_id}')
+        self.assertContains(rsp, '<th>Date</th><td>21 May 2018</td>', html=True)
+        self.assertContains(rsp, '<th>Original invoice number</th><td>S-2018-0001</td>', html=True)
+        self.assertContains(rsp, '<th>Credit note number</th><td>R-2018-0001-01</td>', html=True)
+        self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£105</td>', html=True)
+        self.assertContains(rsp, '<th>VAT at 20%</th><td>£21</td>', html=True)
+        self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£126</td>', html=True)
+        self.assertContains(rsp, '''
+            <tr>
+                <td>3-day individual-rate ticket</td>
+                <td>1</td>
+                <td>£105</td>
+                <td>£126</td>
+                <td>£105</td>
+                <td>£126</td>
+            </tr>''', html=True)
+        self.assertContains(rsp, '''
+            <tr>
+                <th>Total</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>£105</th>
+                <th>£126</th>
+            </tr>''', html=True)
+
+    def test_when_not_authenticated(self):
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next={self.url}')
+
+    def test_when_not_authorized(self):
+        bob = factories.create_user('Bob')
+        self.client.force_login(bob)
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, '/')
+        self.assertContains(rsp, 'Only the purchaser of an order can view a credit note')
+
+
 class TicketTests(TestCase):
     def test_ticket(self):
         ticket = factories.create_ticket()

@@ -3,13 +3,14 @@ from datetime import datetime, timezone
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from . import actions
 from .forms import BillingDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
-from .models import Order, Ticket, TicketInvitation
+from .models import Order, Refund, Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
 
 
@@ -245,6 +246,27 @@ def order_receipt(request, order_id):
         'no_navbar': True,
     }
     return render(request, 'tickets/order_receipt.html', context)
+
+
+@login_required
+def refund_credit_note(request, order_id, refund_id):
+    refund = Refund.objects.get_by_refund_id_or_404(refund_id)
+    order = refund.order
+
+    if order.order_id != order_id:
+        raise Http404
+
+    if request.user != order.purchaser:
+        messages.warning(request, 'Only the purchaser of an order can view a credit note')
+        return redirect('index')
+
+    context = {
+        'order': order,
+        'refund': refund,
+        'title': f'PyCon UK 2018 credit note {refund.refund_id} for order {order.order_id}',
+        'no_navbar': True,
+    }
+    return render(request, 'tickets/refund_credit_note.html', context)
 
 
 @login_required
