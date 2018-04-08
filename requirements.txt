@@ -16,6 +16,7 @@ django-slack==5.11.1
 django==2.0.3
 first==2.0.1              # via pip-tools
 flake8==3.5.0
+gunicorn==19.7.1
 idna==2.6                 # via requests
 mccabe==0.6.1             # via flake8
 pip-tools==1.11.0
