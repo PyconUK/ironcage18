@@ -2,7 +2,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
 
 from accounts.models import User
-from tickets.models import Order, Ticket
+from orders.models import Order
+from tickets.models import Ticket
 
 from .reports import reports
 

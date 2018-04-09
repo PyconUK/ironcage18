@@ -50,7 +50,7 @@ class IndexTests(TestCase):
         order = ticket_factories.create_confirmed_order_for_others(self.alice)
 
         rsp = self.client.get('/')
-        self.assertContains(rsp, f'<a href="/tickets/orders/{order.order_id}/">View your order</a>', html=True)
+        self.assertContains(rsp, f'<a href="/orders/{order.order_id}/">View your order</a>', html=True)
         self.assertContains(rsp, '<a href="/tickets/orders/new/">Order more conference tickets</a>', html=True)
 
     def test_when_has_no_order(self):
@@ -63,6 +63,6 @@ class IndexTests(TestCase):
         order2 = ticket_factories.create_confirmed_order_for_others(self.alice)
 
         rsp = self.client.get('/')
-        self.assertContains(rsp, f'<a href="/tickets/orders/{order1.order_id}/">Order {order1.order_id}</a> (1 × 3-day individual-rate ticket)', html=True)
-        self.assertContains(rsp, f'<a href="/tickets/orders/{order2.order_id}/">Order {order2.order_id}</a> (2 × 2-day individual-rate ticket)', html=True)
+        self.assertContains(rsp, f'<a href="/orders/{order1.order_id}/">Order {order1.order_id}</a> (1 × 3-day individual-rate ticket)', html=True)
+        self.assertContains(rsp, f'<a href="/orders/{order2.order_id}/">Order {order2.order_id}</a> (2 × 2-day individual-rate ticket)', html=True)
         self.assertContains(rsp, '<a href="/tickets/orders/new/">Order more conference tickets</a>', html=True)

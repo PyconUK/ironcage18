@@ -5,8 +5,9 @@ from django.utils.text import slugify
 from django.views.generic import TemplateView
 
 from accounts.models import User
+from orders.models import Order
 from tickets.constants import DAYS
-from tickets.models import Order, Ticket
+from tickets.models import Ticket
 from tickets.prices import PRICES_EXCL_VAT, cost_incl_vat
 
 

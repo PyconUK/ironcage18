@@ -1,6 +1,7 @@
 from accounts.tests.factories import create_user
 
 from tickets import actions
+from orders import actions as order_actions
 
 
 def create_pending_order_for_self(user=None, rate=None, num_days=None):
@@ -60,15 +61,15 @@ def create_pending_order_for_self_and_others(user=None, rate=None):
 
 
 def confirm_order(order):
-    actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1526887563)
+    order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1526887563)
 
 
 def mark_order_as_failed(order):
-    actions.mark_order_as_failed(order, 'Your card was declined.')
+    order_actions.mark_order_as_failed(order, 'Your card was declined.')
 
 
 def mark_order_as_errored_after_charge(order):
-    actions.mark_order_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+    order_actions.mark_order_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw')
 
 
 def create_confirmed_order_for_self(user=None, rate=None, num_days=None):
