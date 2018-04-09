@@ -4,15 +4,15 @@ from accounts.models import User
 email_ix = 0
 
 
-def create_user(name='Alice', **kwargs):
+def create_user(first_name='Alice', **kwargs):
     if 'email_addr' not in kwargs:
         global email_ix
         email_ix += 1
-        kwargs['email_addr'] = f'{name.lower()}-{email_ix}@example.com'
-    return User.objects.create_user(name=name, **kwargs)
+        kwargs['email_addr'] = f'{first_name.lower()}-{email_ix}@example.com'
+    return User.objects.create_user(first_name=first_name, **kwargs)
 
 
-def create_user_with_full_profile(name='Alice', email_addr=None):
+def create_user_with_full_profile(first_name='Alice', email_addr=None):
     kwargs = {
         'last_name': 'In Wonderland',
         'year_of_birth': 1985,
@@ -31,11 +31,11 @@ def create_user_with_full_profile(name='Alice', email_addr=None):
     }
     if email_addr is not None:
         kwargs['email_addr'] = email_addr
-    return create_user(name, **kwargs)
+    return create_user(first_name, **kwargs)
 
 
-def create_user_with_dont_ask_demographics_set(name='Alice', **kwargs):
-    return create_user(name, dont_ask_demographics=True, **kwargs)
+def create_user_with_dont_ask_demographics_set(first_name='Alice', **kwargs):
+    return create_user(first_name, dont_ask_demographics=True, **kwargs)
 
 
 def create_staff_user(**kwargs):

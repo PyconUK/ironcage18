@@ -28,7 +28,7 @@ class RegisterForm(forms.ModelForm):
         model = User
         fields = [
             'email_addr',
-            'name',
+            'first_name',
             'last_name',
             'password1',
             'password2'
@@ -53,17 +53,12 @@ class RegisterForm(forms.ModelForm):
             user.save()
         return user
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['name'].label = "First Name"
-
 
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
-            'name',
+            'first_name',
             'last_name',
             'email_addr',
             'accessibility_reqs_yn',
