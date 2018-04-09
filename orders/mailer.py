@@ -12,7 +12,7 @@ def send_order_confirmation_mail(order):
 
     template = get_template('orders/emails/order-confirmation.txt')
     context = {
-        'purchaser_name': order.purchaser.name,
+        'purchaser_name': order.purchaser.get_full_name(),
         'num_tickets': order.num_tickets(),
         'tickets_for_others': order.tickets_for_others(),
         'ticket_for_self': order.ticket_for_self(),
