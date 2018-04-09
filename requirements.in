@@ -10,3 +10,4 @@ pip-tools
 psycopg2-binary
 stripe
 structlog[dev]  # the [dev] is for coloured output
+whitenoise

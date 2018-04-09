@@ -29,3 +29,4 @@ six==1.11.0               # via django-slack, pip-tools, structlog
 stripe==1.79.1
 structlog[dev]==18.1.0
 urllib3==1.22             # via requests
+whitenoise==3.3.1
