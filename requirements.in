@@ -5,7 +5,9 @@ django-bootstrap4
 django-dotenv
 django_slack
 flake8
+gunicorn
 pip-tools
 psycopg2-binary
 stripe
 structlog[dev]  # the [dev] is for coloured output
+whitenoise

@@ -63,6 +63,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -202,6 +203,15 @@ LOGGING = {
 
 STRIPE_API_KEY_PUBLISHABLE = os.environ.get('STRIPE_API_KEY_PUBLISHABLE', ENVVAR_SENTINAL)
 STRIPE_API_KEY_SECRET = os.environ.get('STRIPE_API_KEY_SECRET', ENVVAR_SENTINAL)
+
+
+# Mailgun
+
+EMAIL_HOST = os.environ.get('MAILGUN_SMTP_SERVER', ENVVAR_SENTINAL)
+EMAIL_PORT = os.environ.get('MAILGUN_SMTP_PORT', ENVVAR_SENTINAL)
+EMAIL_HOST_USER = os.environ.get('MAILGUN_SMTP_LOGIN', ENVVAR_SENTINAL)
+EMAIL_HOST_PASSWORD = os.environ.get('MAILGUN_SMTP_PASSWORD', ENVVAR_SENTINAL)
+EMAIL_USE_TLS = True
 
 
 # Slack

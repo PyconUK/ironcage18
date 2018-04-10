@@ -16,6 +16,7 @@ django-slack==5.11.1
 django==2.0.3
 first==2.0.1              # via pip-tools
 flake8==3.5.0
+gunicorn==19.7.1
 idna==2.6                 # via requests
 mccabe==0.6.1             # via flake8
 pip-tools==1.11.0
@@ -28,3 +29,4 @@ six==1.11.0               # via django-slack, pip-tools, structlog
 stripe==1.79.1
 structlog[dev]==18.1.0
 urllib3==1.22             # via requests
+whitenoise==3.3.1
