@@ -5,7 +5,7 @@
 
 <p>Issued by the PyCon UK Society Ltd, c/o Acconomy, Arena Business Centre, Holyrood Close, Poole, BH17 7FJ, United Kingdom (VAT Number GB-249244982)</p>
 
-<p>Issued to {{ order.purchaser.name }}, {{ order.billing_name }}, {{ order.billing_addr_formatted }}</p>
+<p>Issued to {{ order.purchaser.get_full_name }}, {{ order.billing_name }}, {{ order.billing_addr_formatted }}</p>
 
 <div class="row">
   <div class="col-6">

@@ -28,7 +28,8 @@ class RegisterForm(forms.ModelForm):
         model = User
         fields = [
             'email_addr',
-            'name',
+            'first_name',
+            'last_name',
             'password1',
             'password2'
         ]
@@ -57,7 +58,8 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
-            'name',
+            'first_name',
+            'last_name',
             'email_addr',
             'accessibility_reqs_yn',
             'accessibility_reqs',

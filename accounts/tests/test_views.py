@@ -30,7 +30,7 @@ class ProfileTests(TestCase):
         self.client.force_login(factories.create_user_with_full_profile(email_addr='alice@example.com'))
         rsp = self.client.get('/profile/')
         for k, v in [
-            ['Name', 'Alice'],
+            ['Name', 'Alice In Wonderland'],
             ['Email', 'alice@example.com'],
             ['Accessibility', 'none'],
             ['Childcare', 'none'],
@@ -56,7 +56,7 @@ class EditProfileTests(TestCase):
         self.client.force_login(alice)
 
         data = {
-            'name': 'Alice',
+            'first_name': 'Alice',
             'email_addr': 'alice@example.com',
             'year_of_birth': '1986',
             'gender': 'agender',
@@ -81,7 +81,7 @@ class EditProfileTests(TestCase):
         self.client.force_login(alice)
 
         data = {
-            'name': 'Alice',
+            'first_name': 'Alice',
             'email_addr': 'alice@example.com',
             'year_of_birth': '1986',
             'gender': 'agender',
@@ -107,7 +107,7 @@ class EditProfileTests(TestCase):
         self.client.force_login(alice)
 
         data = {
-            'name': 'Alice',
+            'first_name': 'Alice',
             'email_addr': 'alice@example.com',
             'year_of_birth': '1986',
             'gender': 'agender',
@@ -170,7 +170,7 @@ class RegisterTests(TestCase):
 
     def test_post_success(self):
         data = {
-            'name': 'Alice',
+            'first_name': 'Alice',
             'email_addr': 'alice@example.com',
             'password1': 'Pa55w0rd',
             'password2': 'Pa55w0rd',
@@ -180,7 +180,7 @@ class RegisterTests(TestCase):
 
     def test_post_failure_password_mismatch(self):
         data = {
-            'name': 'Alice',
+            'first_name': 'Alice',
             'email_addr': 'alice@example.com',
             'password1': 'Pa55w0rd',
             'password2': 'Pa55wOrd',
@@ -190,7 +190,7 @@ class RegisterTests(TestCase):
 
     def test_post_failure_password_too_short(self):
         data = {
-            'name': 'Alice',
+            'first_name': 'Alice',
             'email_addr': 'alice@example.com',
             'password1': 'pw',
             'password2': 'pw',
@@ -201,7 +201,7 @@ class RegisterTests(TestCase):
     def test_post_failure_email_taken(self):
         factories.create_user(email_addr='alice@example.com')
         data = {
-            'name': 'Alice',
+            'first_name': 'Alice',
             'email_addr': 'alice@example.com',
             'password1': 'Pa55w0rd',
             'password2': 'Pa55w0rd',
@@ -211,7 +211,7 @@ class RegisterTests(TestCase):
 
     def test_post_redirect(self):
         data = {
-            'name': 'Alice',
+            'first_name': 'Alice',
             'email_addr': 'alice@example.com',
             'password1': 'Pa55w0rd',
             'password2': 'Pa55w0rd',

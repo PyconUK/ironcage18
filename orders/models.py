@@ -346,11 +346,11 @@ class OrderRow(models.Model):
             return 'Refunded'
         elif item.pk:
             if item.owner:
-                return item.owner.name
+                return item.owner.get_full_name()
             else:
                 return item.invitation().email_addr
         else:
             if item.owner:
-                return item.owner.name
+                return item.owner.get_full_name()
             else:
                 return item.email_addr
