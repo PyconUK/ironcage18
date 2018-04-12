@@ -22,7 +22,7 @@ class Proposal(models.Model):
     subtitle = models.CharField(max_length=120, blank=True)
     copresenter_names = models.TextField(blank=True)
     description = models.TextField(validators=[validate_max_300_words])
-    outline = models.TextField(validators=[validate_max_300_words])
+    outline = models.TextField(validators=[validate_max_300_words], blank=True)
     aimed_at_new_programmers = models.BooleanField()
     aimed_at_teachers = models.BooleanField()
     aimed_at_data_scientists = models.BooleanField()

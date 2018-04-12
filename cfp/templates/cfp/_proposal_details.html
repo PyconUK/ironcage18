@@ -15,9 +15,12 @@
 
     <h4>{{ form.description.label }}</h4>
     <div>{{ proposal.description|linebreaks }}</div>
-    <hr>
-    <h4>{{ form.outline.label }}</h4>
-    <div>{{ proposal.outline|linebreaks }}</div>
+
+    {% if proposal.outline %}
+      <hr>
+      <h4>{{ form.outline.label }}</h4>
+      <div>{{ proposal.outline|linebreaks }}</div>
+    {% endif %}
 
     {% if proposal.aimed_at_new_programmers or proposal.aimed_at_teachers or proposal.aimed_at_data_scientists or proposal.would_like_mentor or proposal.would_like_longer_slot %}
       <hr>
