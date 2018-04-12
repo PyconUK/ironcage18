@@ -13,21 +13,10 @@
         <div class="card-body">
           <div class="row">
             <div class="col-4">
-              <label>First Name</label>
-              <small class="form-text text-muted">This will appear on your conference badge</small>
+              <label>Name (this will appear on your conference badge)</label>
             </div>
             <div class="col-8">
-              {% bootstrap_field form.first_name layout='inline' %}
-            </div>
-          </div>
-          <hr>
-          <div class="row">
-            <div class="col-4">
-              <label>Last Name</label>
-              <small class="form-text text-muted">Optional; will appear on your conference badge</small>
-            </div>
-            <div class="col-8">
-              {% bootstrap_field form.last_name layout='inline' %}
+              {% bootstrap_field form.name layout='inline' %}
             </div>
           </div>
           <hr>
@@ -183,8 +172,6 @@
               <input type="text" maxlength="100" class="form-control" placeholder="Please specify" id="id_country_of_residence_free_text" />
             </div>
           </div>
-        </div>
-      </div>
 
       <button type="submit" class="btn btn-primary">Update my profile</button>
     </form>

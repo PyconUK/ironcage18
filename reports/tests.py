@@ -10,11 +10,11 @@ class ReportsTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.alice = accounts_factories.create_staff_user(
-            first_name='Alice',
+            name='Alice',
             email_addr='alice@example.com',
         )
         cls.bob = accounts_factories.create_user(
-            first_name='Bob',
+            name='Bob',
             email_addr='bob@example.com',
         )
 

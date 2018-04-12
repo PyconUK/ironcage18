@@ -93,7 +93,7 @@ class UKPAReport(ReportView):
 
     def get_context_data(self):
         members = User.objects.filter(is_ukpa_member=True)
-        rows = [[member.get_full_name(), member.email_addr] for member in members]
+        rows = [[member.name, member.email_addr] for member in members]
 
         return {
             'title': self.title,
@@ -160,7 +160,7 @@ class OrdersMixin:
         }
         return [
             link,
-            order.purchaser.get_full_name(),
+            order.purchaser.name,
             order.purchaser.email_addr,
             order.num_tickets(),
             f'£{order.cost_incl_vat}',
@@ -227,7 +227,7 @@ class AttendeesWithAccessibilityReqs(ReportView):
         return User.objects.filter(accessibility_reqs_yn=True)
 
     def presenter(self, user):
-        return [user.get_full_name(), user.email_addr, user.accessibility_reqs]
+        return [user.name, user.email_addr, user.accessibility_reqs]
 
 
 class AttendeesWithChildcareReqs(ReportView):
@@ -243,7 +243,7 @@ class AttendeesWithChildcareReqs(ReportView):
         return User.objects.filter(childcare_reqs_yn=True)
 
     def presenter(self, user):
-        return [user.get_full_name(), user.email_addr, user.childcare_reqs]
+        return [user.name, user.email_addr, user.childcare_reqs]
 
 
 class AttendeesWithDietaryReqs(ReportView):
@@ -259,7 +259,7 @@ class AttendeesWithDietaryReqs(ReportView):
         return User.objects.filter(dietary_reqs_yn=True)
 
     def presenter(self, user):
-        return [user.get_full_name(), user.email_addr, user.dietary_reqs]
+        return [user.name, user.email_addr, user.dietary_reqs]
 
 
 class PeopleMixin:
@@ -273,7 +273,7 @@ class PeopleMixin:
 
         return [
             link,
-            user.get_full_name(),
+            user.name,
             user.email_addr,
         ]
 
