@@ -69,7 +69,7 @@ class Ticket(models.Model):
     def ticket_holder_name(self):
         # TODO this is a mess
         if self.owner:
-            return self.owner.get_full_name()
+            return self.owner.name
         elif self.pk:
             return self.invitation().email_addr
         else:

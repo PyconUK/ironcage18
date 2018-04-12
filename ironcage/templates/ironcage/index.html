@@ -2,7 +2,7 @@
 
 {% block content %}
 {% if request.user.is_authenticated %}
-<p>Hello, {{ request.user.first_name }}</p>
+<p>Hello, {{ request.user.name }}</p>
 {% endif %}
 
 <p>Welcome to the PyCon UK 2018 conference registration office.</p>

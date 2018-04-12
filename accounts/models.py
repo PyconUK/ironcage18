@@ -56,9 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             'unique': 'That email address has already been registered',
         },
     )
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200, blank=True)
-    badge_detail_line = models.CharField(max_length=200, blank=True)
+    name = models.CharField(max_length=200)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     year_of_birth = models.CharField(max_length=10, null=True, blank=True, choices=YEAR_OF_BIRTH_CHOICES)
@@ -82,7 +80,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email_addr'
     EMAIL_FIELD = 'email_addr'
-    REQUIRED_FIELDS = ['first_name']
+    REQUIRED_FIELDS = ['name']
 
     id_scrambler = Scrambler(8000)
 
@@ -96,14 +94,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         '''This is used by the admin.'''
-        if self.last_name:
-            return f'{self.first_name} {self.last_name}'
-        else:
-            return self.first_name
+        return self.name
 
     def get_short_name(self):
         '''This is used by the admin.'''
-        return self.first_name
+        return self.name
 
     def get_ticket(self):
         try:
