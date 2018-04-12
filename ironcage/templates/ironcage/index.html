@@ -57,7 +57,9 @@
       <li><a href="{% url 'cfp:proposal' proposal.proposal_id %}">{{ proposal.title }}</a></li>
       {% endfor %}
     </ul>
-    <li><a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a></li>
+    {% if cfp_open %}
+      <li><a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a></li>
+    {% endif %}
   {% endif %}
 </ul>
 
