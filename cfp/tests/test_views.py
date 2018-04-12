@@ -25,6 +25,44 @@ class NewProposalTests(TestCase):
         self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/cfp/proposals/new/">sign up</a> or <a href="/accounts/login/?next=/cfp/proposals/new/">sign in</a> to make a submission.', html=True)
         self.assertNotContains(rsp, '<form method="post">')
 
+    def test_post_fails_without_coc_conformity(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'session_type': 'talk',
+            'title': 'Python is brilliant',
+            'subtitle': 'From abs to ZeroDivisionError',
+            'copresenter_names': '',
+            'description': 'Let me tell you why Python is brilliant',
+            'outline': 'I am well placed to tell you why Python is brilliant',
+            'aimed_at_new_programmers': True,
+            'would_like_mentor': True,
+            'ticket': True,
+        }
+        rsp = self.client.post('/cfp/proposals/new/', form_data, follow=True)
+
+        self.assertContains(rsp, 'This field is required.')
+
+        self.assertEqual(self.alice.proposals.count(), 0)
+
+    def test_post_fails_without_ticket(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'session_type': 'talk',
+            'title': 'Python is brilliant',
+            'subtitle': 'From abs to ZeroDivisionError',
+            'copresenter_names': '',
+            'description': 'Let me tell you why Python is brilliant',
+            'outline': 'I am well placed to tell you why Python is brilliant',
+            'aimed_at_new_programmers': True,
+            'would_like_mentor': True,
+            'coc_conformity': True,
+        }
+        rsp = self.client.post('/cfp/proposals/new/', form_data, follow=True)
+
+        self.assertContains(rsp, 'This field is required.')
+
+        self.assertEqual(self.alice.proposals.count(), 0)
+
     def test_post(self):
         self.client.force_login(self.alice)
         form_data = {
@@ -36,6 +74,8 @@ class NewProposalTests(TestCase):
             'outline': 'I am well placed to tell you why Python is brilliant',
             'aimed_at_new_programmers': True,
             'would_like_mentor': True,
+            'coc_conformity': True,
+            'ticket': True,
         }
         rsp = self.client.post('/cfp/proposals/new/', form_data, follow=True)
         self.assertContains(rsp, 'Thank you for submitting your proposal')
@@ -57,6 +97,8 @@ class NewProposalTests(TestCase):
             'outline': 'I am well placed to tell you why Python is brilliant',
             'aimed_at_new_programmers': True,
             'would_like_mentor': True,
+            'coc_conformity': True,
+            'ticket': True,
         }
         self.client.post('/cfp/proposals/new/', form_data, follow=True)
 
@@ -82,6 +124,44 @@ class ProposalEditTests(TestCase):
         rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/edit/')
         self.assertContains(rsp, 'Update your proposal')
 
+    def test_post_fails_without_coc_conformity(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'session_type': 'talk',
+            'title': 'Python is brilliant',
+            'subtitle': 'From abs to ZeroDivisionError',
+            'copresenter_names': '',
+            'description': 'Let me tell you why Python is brilliant',
+            'outline': 'I am well placed to tell you why Python is brilliant',
+            'aimed_at_new_programmers': True,
+            'ticket': True,
+        }
+        rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', form_data, follow=True)
+
+        self.assertContains(rsp, 'This field is required.')
+
+        proposal = Proposal.objects.get(title='Python is brilliant')
+        self.assertTrue(proposal.coc_conformity)
+
+    def test_post_fails_without_ticket(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'session_type': 'talk',
+            'title': 'Python is brilliant',
+            'subtitle': 'From abs to ZeroDivisionError',
+            'copresenter_names': '',
+            'description': 'Let me tell you why Python is brilliant',
+            'outline': 'I am well placed to tell you why Python is brilliant',
+            'aimed_at_new_programmers': True,
+            'coc_conformity': True,
+        }
+        rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', form_data, follow=True)
+
+        self.assertContains(rsp, 'This field is required.')
+
+        proposal = Proposal.objects.get(title='Python is brilliant')
+        self.assertTrue(proposal.ticket)
+
     def test_post(self):
         self.client.force_login(self.alice)
         form_data = {
@@ -92,6 +172,8 @@ class ProposalEditTests(TestCase):
             'description': 'Let me tell you why Python is brilliant',
             'outline': 'I am well placed to tell you why Python is brilliant',
             'aimed_at_new_programmers': True,
+            'coc_conformity': True,
+            'ticket': True,
         }
         rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', form_data, follow=True)
         self.assertContains(rsp, 'Thank you for updating your proposal')
@@ -234,6 +316,8 @@ class CFPClosedTests(TestCase):
             'outline': 'I am well placed to tell you why Python is brilliant',
             'aimed_at_new_programmers': True,
             'would_like_mentor': True,
+            'coc_conformity': True,
+            'ticket': True,
         }
         rsp = self.client.post('/cfp/proposals/new/', form_data, follow=True)
         self.assertContains(rsp, 'the Call For Participation has closed')
@@ -250,6 +334,8 @@ class CFPClosedTests(TestCase):
             'outline': 'I am well placed to tell you why Python is brilliant',
             'aimed_at_new_programmers': True,
             'would_like_mentor': True,
+            'coc_conformity': True,
+            'ticket': True,
         }
         rsp = self.client.post('/cfp/proposals/new/?deadline-bypass-token=abc123', form_data, follow=True)
         self.assertContains(rsp, 'Thank you for submitting your proposal')
@@ -273,6 +359,8 @@ class CFPClosedTests(TestCase):
             'description': 'Let me tell you why Python is brilliant',
             'outline': 'I am well placed to tell you why Python is brilliant',
             'aimed_at_new_programmers': True,
+            'coc_conformity': True,
+            'ticket': True,
         }
         rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', form_data, follow=True)
         self.assertContains(rsp, 'the Call For Participation has closed')
@@ -287,6 +375,8 @@ class CFPClosedTests(TestCase):
             'description': 'Let me tell you why Python is brilliant',
             'outline': 'I am well placed to tell you why Python is brilliant',
             'aimed_at_new_programmers': True,
+            'coc_conformity': True,
+            'ticket': True,
         }
         rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/?deadline-bypass-token=abc123', form_data, follow=True)
         self.assertNotContains(rsp, 'the Call For Participation has closed')

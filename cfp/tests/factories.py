@@ -21,4 +21,6 @@ def create_proposal(user=None, session_type='talk', state='accepted'):
         aimed_at_data_scientists=False,
         would_like_mentor=True,
         would_like_longer_slot=False,
+        coc_conformity=True,
+        ticket=True,
     )
