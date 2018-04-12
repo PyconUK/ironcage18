@@ -34,8 +34,6 @@ class ProposalForm(forms.ModelForm):
             'aimed_at_data_scientists': 'data scientists?',
             'would_like_mentor': 'like a mentor',
             'would_like_longer_slot': 'like to be considered for a longer talk slot',
-            'coc_conformity': 'Does your proposal conform to our Code of Conduct?',
-            'ticket': 'I understand that I will need to register for a ticket for the event',
         }
 
         help_texts = {
@@ -44,8 +42,6 @@ class ProposalForm(forms.ModelForm):
             'copresenter_names': 'If you are presenting with anybody else, please list their names here.',
             'description': 'If your session is selected, this is the basis of what will be published in the programme.  Limit: 300 words.',
             'outline': 'An outline of your session is optional, but helps the programme committee. A proposal with an outline is more likely to be selected than one without. More detail, including timings, is better. The outline will not be published. Limit: 300 words.',
-            'coc_conformity': 'I confirm that my proposed session conforms to the requirements of the <a href="https://2018.pyconuk.org/code-conduct/" target="_blank">Code of Conduct</a>',
-            'ticket': 'All attendees <strong>including speakers</strong> at PyCon UK need to register for a ticket. I understand that I will either need to buy a ticket for the event <strong>or</strong> request a free ticket through the financial assistance process.',
         }
 
         widgets = {
@@ -55,6 +51,15 @@ class ProposalForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'placeholder': False}),
             'outline': forms.Textarea(attrs={'placeholder': False}),
         }
+
+    # Model form does not allow required=True on booleans unless explicitly defined
+    coc_conformity = forms.BooleanField(required=True)
+    coc_conformity.label = 'Does your proposal conform to our Code of Conduct?'
+    coc_conformity.help_text = 'I confirm that my proposed session conforms to the requirements of the <a href="https://2018.pyconuk.org/code-conduct/" target="_blank">Code of Conduct</a>'
+
+    ticket = forms.BooleanField(required=True)
+    ticket.label = 'I understand that I will need to register for a ticket for the event'
+    ticket.help_text = 'All attendees <strong>including speakers</strong> at PyCon UK need to register for a ticket. I understand that I will either need to buy a ticket for the event <strong>or</strong> request a free ticket through the financial assistance process.'
 
 
 IS_INTERESTED_CHOICES = [
