@@ -1,0 +1,94 @@
+{% load bootstrap4 %}
+
+<form method="post">
+  {% csrf_token %}
+
+  <div class="card">
+    <div class="card-header">Basic information</div>
+    <div class="card-body">
+      {% bootstrap_field form.session_type layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.title layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.subtitle layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.copresenter_names layout='horizontal' %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">About your proposal</div>
+    <div class="card-body">
+      {% bootstrap_field form.description layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.outline layout='horizontal' %}
+      <hr>
+      <p>Is your session particularly suitable for:</p>
+      <div class="row">
+        <div class="offset-md-1">
+          {% bootstrap_field form.aimed_at_new_programmers %}
+          {% bootstrap_field form.aimed_at_teachers %}
+          {% bootstrap_field form.aimed_at_data_scientists %}
+        </div>
+      </div>
+      <hr>
+      <p>Please tick if you would:</p>
+      <div class="row">
+        <div class="offset-md-1">
+          {% bootstrap_field form.would_like_mentor %}
+          {% bootstrap_field form.would_like_longer_slot %}
+        </div>
+      </div>
+      <hr>
+      {% bootstrap_field form.coc_conformity %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Ticket information</div>
+    <div class="card-body">
+      <p>
+        At PyCon UK, <em>all attendees</em> - including speakers and even the conference organising committee - need to have a ticket. We don't <em>automatically</em> issue speakers with free tickets, or provide benefits such as accommodation or travel funds.
+      </p>
+
+      <p>
+        However, we are aware that some speakers need to pay their own way, and not all will find it easy to meet the various costs of attending a conference.
+      </p>
+
+      <p>
+        <strong>Every speaker who needs a free ticket will receive one.</strong> However, you <em>must</em> request it through <a href="">our financial assistance programme</a>. Speakers who feel they can afford only a portion of the price of a ticket are welcome to select purchase theirs at the lower <em>Unwaged</em> rate if that is a suitable option for them.
+      </p>
+
+      <p>
+        In addition, if you require assistance in the form of <strong>funds for travel, accommodation or other expenses</strong>, we warmly invite you to apply for those through <a href="">the financial assistance programme</a>. We will do all we can to make it possible for you to speak at our conference.
+      </p>
+
+      <p>
+        Please do this as early as possible - <strong>preferably right now</strong>.
+      </p>
+
+      <p>
+        We request that <strong>if</strong> you can readily afford it, or if your employer would otherwise support your attendance by purchasing a ticket on your behalf, you don't claim a free ticket. We rely on our attendees and speakers to make their own judgements about this.
+      </p>
+
+      <p>
+        <strong>In short, if as a speaker you need the help of a free ticket or other financial assistance, we'd like to make sure you get it.</strong>
+      </p>
+
+      <p>
+        We believe this is the fairest policy, and allows us to offer the most financial assistance to attendees who need it.
+      </p>
+
+      {% bootstrap_field form.ticket %}
+    </div>
+  </div>
+
+
+
+
+
+  {% buttons %}
+  <button type="submit" class="btn btn-primary">Submit</button>
+  {% endbuttons %}
+</form>
+
