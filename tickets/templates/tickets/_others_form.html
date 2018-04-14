@@ -1,17 +1,17 @@
 <div data-formset-form>
   <div class="row">
-    <div class="col">
+    <div class="col-4">
       {{ form.email_addr }}
     </div>
-    <div class="col">
+    <div class="col-4">
       {{ form.name }}
     </div>
-    <div class="col">
+    <div class="col-3">
       <div class="btn-group btn-group-toggle{% if form.days.errors %} error{% endif %}" data-toggle="buttons">
         {{ form.days }}
       </div>
     </div>
-    <div class="col">
+    <div class="col-1">
       <button type="button" data-formset-delete-button class="btn btn-danger">&times;</button>
       <div class="invisible">{{ form.DELETE }}</div>
     </div>
