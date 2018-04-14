@@ -56,3 +56,35 @@ class ApplicationForm(forms.ModelForm):
         choices=DAY_CHOICES,
         widget=ButtonsCheckbox
     )
+
+    def clean_requested_ticket_only(self):
+        # Yes, I know.
+        data = self.cleaned_data['requested_ticket_only']
+        if data == "True":
+            return True
+        elif data == "False":
+            return False
+        return None
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        requested_ticket_only = cleaned_data.get("requested_ticket_only")
+        amount_requested = cleaned_data.get("amount_requested")
+        cost_breakdown = cleaned_data.get("cost_breakdown")
+
+        if not requested_ticket_only:
+            if not amount_requested:
+                msg = forms.ValidationError(
+                    "Please ensure you provide an amount of assistance you are "
+                    "requesting if you require financial assistance outside of "
+                    "a free ticket."
+                )
+                self.add_error('amount_requested', msg)
+            if not cost_breakdown:
+                msg = forms.ValidationError(
+                    "Please ensure you provide a breakdown of the costs you "
+                    "anticipate if you require financial assistance outside of "
+                    "a free ticket."
+                )
+                self.add_error('cost_breakdown', msg)
