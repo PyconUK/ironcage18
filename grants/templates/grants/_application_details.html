@@ -1,23 +1,30 @@
-<div class="card">
+<div class="card bg-primary">
+    <div class="card-header"><h2>About You</h2></div>
     <div class="card-body">
-        <p>You have requested a grant for &pound;{{ application.amount_requested }}.</p>
-        <hr>
-
         <h4>About you</h4>
         <p>{{ application.about_you|linebreaks }}</p>
         <hr>
-
-        {% if application.days %}
-            <p>You are planning to come on {{ application.days|join:', ' }}.</p>
-        {% else %}
-            <p>You have not told us which days you plan to come for.</p>
-        {% endif %}
+        <h4>How you feel attending PyCon UK will be of value</h4>
+        <p>{{ application.about_why|linebreaks }}</p>
         <hr>
-
-        {% if application.would_like_ticket_set_aside %}
-            <p>You have requested that we reserve a ticket for you until your application is processed.</p>
+        <p>You are planning to come on {{ application.days|join:', ' }}.</p>
+        <hr>
+        {% if application.requested_ticket_only %}
+            <p class="card-text">You have requested a free ticket, but don't need other financial assistance.</p>
         {% else %}
-            <p>You have not requested that we reserve a ticket for you until your application is processed.</p>
+            <p class="card-text">You have requested a free ticket and additional financial assistance.</p>
         {% endif %}
     </div>
 </div>
+
+{% if not application.requested_ticket_only %}
+    <div class="card bg-primary">
+        <div class="card-header"><h2>Financial Assistance</h2></div>
+        <div class="card-body">
+            <p>You have requested a grant for {{ application.amount_requested }}.</p>
+            <hr>
+            <h4>Your cost breakdown</h4>
+            <p class="card-text">{{ application.cost_breakdown|linebreaks }}</p>
+        </div>
+    </div>
+{% endif %}
