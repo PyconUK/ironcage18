@@ -24,3 +24,4 @@ EMAIL_REPLY_TO_ADDR = 'PyCon UK 2018 <pyconuk-committee@uk.python.org>'
 # Closing times
 bst = timezone(timedelta(hours=1))
 CFP_CLOSE_AT = datetime(2018, 6, 15, 12, 0, tzinfo=bst)
+GRANT_APPLICATIONS_CLOSE_AT = datetime(2018, 6, 15, 12, 0, tzinfo=bst)

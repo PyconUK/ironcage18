@@ -1,0 +1,53 @@
+{% extends 'ironcage/base.html' %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8 offset-lg-2 col-sm-12">
+    <h1>Application for financial assistance</h1>
+    <hr>
+    <p>Applications for financial assistance will close at 1200 BST on June 15th.</p>
+    <hr>
+
+    <div class="card bg-primary">
+        <div class="card-header"><h2>About the programme</h2></div>
+        <div class="card-body">
+            <p class="card-text">
+                Our financial assistance programme exists to support attendees who might otherwise find it difficult to attend the conference. We have a budget set aside for this purpose.
+            </p>
+
+            <p class="card-text">
+                We welcome applications from all attendees, and strongly encourage you to apply if it would make it easier for you to attend. Many of your fellow attendees will be doing the same, including many speakers and even members of the conference organisation team.
+            </p>
+
+            <p class="card-text">
+                Financial assistance includes free or discounted tickets, and funds to cover the costs of travel, accommodation and other expenses.
+            </p>
+
+            <p class="card-text">
+                We'd love to be able to help all those who submit applications, but our funds are not unlimited, so we can't meet all requests. We do our best to maximise the impact of our financial assistance funding.
+            </p>
+
+            <p class="card-text">
+                The financial assistance programme prioritises speakers. We also use it to support attendees from groups who are under-represented in our community and at our events, as part of our efforts to make <a href="https://2018.pyconuk.org/diversity-inclusion-accessibility/">PyCon UK as inclusive and diverse as possible</a>.
+            </p>
+
+            <p class="card-text">
+                Whoever you are, however, and whatever your needs, <strong>please do apply if we might be able to help you attend</strong>. Your application will be treated in complete confidence.
+            </p>
+
+            <p class="card-text">
+                Thanks for applying. We hope we'll be able to help.
+            </p>
+        </div>
+    </div>
+
+    {% if not request.user.is_authenticated %}
+        <p>Please <a href="{% url 'register' %}?next={{ request.path }}">sign up</a> or <a href="{% url 'login' %}?next={{ request.path }}">sign in</a> to make an application.</p>
+    {% else %}
+        {% include './_application_form.html' %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

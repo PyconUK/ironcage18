@@ -20,11 +20,14 @@ def index(request):
             'orders': user.orders.all(),
             'proposals': user.proposals.all(),
             'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
+            'grant_application': user.get_grant_application(),
+            'grant_applications_open': datetime.now(timezone.utc) < settings.GRANT_APPLICATIONS_CLOSE_AT,
             'ticket_sales_open': datetime.now(timezone.utc) < settings.TICKET_SALES_CLOSE_AT,
         }
     else:
         context = {
             'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
+            'grant_applications_open': datetime.now(timezone.utc) < settings.GRANT_APPLICATIONS_CLOSE_AT,
             'ticket_sales_open': datetime.now(timezone.utc) < settings.TICKET_SALES_CLOSE_AT,
         }
 

@@ -1,0 +1,16 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8 offset-lg-2 col-sm-12">
+    <h1>Your application for financial assistance</h1>
+    <hr>
+
+    {% include './_application_details.html' %}
+
+    {% if applications_open %}
+    <a href="{% url 'grants:application_edit' application.application_id %}" class="btn btn-primary">Update your application</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

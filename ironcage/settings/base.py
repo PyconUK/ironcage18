@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'orders',
     'tickets',
     'cfp',
+    'grants',
     'ironcage',
 
     'bootstrap4',

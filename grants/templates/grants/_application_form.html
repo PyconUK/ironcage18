@@ -1,0 +1,43 @@
+{% load bootstrap4 %}
+
+<form method="post">
+  {% csrf_token %}
+
+  <div class="card bg-primary">
+    <div class="card-header"><h2>About You</h2></div>
+    <div class="card-body">
+      {% bootstrap_field form.about_you %}
+      <hr>
+      {% bootstrap_field form.about_why %}
+      <hr>
+      <div class="form-group{% if form.days.errors %} is-invalid{% endif %}">
+        <label class="control-label" for="{{ form.days.auto_id }}">On which days do you plan to attend the conference?</label>
+        <div class="btn-group btn-group-toggle {% if form.days.errors %} is-invalid error{% endif %}" data-toggle="buttons">
+          {{ form.days }}
+        </div>
+        {% if form.days.errors %}
+          <div class="invalid-feedback">
+            {% for error in form.days.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <hr>
+      {% bootstrap_field form.requested_ticket_only %}
+    </div>
+  </div>
+
+  <div class="card bg-primary" id="further-assistance">
+    <div class="card-header"><h2>Financial Assistance</h2></div>
+    <div class="card-body">
+      {% bootstrap_field form.amount_requested %}
+      <hr>
+      {% bootstrap_field form.cost_breakdown %}
+    </div>
+  </div>
+
+  {% buttons %}
+  <button type="submit" class="btn btn-primary">Submit</button>
+  {% endbuttons %}
+</form>

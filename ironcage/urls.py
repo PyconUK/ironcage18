@@ -13,6 +13,7 @@ urlpatterns = [
     path('reports/', include('reports.urls')),
     path('tickets/', include('tickets.urls')),
     path('cfp/', include('cfp.urls')),
+    path('grants/', include('grants.urls')),
     path('500/', ironcage.views.error, name='error'),
     path('log/', ironcage.views.log, name='log'),
 ]
