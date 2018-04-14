@@ -16,7 +16,7 @@ class CreatePendingOrderTests(TestCase):
             purchaser=self.alice,
             billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
             rate='individual',
-            days_for_self=['thu', 'fri', 'sat']
+            days_for_self=['sat', 'sun', 'mon']
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
@@ -33,7 +33,7 @@ class CreatePendingOrderTests(TestCase):
             purchaser=self.alice,
             billing_details={'name': 'Sirius Cybernetics Corp.', 'addr': 'Eadrax, Sirius Tau'},
             rate='corporate',
-            days_for_self=['thu', 'fri', 'sat'],
+            days_for_self=['sat', 'sun', 'mon'],
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
@@ -70,7 +70,7 @@ class CreatePendingOrderTests(TestCase):
             purchaser=self.alice,
             billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
             rate='individual',
-            days_for_self=['thu', 'fri', 'sat'],
+            days_for_self=['sat', 'sun', 'mon'],
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),

@@ -28,12 +28,12 @@ class ConfirmOrderTests(TestCase):
 
         self.assertEqual(row.cost_excl_vat, 105)
         self.assertEqual(row.item_descr, '3-day individual-rate ticket')
-        self.assertEqual(row.item_descr_extra, 'Thursday, Friday, Saturday')
+        self.assertEqual(row.item_descr_extra, 'Saturday, Sunday, Monday')
 
         ticket = row.item
         self.assertEqual(ticket.owner, order.purchaser)
         self.assertEqual(ticket.rate, 'individual')
-        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday', 'Monday'])
 
         self.assertEqual(order.purchaser.orders.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
@@ -97,12 +97,12 @@ class ConfirmOrderTests(TestCase):
 
         self.assertEqual(row1.cost_excl_vat, 105)
         self.assertEqual(row1.item_descr, '3-day individual-rate ticket')
-        self.assertEqual(row1.item_descr_extra, 'Thursday, Friday, Saturday')
+        self.assertEqual(row1.item_descr_extra, 'Saturday, Sunday, Monday')
 
         ticket1 = row1.item
         self.assertEqual(ticket1.owner, order.purchaser)
         self.assertEqual(ticket1.rate, 'individual')
-        self.assertEqual(ticket1.days(), ['Thursday', 'Friday', 'Saturday'])
+        self.assertEqual(ticket1.days(), ['Saturday', 'Sunday', 'Monday'])
 
         self.assertEqual(row2.cost_excl_vat, 75)
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
@@ -150,7 +150,7 @@ class ConfirmOrderTests(TestCase):
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
-        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday', 'Monday'])
 
     def test_invoice_number_increments(self):
         order = factories.create_pending_order_for_self()
@@ -257,7 +257,7 @@ class RefundTicketTests(TestCase):
         self.assertIsNone(order_row.item)
         self.assertEqual(order_row.cost_excl_vat, 105)
         self.assertEqual(order_row.item_descr, '3-day individual-rate ticket')
-        self.assertEqual(order_row.item_descr_extra, 'Thursday, Friday, Saturday')
+        self.assertEqual(order_row.item_descr_extra, 'Saturday, Sunday, Monday')
         self.assertIsNotNone(order_row.refund)
         self.assertEqual(order_row.refund.reason, 'Refund requested by user')
         self.assertEqual(order_row.refund.credit_note_number, 1)

@@ -67,7 +67,7 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'self',
             'rate': 'individual',
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
             'billing_name': 'Alice Apple',
             'billing_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
@@ -86,7 +86,7 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'self',
             'rate': 'corporate',
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
             'billing_name': 'Sirius Cybernetics Corp.',
             'billing_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
@@ -124,7 +124,7 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'self and others',
             'rate': 'individual',
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
             'billing_name': 'Alice Apple',
             'billing_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',

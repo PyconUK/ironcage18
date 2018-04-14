@@ -36,7 +36,7 @@ class TicketForSelfFormTests(TestCase):
     def test_from_pending_order_for_self(self):
         order = factories.create_pending_order_for_self()
         expected = {
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
         }
         self.assertEqual(TicketForSelfForm.from_pending_order(order).data, expected)
 
@@ -47,7 +47,7 @@ class TicketForSelfFormTests(TestCase):
     def test_from_pending_order_for_self_and_others(self):
         order = factories.create_pending_order_for_self_and_others()
         expected = {
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
         }
         self.assertEqual(TicketForSelfForm.from_pending_order(order).data, expected)
 
