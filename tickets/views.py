@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.html import mark_safe
 
 from . import actions
 from .forms import BillingDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
@@ -180,7 +181,10 @@ def ticket(request, ticket_id):
         return redirect('index')
 
     if not request.user.profile_complete():
-        messages.warning(request, 'Your profile is incomplete')
+        messages.warning(
+            request,
+            mark_safe('Your profile is incomplete. <a href="{}">Update your profile</a>'.format(reverse('accounts:edit_profile')))
+        )
 
     context = {
         'ticket': ticket,
