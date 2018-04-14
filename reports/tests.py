@@ -192,8 +192,8 @@ class TestTicketsReport(ReportsTestCase):
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
                 [links[0], 'individual', 'Alice', 'Thursday, Friday, Saturday', '£126', 'Assigned'],
-                [links[1], 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
                 [links[2], 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
+                [links[1], 'individual', 'bob@example.com', 'Sunday, Monday', '£90', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -221,8 +221,8 @@ class TestUnclaimedTicketsReport(ReportsTestCase):
             'title': 'Unclaimed tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [links[0], 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
                 [links[1], 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
+                [links[0], 'individual', 'bob@example.com', 'Sunday, Monday', '£90', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
