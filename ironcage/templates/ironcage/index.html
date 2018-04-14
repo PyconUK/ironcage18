@@ -26,7 +26,7 @@
 
         {% if orders|length == 0 %}
           {% if ticket_sales_open %}
-            <a href="{% url 'tickets:new_order' %}">Order conference tickets</a></li>
+            <a href="{% url 'tickets:new_order' %}">Order conference tickets</a>
           {% endif %}
         {% elif orders|length == 1 %}
           <hr>
@@ -55,20 +55,20 @@
 <div class="row">
   <div class="col col-12 col-xs-12 col-sm-12 col-md-6">
     <div class="card bg-warning text-dark">
-      <div class="card-header"><h2>Call for Participation</h2></div>
+      <div class="card-header"><h2>Call for Proposals</h2></div>
       <div class="card-body">
         {% if proposals|length == 0 %}
           {% if cfp_open %}
-            <a href="{% url 'cfp:new_proposal' %}">Make a proposal to our Call for Participation</a>
+            <a href="{% url 'cfp:new_proposal' %}">Make a proposal to our Call for Proposals</a>
           {% endif %}
         {% elif proposals|length == 1 %}
-          <a href="{% url 'cfp:proposal' proposals.0.proposal_id %}">View your proposal to our Call for Participation</a> ({{ proposals.0.title }})
+          <a href="{% url 'cfp:proposal' proposals.0.proposal_id %}">View your proposal to our Call for Proposals</a> ({{ proposals.0.title }})
           {% if cfp_open %}
             <hr>
-            <a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a>
+            <a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Proposals</a>
           {% endif %}
         {% else %}
-          View your proposals to our Call for Participation
+          View your proposals to our Call for Proposals
           <ul>
             {% for proposal in proposals %}
             <li><a href="{% url 'cfp:proposal' proposal.proposal_id %}">{{ proposal.title }}</a></li>
@@ -76,7 +76,7 @@
           </ul>
           {% if cfp_open %}
             <hr>
-            <a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a>
+            <a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Proposals</a>
           {% endif %}
         {% endif %}
       </div>

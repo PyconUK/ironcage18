@@ -5,13 +5,13 @@
 
 <p>To help us allocate rooms for talks, please let us know if you would be interested in attending the following talk.</p>
 
-<hr />
+<hr>
 
 <h3>{{ proposal.full_title }} <span class="small">({{ proposal.proposer.name }})</span></h3>
 
 <div>{{ proposal.description|linebreaks }}</div>
 
-<hr />
+<hr>
 
 <form method="POST" id="voting-form">
   {% csrf_token %}
