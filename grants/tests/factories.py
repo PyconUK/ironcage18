@@ -9,12 +9,14 @@ def create_application(user=None):
 
     return Application.objects.create(
         applicant=user,
-        amount_requested=1000,
-        would_like_ticket_set_aside=False,
+        about_you='I have two thumbs',
+        about_why='I use thumbs to press my space bar',
+        requested_ticket_only=False,
+        amount_requested='£1000',
+        cost_breakdown='Train £500. Hotel £500.',
         sat=True,
         sun=True,
         mon=True,
         tue=False,
         wed=False,
-        about_you='I have two thumbs',
     )
