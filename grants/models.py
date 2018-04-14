@@ -9,18 +9,27 @@ from ironcage.utils import Scrambler
 
 
 class Application(models.Model):
+
+    REQUESTED_TICKET_ONLY_CHOICES = [
+        (True, "I'd like to request a free ticket, but don't need other financial assistance"),
+        (False, "I'd like to request a free ticket and additional financial assistance"),
+    ]
+
     applicant = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='grant_application', on_delete=models.CASCADE)
-    amount_requested = models.IntegerField()
-    would_like_ticket_set_aside = models.BooleanField()
+
+    about_you = models.TextField(blank=False)
+    about_why = models.TextField(blank=False)
+
+    requested_ticket_only = models.BooleanField(blank=False, choices=REQUESTED_TICKET_ONLY_CHOICES)
+
+    amount_requested = models.TextField(blank=True)
+    cost_breakdown = models.TextField(blank=True)
+
     sat = models.BooleanField()
     sun = models.BooleanField()
     mon = models.BooleanField()
     tue = models.BooleanField()
     wed = models.BooleanField()
-    about_you = models.TextField()
-    amount_offered = models.IntegerField(default=0)
-    requested_ticket_only = models.BooleanField(default=False)
-    special_reply_required = models.BooleanField(default=False)
 
     id_scrambler = Scrambler(4000)
 
