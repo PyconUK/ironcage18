@@ -39,12 +39,12 @@ class ProposalForm(forms.ModelForm):
         }
 
         help_texts = {
-            'title': 'Limit: 60 characters.',
-            'subtitle': 'Limit: 120 characters.  Optional.',
+            'title': 'Limit: 60 characters. Required.',
+            'subtitle': 'Limit: 120 characters. Optional.',
             'copresenter_names': 'If you are presenting with anybody else, please list their names here.',
-            'description': 'If your session is selected, this is the basis of what will be published in the programme.  Limit: 300 words.',
-            'outline': 'An outline of your session is optional, but helps the programme committee. A proposal with an outline is more likely to be selected than one without. More detail, including timings, is better. The outline will not be published. Limit: 300 words.',
+            'description': 'If your session is selected, this is the basis of what will be published in the programme. Limit: 300 words. Required.',
             'description_private': 'Your answer here is for the benefit of the programme committee, and will not be published. Limit: 300 words.',
+            'outline': 'An outline of your session is optional, but helps the programme committee. A proposal with an outline is more likely to be selected than one without. More detail, including timings, is better. The outline will not be published.',
         }
 
         widgets = {
