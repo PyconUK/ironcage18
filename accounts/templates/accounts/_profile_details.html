@@ -1,5 +1,5 @@
-<div class="card">
-  <div class="card-header">Basic information</div>
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>Basic information</h2></div>
   <div class="card-body">
     <div class="row">
       <div class="col-4 field-name">
@@ -21,8 +21,8 @@
   </div>
 </div>
 
-<div class="card">
-  <div class="card-header">Requirements</div>
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>Requirements</h2></div>
   <div class="card-body">
     <div class="row">
       <div class="col-4 field-name">
@@ -72,8 +72,8 @@
 </div>
 
 {% if user.get_ticket is not None %}
-<div class="card">
-  <div class="card-header">UK Python Association</div>
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>UK Python Association</h2></div>
   <div class="card-body">
     <div class="row">
       <div class="col-4 field-name">
@@ -93,8 +93,8 @@
 </div>
 {% endif %}
 
-<div class="card">
-  <div class="card-header">Demographics</div>
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>Demographics</h2></div>
   <div class="card-body">
     {% if user.dont_ask_demographics %}
       <p>You have opted not to share demographic information with us.</p>

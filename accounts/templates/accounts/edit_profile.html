@@ -4,12 +4,12 @@
 
 {% block content %}
 <div class="row">
-  <div class="col">
+  <div class="col-lg-8 offset-lg-2 col-sm-12">
     <form method="post">
       {% csrf_token %}
 
-      <div class="card">
-        <div class="card-header">Basic information</div>
+      <div class="card bg-danger text-dark">
+        <div class="card-header"><h2>Basic information</h2></div>
         <div class="card-body">
           <div class="row">
             <div class="col-4">
@@ -31,8 +31,8 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">Requirements</div>
+      <div class="card bg-danger text-dark">
+        <div class="card-header"><h2>Requirements</h2></div>
         <div class="card-body">
           <div class="row">
             <div class="col-4">
@@ -88,10 +88,10 @@
       </div>
 
       {% if user.get_ticket is not None %}
-      <div class="card">
-        <div class="card-header">UK Python Association (UKPA)</div>
+      <div class="card bg-danger text-dark">
+        <div class="card-header"><h2>UK Python Association (UKPA)</h2></div>
         <div class="card-body">
-          <p>You can read more details about the UKPA and becoming a member on the <a href="http://2017.pyconuk.org/ukpa/">conference website</a></p>
+          <p>You can read more details about the UKPA and becoming a member on the <a href="https://2018.pyconuk.org/ukpa/">conference website</a></p>
           <div class="row">
             <div class="col-4">
               <label>Do you wish to become a member of the UKPA?</label>
@@ -111,8 +111,8 @@
       </div>
       {% endif %}
 
-      <div class="card">
-        <div class="card-header">Demographics</div>
+      <div class="card bg-danger text-dark">
+        <div class="card-header"><h2>Demographics</h2></div>
         <div class="card-body">
           <p>All fields are optional, and if you'd prefer not to share this information with us, just click "Don't ask me about this" below.</p>
           <div class="row">
