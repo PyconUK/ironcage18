@@ -62,7 +62,7 @@ class TicketForOthersFormSetTests(TestCase):
         expected = {
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '2',
-            'form-0-days': ['fri', 'sat'],
+            'form-0-days': ['sun', 'mon'],
             'form-0-email_addr': 'bob@example.com',
             'form-1-days': ['sat', 'sun'],
             'form-1-email_addr': 'carol@example.com',
@@ -74,7 +74,7 @@ class TicketForOthersFormSetTests(TestCase):
         expected = {
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '2',
-            'form-0-days': ['fri', 'sat'],
+            'form-0-days': ['sun', 'mon'],
             'form-0-email_addr': 'bob@example.com',
             'form-1-days': ['sat', 'sun'],
             'form-1-email_addr': 'carol@example.com',

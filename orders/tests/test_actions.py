@@ -54,12 +54,12 @@ class ConfirmOrderTests(TestCase):
 
         self.assertEqual(row1.cost_excl_vat, 75)
         self.assertEqual(row1.item_descr, '2-day individual-rate ticket')
-        self.assertEqual(row1.item_descr_extra, 'Friday, Saturday')
+        self.assertEqual(row1.item_descr_extra, 'Sunday, Monday')
 
         ticket1 = row1.item
         self.assertIsNone(ticket1.owner)
         self.assertEqual(ticket1.rate, 'individual')
-        self.assertEqual(ticket1.days(), ['Friday', 'Saturday'])
+        self.assertEqual(ticket1.days(), ['Sunday', 'Monday'])
 
         invitation1 = ticket1.invitation()
         self.assertEqual(invitation1.email_addr, 'bob@example.com')
@@ -106,12 +106,12 @@ class ConfirmOrderTests(TestCase):
 
         self.assertEqual(row2.cost_excl_vat, 75)
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
-        self.assertEqual(row2.item_descr_extra, 'Friday, Saturday')
+        self.assertEqual(row2.item_descr_extra, 'Sunday, Monday')
 
         ticket2 = row2.item
         self.assertIsNone(ticket2.owner)
         self.assertEqual(ticket2.rate, 'individual')
-        self.assertEqual(ticket2.days(), ['Friday', 'Saturday'])
+        self.assertEqual(ticket2.days(), ['Sunday', 'Monday'])
 
         invitation2 = ticket2.invitation()
         self.assertEqual(invitation2.email_addr, 'bob@example.com')

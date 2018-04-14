@@ -51,8 +51,8 @@ class CreatePendingOrderTests(TestCase):
             billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
             rate='individual',
             email_addrs_and_days_for_others=[
-                ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),
+                ('bob@example.com', ['sun', 'mon']),
             ]
         )
 
@@ -72,8 +72,8 @@ class CreatePendingOrderTests(TestCase):
             rate='individual',
             days_for_self=['sat', 'sun', 'mon'],
             email_addrs_and_days_for_others=[
-                ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),
+                ('bob@example.com', ['sun', 'mon']),
             ]
         )
 
@@ -120,8 +120,8 @@ class UpdatePendingOrderTests(TestCase):
             billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
             rate='individual',
             email_addrs_and_days_for_others=[
-                ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),
+                ('bob@example.com', ['sun', 'mon']),
             ]
         )
 
@@ -158,8 +158,8 @@ class UpdatePendingOrderTests(TestCase):
             rate='individual',
             days_for_self=['fri', 'sat', 'sun'],
             email_addrs_and_days_for_others=[
-                ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),
+                ('bob@example.com', ['sun', 'mon']),
             ]
         )
 
