@@ -16,6 +16,12 @@
     <h4>{{ form.description.label }}</h4>
     <div>{{ proposal.description|linebreaks }}</div>
 
+    {% if proposal.description_private %}
+      <hr>
+      <h4>{{ form.description_private.label }}</h4>
+      <div>{{ proposal.description_private|linebreaks }}</div>
+    {% endif %}
+
     {% if proposal.outline %}
       <hr>
       <h4>{{ form.outline.label }}</h4>
