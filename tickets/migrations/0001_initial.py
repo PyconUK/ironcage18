@@ -19,11 +19,11 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('rate', models.CharField(max_length=40)),
-                ('thu', models.BooleanField()),
-                ('fri', models.BooleanField()),
                 ('sat', models.BooleanField()),
                 ('sun', models.BooleanField()),
                 ('mon', models.BooleanField()),
+                ('tue', models.BooleanField()),
+                ('wed', models.BooleanField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('owner', models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),

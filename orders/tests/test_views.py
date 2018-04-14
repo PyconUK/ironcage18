@@ -19,7 +19,7 @@ class OrderTests(TestCase):
         <tr>
             <td>Alice</td>
             <td>3-day individual-rate ticket</td>
-            <td>Thursday, Friday, Saturday</td>
+            <td>Saturday, Sunday, Monday</td>
             <td>£126</td>
         </tr>
         ''', html=True)
@@ -36,7 +36,7 @@ class OrderTests(TestCase):
         <tr>
             <td>bob@example.com</td>
             <td>2-day individual-rate ticket</td>
-            <td>Friday, Saturday</td>
+            <td>Sunday, Monday</td>
             <td>£90</td>
         </tr>
         ''', html=True)
@@ -45,7 +45,7 @@ class OrderTests(TestCase):
         <tr>
             <td>carol@example.com</td>
             <td>2-day individual-rate ticket</td>
-            <td>Saturday, Sunday</td>
+            <td>Monday, Tuesday</td>
             <td>£90</td>
         </tr>
         ''', html=True)
@@ -62,7 +62,7 @@ class OrderTests(TestCase):
         <tr>
             <td>Alice</td>
             <td>3-day individual-rate ticket</td>
-            <td>Thursday, Friday, Saturday</td>
+            <td>Saturday, Sunday, Monday</td>
             <td>£126</td>
         </tr>
         ''', html=True)
@@ -71,7 +71,7 @@ class OrderTests(TestCase):
         <tr>
             <td>bob@example.com</td>
             <td>2-day individual-rate ticket</td>
-            <td>Friday, Saturday</td>
+            <td>Sunday, Monday</td>
             <td>£90</td>
         </tr>
         ''', html=True)
@@ -80,7 +80,7 @@ class OrderTests(TestCase):
         <tr>
             <td>carol@example.com</td>
             <td>2-day individual-rate ticket</td>
-            <td>Saturday, Sunday</td>
+            <td>Monday, Tuesday</td>
             <td>£90</td>
         </tr>
         ''', html=True)
@@ -102,7 +102,7 @@ class OrderTests(TestCase):
         <tr>
             <td>Alice</td>
             <td>3-day individual-rate ticket</td>
-            <td>Thursday, Friday, Saturday</td>
+            <td>Saturday, Sunday, Monday</td>
             <td>£126</td>
         </tr>
         ''', html=True)
@@ -111,7 +111,7 @@ class OrderTests(TestCase):
         <tr>
             <td>bob@example.com</td>
             <td>2-day individual-rate ticket</td>
-            <td>Friday, Saturday</td>
+            <td>Sunday, Monday</td>
             <td>£90</td>
         </tr>
         ''', html=True)
@@ -120,7 +120,7 @@ class OrderTests(TestCase):
         <tr>
             <td>Refunded</td>
             <td>2-day individual-rate ticket</td>
-            <td>Saturday, Sunday</td>
+            <td>Monday, Tuesday</td>
             <td>£90</td>
         </tr>
         ''', html=True)
@@ -139,7 +139,7 @@ class OrderTests(TestCase):
         <tr>
             <td>Alice</td>
             <td>3-day individual-rate ticket</td>
-            <td>Thursday, Friday, Saturday</td>
+            <td>Saturday, Sunday, Monday</td>
             <td>£126</td>
         </tr>
         ''', html=True)

@@ -67,7 +67,7 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'self',
             'rate': 'individual',
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
             'billing_name': 'Alice Apple',
             'billing_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
@@ -86,7 +86,7 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'self',
             'rate': 'corporate',
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
             'billing_name': 'Sirius Cybernetics Corp.',
             'billing_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
@@ -112,9 +112,9 @@ class NewOrderTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon'],
+            'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 2 tickets')
@@ -124,7 +124,7 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'self and others',
             'rate': 'individual',
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
             'billing_name': 'Alice Apple',
             'billing_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',
@@ -132,9 +132,9 @@ class NewOrderTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon'],
+            'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 3 tickets')
@@ -184,7 +184,7 @@ class OrderEditTests(TestCase):
             'rate': 'corporate',
             'billing_name': 'Sirius Cybernetics Corp.',
             'billing_addr': 'Eadrax, Sirius Tau',
-            'days': ['fri', 'sat', 'sun'],
+            'days': ['sun', 'mon', 'tue'],
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -208,9 +208,9 @@ class OrderEditTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon'],
+            'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 2 tickets')
@@ -222,15 +222,15 @@ class OrderEditTests(TestCase):
             'rate': 'corporate',
             'billing_name': 'Sirius Cybernetics Corp.',
             'billing_addr': 'Eadrax, Sirius Tau',
-            'days': ['fri', 'sat', 'sun'],
+            'days': ['sun', 'mon', 'tue'],
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon'],
+            'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 3 tickets')
