@@ -14,11 +14,11 @@ from . import prices
 class Ticket(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     rate = models.CharField(max_length=40)
-    thu = models.BooleanField()
-    fri = models.BooleanField()
     sat = models.BooleanField()
     sun = models.BooleanField()
     mon = models.BooleanField()
+    tue = models.BooleanField()
+    wed = models.BooleanField()
     order_rows = GenericRelation('orders.OrderRow')
 
     created_at = models.DateTimeField(auto_now_add=True)
