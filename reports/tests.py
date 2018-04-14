@@ -191,7 +191,7 @@ class TestTicketsReport(ReportsTestCase):
             'title': 'All tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [links[0], 'individual', 'Alice', 'Thursday, Friday, Saturday', '£126', 'Assigned'],
+                [links[0], 'individual', 'Alice', 'Saturday, Sunday, Monday', '£126', 'Assigned'],
                 [links[1], 'individual', 'bob@example.com', 'Sunday, Monday', '£90', 'Unclaimed'],
                 [links[2], 'individual', 'carol@example.com', 'Monday, Tuesday', '£90', 'Unclaimed'],
             ],
