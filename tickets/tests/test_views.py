@@ -112,7 +112,7 @@ class NewOrderTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
@@ -132,7 +132,7 @@ class NewOrderTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
@@ -208,7 +208,7 @@ class OrderEditTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
@@ -228,7 +228,7 @@ class OrderEditTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
