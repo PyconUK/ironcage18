@@ -64,7 +64,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-INITIAL_FORMS': '2',
             'form-0-days': ['sun', 'mon'],
             'form-0-email_addr': 'bob@example.com',
-            'form-1-days': ['sat', 'sun'],
+            'form-1-days': ['mon', 'tue'],
             'form-1-email_addr': 'carol@example.com',
         }
         self.assertEqual(TicketForOthersFormSet.from_pending_order(order).data, expected)
@@ -76,7 +76,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-INITIAL_FORMS': '2',
             'form-0-days': ['sun', 'mon'],
             'form-0-email_addr': 'bob@example.com',
-            'form-1-days': ['sat', 'sun'],
+            'form-1-days': ['mon', 'tue'],
             'form-1-email_addr': 'carol@example.com',
         }
         self.assertEqual(TicketForOthersFormSet.from_pending_order(order).data, expected)

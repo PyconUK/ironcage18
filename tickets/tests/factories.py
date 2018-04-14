@@ -34,8 +34,8 @@ def create_pending_order_for_others(user=None, rate=None):
         billing_details=billing_details,
         rate=rate,
         email_addrs_and_days_for_others=[
-            ('carol@example.com', ['sat', 'sun']),
             ('bob@example.com', ['sun', 'mon']),
+            ('carol@example.com', ['mon', 'tue']),
         ]
     )
 
@@ -54,8 +54,8 @@ def create_pending_order_for_self_and_others(user=None, rate=None):
         rate=rate,
         days_for_self=['thu', 'fri', 'sat'],
         email_addrs_and_days_for_others=[
-            ('carol@example.com', ['sat', 'sun']),
             ('bob@example.com', ['sun', 'mon']),
+            ('carol@example.com', ['mon', 'tue']),
         ]
     )
 
