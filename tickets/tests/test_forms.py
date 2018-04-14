@@ -192,7 +192,7 @@ class TicketForOthersFormSetTests(TestCase):
         formset.errors  # Trigger full clean
         self.assertEqual(
             formset.email_addrs_and_days,
-            [('test1@example.com', ['thu', 'fri']), ('test2@example.com', ['sat', 'sun', 'mon'])]
+            [('test1@example.com', ['sat', 'sun']), ('test2@example.com', ['mon', 'tue', 'wed'])]
         )
 
     def test_email_addrs_and_days_with_valid_data_and_deleted_form(self):

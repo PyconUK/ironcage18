@@ -143,12 +143,12 @@ class UpdatePendingOrderTests(TestCase):
 
         self.assertEqual(row2.cost_excl_vat, 75)
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
-        self.assertEqual(row2.item_descr_extra, 'Saturday, Sunday')
+        self.assertEqual(row2.item_descr_extra, 'Monday, Tuesday')
 
         ticket2 = row2.item
         self.assertEqual(ticket1.owner, None)
         self.assertEqual(ticket2.rate, 'individual')
-        self.assertEqual(ticket2.days(), ['Saturday', 'Sunday'])
+        self.assertEqual(ticket2.days(), ['Monday', 'Tuesday'])
 
     def test_order_for_self_to_order_for_self_and_others(self):
         order = factories.create_pending_order_for_self()
@@ -156,7 +156,7 @@ class UpdatePendingOrderTests(TestCase):
             order,
             billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
             rate='individual',
-            days_for_self=['fri', 'sat', 'sun'],
+            days_for_self=['sun', 'mon', 'tue'],
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['sun', 'mon']),
                 ('carol@example.com', ['mon', 'tue']),
@@ -190,12 +190,12 @@ class UpdatePendingOrderTests(TestCase):
 
         self.assertEqual(row3.cost_excl_vat, 75)
         self.assertEqual(row3.item_descr, '2-day individual-rate ticket')
-        self.assertEqual(row3.item_descr_extra, 'Saturday, Sunday')
+        self.assertEqual(row3.item_descr_extra, 'Monday, Tuesday')
 
         ticket3 = row3.item
         self.assertEqual(ticket3.owner, None)
         self.assertEqual(ticket3.rate, 'individual')
-        self.assertEqual(ticket3.days(), ['Saturday', 'Sunday'])
+        self.assertEqual(ticket3.days(), ['Monday', 'Tuesday'])
 
     def test_individual_order_to_corporate_order(self):
         order = factories.create_pending_order_for_self()
@@ -203,7 +203,7 @@ class UpdatePendingOrderTests(TestCase):
             order,
             billing_details={'name': 'Sirius Cybernetics Corp.', 'addr': 'Eadrax, Sirius Tau'},
             rate='corporate',
-            days_for_self=['fri', 'sat', 'sun'],
+            days_for_self=['sun', 'mon', 'tue'],
         )
 
         self.assertEqual(order.status, 'pending')
@@ -228,7 +228,7 @@ class UpdatePendingOrderTests(TestCase):
             order,
             billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
             rate='individual',
-            days_for_self=['fri', 'sat', 'sun'],
+            days_for_self=['sun', 'mon', 'tue'],
         )
 
         self.assertEqual(order.status, 'pending')

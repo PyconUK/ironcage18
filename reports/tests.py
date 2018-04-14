@@ -56,11 +56,11 @@ class TestAttendanceByDayReport(ReportsTestCase):
             'title': 'Attendance by day',
             'headings': ['Day', 'Individual rate', 'Corporate rate', 'Education rate', 'Free', 'Total'],
             'rows': [
-                ['Thursday', 3, 2, 0, 0, 5],
-                ['Friday', 2, 2, 0, 0, 4],
-                ['Saturday', 2, 1, 0, 0, 3],
-                ['Sunday', 1, 1, 0, 0, 2],
-                ['Monday', 1, 0, 0, 0, 1],
+                ['Saturday', 3, 2, 0, 0, 5],
+                ['Sunday', 2, 2, 0, 0, 4],
+                ['Monday', 2, 1, 0, 0, 3],
+                ['Tuesday', 1, 1, 0, 0, 2],
+                ['Wednesday', 1, 0, 0, 0, 1],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)

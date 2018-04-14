@@ -17,7 +17,7 @@ def create_pending_order_for_self(user=None, rate=None, num_days=None):
         purchaser=user,
         billing_details=billing_details,
         rate=rate,
-        days_for_self=['thu', 'fri', 'sat', 'sun', 'mon'][:num_days],
+        days_for_self=['sat', 'sun', 'mon', 'tue', 'wed'][:num_days],
     )
 
 
