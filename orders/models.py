@@ -189,7 +189,7 @@ class Order(models.Model, SalesRecord):
 
         email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
         if email_addrs_and_days_for_others is not None:
-            for email_addr, days in email_addrs_and_days_for_others:
+            for email_addr, name, days in email_addrs_and_days_for_others:
                 ticket = Ticket.objects.build(
                     rate=self.unconfirmed_details['rate'],
                     email_addr=email_addr,
