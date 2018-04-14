@@ -1,20 +1,23 @@
-<div>You have requested a grant for £{{ application.amount_requested }}.</div>
-<hr />
+<div class="card">
+    <div class="card-body">
+        <p>You have requested a grant for &pound;{{ application.amount_requested }}.</p>
+        <hr>
 
-<h4>About you</h4>
-<div>{{ application.about_you|linebreaks }}</div>
-<hr />
+        <h4>About you</h4>
+        <p>{{ application.about_you|linebreaks }}</p>
+        <hr>
 
-{% if application.days %}
-<div>You are planning to come on {{ application.days|join:', ' }}.</div>
-{% else %}
-<div>You have not told us which days you plan to come for.</div>
-{% endif %}
-<hr />
+        {% if application.days %}
+            <p>You are planning to come on {{ application.days|join:', ' }}.</p>
+        {% else %}
+            <p>You have not told us which days you plan to come for.</p>
+        {% endif %}
+        <hr>
 
-{% if application.would_like_ticket_set_aside %}
-<div>You have requested that we reserve a ticket for you until your application is processed.</div>
-{% else %}
-<div>You have not requested that we reserve a ticket for you until your application is processed.</div>
-{% endif %}
-<hr />
+        {% if application.would_like_ticket_set_aside %}
+            <p>You have requested that we reserve a ticket for you until your application is processed.</p>
+        {% else %}
+            <p>You have not requested that we reserve a ticket for you until your application is processed.</p>
+        {% endif %}
+    </div>
+</div>

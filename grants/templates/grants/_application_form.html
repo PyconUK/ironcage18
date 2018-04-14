@@ -1,20 +1,25 @@
-{% load bootstrap3 %}
+{% load bootstrap4 %}
 
 <form method="post">
   {% csrf_token %}
 
-  {% bootstrap_field form.amount_requested addon_before='£' %}
-  <hr />
-  {% bootstrap_field form.would_like_ticket_set_aside %}
-  <hr />
-  {% bootstrap_field form.about_you %}
-  <hr />
-  <div class="form-group"><label class="control-label" for="{{ form.days.auto_id }}">Which days are you coming?</label>
-    <div class="btn-group" data-toggle="buttons">
-      {{ form.days }}
+  <div class="card">
+    <div class="card-header">Your application</div>
+    <div class="card-body">
+      {% bootstrap_field form.amount_requested addon_before='£' addon_before_class='input-group-text' layout='horizontal' %}
+      <hr />
+      {% bootstrap_field form.would_like_ticket_set_aside %}
+      <hr />
+      {% bootstrap_field form.about_you layout='horizontal' %}
+      <hr />
+      <div class="form-group"><label class="control-label" for="{{ form.days.auto_id }}">Which days are you coming?</label>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          {{ form.days }}
+        </div>
+      </div>
     </div>
-</div>
-  <hr />
+  </div>
+
   {% buttons %}
   <button type="submit" class="btn btn-primary">Submit</button>
   {% endbuttons %}
