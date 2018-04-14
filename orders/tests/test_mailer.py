@@ -7,6 +7,7 @@ from tickets.tests import factories
 
 from orders.mailer import send_order_confirmation_mail
 
+
 class MailerTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -66,4 +67,3 @@ class MailerTests(TestCase):
         self.assertTrue(re.search('bob@example.com', email.body))
         self.assertTrue(re.search('carol@example.com', email.body))
         self.assertTrue(re.search('We look forward to seeing you in Cardiff', email.body))
-
