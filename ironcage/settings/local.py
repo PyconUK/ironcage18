@@ -22,3 +22,4 @@ LOGGING['loggers']['django']['handlers'].remove('slack')
 # Closing times
 bst = timezone(timedelta(hours=1))
 CFP_CLOSE_AT = datetime(2018, 6, 15, 12, 0, tzinfo=bst)
+GRANT_APPLICATIONS_CLOSE_AT = datetime(2018, 6, 15, 12, 0, tzinfo=bst)
