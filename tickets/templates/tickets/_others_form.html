@@ -1,20 +1,29 @@
 <div data-formset-form>
   <div class="row">
-    <div class="col-4">
+    <div class="col-12 col-md-4 col-lg-3">
+      <label>Email address</label>
+    </div>
+    <div class="col-12 col-md-8 col-lg-4">
       {{ form.email_addr }}
     </div>
-    <div class="col-4">
+    <div class="col-12 col-md-4 col-lg-1">
+      <label>Name</label>
+    </div>
+    <div class="col-12 col-md-8 col-lg-4">
       {{ form.name }}
     </div>
-    <div class="col-3">
+  </div>
+  <div class="row mt-3">
+    <div class="col-11">
       <div class="btn-group btn-group-toggle{% if form.days.errors %} error{% endif %}" data-toggle="buttons">
         {{ form.days }}
       </div>
     </div>
     <div class="col-1">
       <button type="button" data-formset-delete-button class="btn btn-danger">&times;</button>
-      <div class="invisible">{{ form.DELETE }}</div>
+      <div style="display: none">{{ form.DELETE }}</div>
     </div>
   </div>
+  <hr>
 </div>
 
