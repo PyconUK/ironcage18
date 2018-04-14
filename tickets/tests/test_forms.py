@@ -64,8 +64,10 @@ class TicketForOthersFormSetTests(TestCase):
             'form-INITIAL_FORMS': '2',
             'form-0-days': ['sun', 'mon'],
             'form-0-email_addr': 'bob@example.com',
+            'form-0-name': 'Bob',
             'form-1-days': ['mon', 'tue'],
             'form-1-email_addr': 'carol@example.com',
+            'form-1-name': 'Carol',
         }
         self.assertEqual(TicketForOthersFormSet.from_pending_order(order).data, expected)
 
@@ -76,8 +78,10 @@ class TicketForOthersFormSetTests(TestCase):
             'form-INITIAL_FORMS': '2',
             'form-0-days': ['sun', 'mon'],
             'form-0-email_addr': 'bob@example.com',
+            'form-0-name': 'Bob',
             'form-1-days': ['mon', 'tue'],
             'form-1-email_addr': 'carol@example.com',
+            'form-1-name': 'Carol',
         }
         self.assertEqual(TicketForOthersFormSet.from_pending_order(order).data, expected)
 
@@ -88,8 +92,10 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
+            'form-1-name': 'Test 2',
             'form-1-days': ['mon', 'tue', 'wed']
         })
 
@@ -103,6 +109,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': '',
         })
@@ -117,8 +124,10 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': '',
+            'form-1-name': 'Test 2',
             'form-1-days': ['mon', 'tue', 'wed']
         })
 
@@ -128,6 +137,26 @@ class TicketForOthersFormSetTests(TestCase):
             [{}, {'email_addr': ['This field is required.']}]
         )
 
+    def test_is_not_valid_with_no_name(self):
+        post_data = build_querydict({
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
+            'form-0-days': ['sat', 'sun'],
+            'form-1-email_addr': 'test2@example.com',
+            'form-1-name': '',
+            'form-1-days': ['mon', 'tue', 'wed']
+        })
+
+        formset = TicketForOthersFormSet(post_data)
+        self.assertEqual(
+            formset.errors,
+            [{}, {'name': ['This field is required.']}]
+        )
+
     def test_is_not_valid_with_no_days(self):
         post_data = build_querydict({
             'form-TOTAL_FORMS': '2',
@@ -135,8 +164,10 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
+            'form-1-name': 'Test 2',
         })
 
         formset = TicketForOthersFormSet(post_data)
@@ -158,7 +189,7 @@ class TicketForOthersFormSetTests(TestCase):
         formset = TicketForOthersFormSet(post_data)
         self.assertEqual(
             formset.errors,
-            [{'email_addr': ['This field is required.'], 'days': ['This field is required.']}, {}]
+            [{'email_addr': ['This field is required.'], 'name': ['This field is required.'], 'days': ['This field is required.']}, {}]
         )
 
     def test_is_not_valid_with_all_deleted_forms(self):
@@ -183,8 +214,10 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
+            'form-1-name': 'Test 2',
             'form-1-days': ['mon', 'tue', 'wed']
         })
 
@@ -192,7 +225,7 @@ class TicketForOthersFormSetTests(TestCase):
         formset.errors  # Trigger full clean
         self.assertEqual(
             formset.email_addrs_and_days,
-            [('test1@example.com', ['sat', 'sun']), ('test2@example.com', ['mon', 'tue', 'wed'])]
+            [('test1@example.com', 'Test 1', ['sat', 'sun']), ('test2@example.com', 'Test 2', ['mon', 'tue', 'wed'])]
         )
 
     def test_email_addrs_and_days_with_valid_data_and_deleted_form(self):
@@ -202,8 +235,10 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': '',
+            'form-1-name': 'Test 2',
             'form-1-DELETE': 'on',
         })
 
@@ -211,5 +246,5 @@ class TicketForOthersFormSetTests(TestCase):
         formset.errors  # Trigger full clean
         self.assertEqual(
             formset.email_addrs_and_days,
-            [('test1@example.com', ['sat', 'sun'])]
+            [('test1@example.com', 'Test 1', ['sat', 'sun'])]
         )

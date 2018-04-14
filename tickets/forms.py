@@ -83,6 +83,9 @@ class TicketForOtherForm(forms.Form):
     email_addr = forms.EmailField(
         widget=EmailInput(attrs={'class': 'form-control'}),
     )
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )
     days = forms.MultipleChoiceField(
         choices=DAY_CHOICES,
         widget=ButtonsCheckbox
@@ -101,8 +104,9 @@ class BaseTicketForOthersFormset(forms.BaseFormSet):
                 continue
 
             email_addr = form.cleaned_data['email_addr']
+            name = form.cleaned_data['name']
             days = form.cleaned_data['days']
-            self.email_addrs_and_days.append((email_addr, days))
+            self.email_addrs_and_days.append((email_addr, name, days))
 
         if not self.email_addrs_and_days:
             raise ValidationError('No valid forms')
@@ -121,8 +125,9 @@ class BaseTicketForOthersFormset(forms.BaseFormSet):
             'form-INITIAL_FORMS': str(len(email_addrs_and_days_for_others)),
         }
 
-        for ix, (email_addr, days) in enumerate(email_addrs_and_days_for_others):
+        for ix, (email_addr, name, days) in enumerate(email_addrs_and_days_for_others):
             data[f'form-{ix}-email_addr'] = email_addr
+            data[f'form-{ix}-name'] = name
             data[f'form-{ix}-days'] = days
 
         return cls(data)

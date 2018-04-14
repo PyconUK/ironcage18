@@ -3,7 +3,10 @@
     <div class="col-4">
       {{ form.email_addr }}
     </div>
-    <div class="col-6">
+    <div class="col-4">
+      {{ form.name }}
+    </div>
+    <div class="col-3">
       <div class="btn-group btn-group-toggle{% if form.days.errors %} error{% endif %}" data-toggle="buttons">
         {{ form.days }}
       </div>

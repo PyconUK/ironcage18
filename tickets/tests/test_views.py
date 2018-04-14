@@ -112,8 +112,10 @@ class NewOrderTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
+            'form-1-name': 'Test 2',
             'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
@@ -132,8 +134,10 @@ class NewOrderTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
+            'form-1-name': 'Test 2',
             'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
@@ -208,8 +212,10 @@ class OrderEditTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
+            'form-1-name': 'Test 2',
             'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
@@ -228,8 +234,10 @@ class OrderEditTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
+            'form-1-name': 'Test 2',
             'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)

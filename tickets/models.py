@@ -122,6 +122,7 @@ class Ticket(models.Model):
 class TicketInvitation(models.Model):
     ticket = models.ForeignKey(Ticket, related_name='invitations', on_delete=models.CASCADE)  # TODO make this a OneToOneField
     email_addr = models.EmailField(unique=True)
+    name = models.CharField(max_length=100)
     token = models.CharField(max_length=12, unique=True)  # An index is automatically created since unique=True
     status = models.CharField(max_length=10, default='unclaimed')
 
