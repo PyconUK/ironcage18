@@ -248,23 +248,23 @@ class CFPClosedTests(TestCase):
 
     def test_get_new_proposal(self):
         rsp = self.client.get('/cfp/proposals/new/', follow=True)
-        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertContains(rsp, 'the Call For Proposals has closed')
         self.assertRedirects(rsp, '/')
 
     def test_get_new_proposal_with_token(self):
         rsp = self.client.get('/cfp/proposals/new/?deadline-bypass-token=abc123')
-        self.assertNotContains(rsp, 'the Call For Participation has closed')
+        self.assertNotContains(rsp, 'the Call For Proposals has closed')
         self.assertContains(rsp, '<form method="post">')
 
     def test_get_new_proposal_with_incorrect_token(self):
         rsp = self.client.get('/cfp/proposals/new/?deadline-bypass-token=321cba', follow=True)
-        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertContains(rsp, 'the Call For Proposals has closed')
         self.assertRedirects(rsp, '/')
 
     @override_settings(CFP_DEADLINE_BYPASS_TOKEN=None)
     def test_get_new_proposal_when_token_not_set_in_setting(self):
         rsp = self.client.get('/cfp/proposals/new/', follow=True)
-        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertContains(rsp, 'the Call For Proposals has closed')
         self.assertRedirects(rsp, '/')
 
     def test_post_new_proposal(self):
@@ -282,7 +282,7 @@ class CFPClosedTests(TestCase):
             'ticket': True,
         }
         rsp = self.client.post('/cfp/proposals/new/', form_data, follow=True)
-        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertContains(rsp, 'the Call For Proposals has closed')
         self.assertRedirects(rsp, '/')
 
     def test_post_new_proposal_with_token(self):
@@ -305,12 +305,12 @@ class CFPClosedTests(TestCase):
 
     def test_get_proposal_edit(self):
         rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', follow=True)
-        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertContains(rsp, 'the Call For Proposals has closed')
         self.assertRedirects(rsp, f'/cfp/proposals/{self.proposal.proposal_id}/')
 
     def test_get_proposal_edit_with_token(self):
         rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/edit/?deadline-bypass-token=abc123', follow=True)
-        self.assertNotContains(rsp, 'the Call For Participation has closed')
+        self.assertNotContains(rsp, 'the Call For Proposals has closed')
         self.assertContains(rsp, 'Update your proposal')
 
     def test_post_proposal_edit(self):
@@ -327,7 +327,7 @@ class CFPClosedTests(TestCase):
             'ticket': True,
         }
         rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', form_data, follow=True)
-        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertContains(rsp, 'the Call For Proposals has closed')
         self.assertRedirects(rsp, f'/cfp/proposals/{self.proposal.proposal_id}/')
 
     def test_post_proposal_edit_with_token(self):
@@ -344,7 +344,7 @@ class CFPClosedTests(TestCase):
             'ticket': True,
         }
         rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/?deadline-bypass-token=abc123', form_data, follow=True)
-        self.assertNotContains(rsp, 'the Call For Participation has closed')
+        self.assertNotContains(rsp, 'the Call For Proposals has closed')
         self.assertContains(rsp, 'Thank you for updating your proposal')
 
     def test_get_proposal(self):
