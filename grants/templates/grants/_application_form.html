@@ -10,10 +10,18 @@
       <hr>
       {% bootstrap_field form.about_why %}
       <hr>
-      <div class="form-group"><label class="control-label" for="{{ form.days.auto_id }}">On which days do you plan to attend the conference?</label>
-        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <div class="form-group{% if form.days.errors %} is-invalid{% endif %}">
+        <label class="control-label" for="{{ form.days.auto_id }}">On which days do you plan to attend the conference?</label>
+        <div class="btn-group btn-group-toggle {% if form.days.errors %} is-invalid error{% endif %}" data-toggle="buttons">
           {{ form.days }}
         </div>
+        {% if form.days.errors %}
+          <div class="invalid-feedback">
+            {% for error in form.days.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
       <hr>
       {% bootstrap_field form.requested_ticket_only %}
