@@ -8,6 +8,7 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 
 from ironcage.utils import Scrambler
+from grants.models import Application
 from tickets.models import Ticket
 
 from .managers import UserManager
@@ -127,3 +128,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.nationality,
             self.country_of_residence
         ])
+
+    def get_grant_application(self):
+        try:
+            return self.grant_application
+        except Application.DoesNotExist:
+            return None
