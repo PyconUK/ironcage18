@@ -36,6 +36,7 @@
             <a href="{% url 'tickets:new_order' %}">Order more conference tickets</a>
           {% endif %}
         {% else %}
+          <hr>
           View your orders:
           <ul>
             {% for order in orders %}
