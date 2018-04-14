@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'reports',
     'orders',
     'tickets',
+    'cfp',
     'ironcage',
 
     'bootstrap4',

@@ -18,10 +18,13 @@ def index(request):
         context = {
             'ticket': user.get_ticket(),
             'orders': user.orders.all(),
+            'proposals': user.proposals.all(),
+            'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
             'ticket_sales_open': datetime.now(timezone.utc) < settings.TICKET_SALES_CLOSE_AT,
         }
     else:
         context = {
+            'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
             'ticket_sales_open': datetime.now(timezone.utc) < settings.TICKET_SALES_CLOSE_AT,
         }
 

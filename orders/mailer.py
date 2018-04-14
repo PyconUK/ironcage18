@@ -26,4 +26,3 @@ def send_order_confirmation_mail(order):
         body,
         order.purchaser.email_addr,
     )
-

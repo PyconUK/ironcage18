@@ -10,3 +10,8 @@ form label.btn {
 .field-name {
   font-weight: bold;
 }
+
+input[type='checkbox'] {
+  position: relative;
+  top: -2px;
+}

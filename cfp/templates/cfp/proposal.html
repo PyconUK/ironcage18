@@ -1,0 +1,13 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col">
+    {% include './_proposal_details.html' %}
+
+    {% if cfp_open %}
+    <a href="{% url 'cfp:proposal_edit' proposal.proposal_id %}" class="btn btn-primary">Update your proposal</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
