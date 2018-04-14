@@ -55,6 +55,7 @@ def new_application(request):
 
     context = {
         'form': form,
+        'js_paths': ['grants/application_form.js'],
     }
     return render(request, 'grants/new_application.html', context)
 
@@ -98,6 +99,7 @@ def application_edit(request, application_id):
 
     context = {
         'form': form,
+        'js_paths': ['grants/application_form.js'],
     }
     return render(request, 'grants/application_edit.html', context)
 

@@ -3,20 +3,29 @@
 <form method="post">
   {% csrf_token %}
 
-  <div class="card">
-    <div class="card-header">Your application</div>
+  <div class="card bg-primary">
+    <div class="card-header"><h2>About You</h2></div>
     <div class="card-body">
-      {% bootstrap_field form.amount_requested addon_before='£' addon_before_class='input-group-text' layout='horizontal' %}
-      <hr />
-      {% bootstrap_field form.would_like_ticket_set_aside %}
-      <hr />
-      {% bootstrap_field form.about_you layout='horizontal' %}
-      <hr />
-      <div class="form-group"><label class="control-label" for="{{ form.days.auto_id }}">Which days are you coming?</label>
+      {% bootstrap_field form.about_you %}
+      <hr>
+      {% bootstrap_field form.about_why %}
+      <hr>
+      <div class="form-group"><label class="control-label" for="{{ form.days.auto_id }}">On which days do you plan to attend the conference?</label>
         <div class="btn-group btn-group-toggle" data-toggle="buttons">
           {{ form.days }}
         </div>
       </div>
+      <hr>
+      {% bootstrap_field form.requested_ticket_only %}
+    </div>
+  </div>
+
+  <div class="card bg-primary" id="further-assistance">
+    <div class="card-header"><h2>Financial Assistance</h2></div>
+    <div class="card-body">
+      {% bootstrap_field form.amount_requested %}
+      <hr>
+      {% bootstrap_field form.cost_breakdown %}
     </div>
   </div>
 
