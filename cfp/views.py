@@ -3,12 +3,11 @@ from datetime import datetime, timezone
 from django_slack import slack_message
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from django.views.decorators.http import require_POST
 
-from .forms import ProposalForm, ProposalVotingForm
+from .forms import ProposalForm
 from .models import Proposal
 
 
