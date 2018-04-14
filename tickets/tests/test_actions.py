@@ -172,12 +172,12 @@ class UpdatePendingOrderTests(TestCase):
 
         self.assertEqual(row1.cost_excl_vat, 105)
         self.assertEqual(row1.item_descr, '3-day individual-rate ticket')
-        self.assertEqual(row1.item_descr_extra, 'Friday, Saturday, Sunday')
+        self.assertEqual(row1.item_descr_extra, 'Sunday, Monday, Tuesday')
 
         ticket1 = row1.item
         self.assertEqual(ticket1.owner, order.purchaser)
         self.assertEqual(ticket1.rate, 'individual')
-        self.assertEqual(ticket1.days(), ['Friday', 'Saturday', 'Sunday'])
+        self.assertEqual(ticket1.days(), ['Sunday', 'Monday', 'Tuesday'])
 
         self.assertEqual(row2.cost_excl_vat, 75)
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
@@ -215,12 +215,12 @@ class UpdatePendingOrderTests(TestCase):
 
         self.assertEqual(row.cost_excl_vat, 210)
         self.assertEqual(row.item_descr, '3-day corporate-rate ticket')
-        self.assertEqual(row.item_descr_extra, 'Friday, Saturday, Sunday')
+        self.assertEqual(row.item_descr_extra, 'Sunday, Monday, Tuesday')
 
         ticket = row.item
         self.assertEqual(ticket.owner, order.purchaser)
         self.assertEqual(ticket.rate, 'corporate')
-        self.assertEqual(ticket.days(), ['Friday', 'Saturday', 'Sunday'])
+        self.assertEqual(ticket.days(), ['Sunday', 'Monday', 'Tuesday'])
 
     def test_corporate_order_to_individual_order(self):
         order = factories.create_pending_order_for_self(rate='corporate')
@@ -240,12 +240,12 @@ class UpdatePendingOrderTests(TestCase):
 
         self.assertEqual(row.cost_excl_vat, 105)
         self.assertEqual(row.item_descr, '3-day individual-rate ticket')
-        self.assertEqual(row.item_descr_extra, 'Friday, Saturday, Sunday')
+        self.assertEqual(row.item_descr_extra, 'Sunday, Monday, Tuesday')
 
         ticket = row.item
         self.assertEqual(ticket.owner, order.purchaser)
         self.assertEqual(ticket.rate, 'individual')
-        self.assertEqual(ticket.days(), ['Friday', 'Saturday', 'Sunday'])
+        self.assertEqual(ticket.days(), ['Sunday', 'Monday', 'Tuesday'])
 
 
 class TicketInvitationTests(TestCase):

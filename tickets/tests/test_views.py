@@ -184,7 +184,7 @@ class OrderEditTests(TestCase):
             'rate': 'corporate',
             'billing_name': 'Sirius Cybernetics Corp.',
             'billing_addr': 'Eadrax, Sirius Tau',
-            'days': ['fri', 'sat', 'sun'],
+            'days': ['sun', 'mon', 'tue'],
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -222,7 +222,7 @@ class OrderEditTests(TestCase):
             'rate': 'corporate',
             'billing_name': 'Sirius Cybernetics Corp.',
             'billing_addr': 'Eadrax, Sirius Tau',
-            'days': ['fri', 'sat', 'sun'],
+            'days': ['sun', 'mon', 'tue'],
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
