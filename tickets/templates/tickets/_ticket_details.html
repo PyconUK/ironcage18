@@ -5,12 +5,12 @@
   </tr>
   <tr>
     <th>Days</th>
-    <td>{{ ticket.details.days }}</td>
+    <td>{{ ticket.days_sentence }}</td>
   </tr>
   {% if not ticket.is_free_ticket %}
   <tr>
     <th>Cost (incl. VAT)</th>
-    <td>{{ ticket.details.cost_incl_vat }}</td>
+    <td>&pound;{{ ticket.cost_incl_vat }}</td>
   </tr>
   {% endif %}
   <tr>
