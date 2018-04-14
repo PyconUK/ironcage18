@@ -1,11 +1,11 @@
-<div class="card">
-  <div class="card-header">Basic information</div>
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>Basic information</h2></div>
   <div class="card-body">
     <div class="row">
       <div class="col-4 field-name">
         Name
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {{ user.name }}
       </div>
     </div>
@@ -14,21 +14,21 @@
       <div class="col-4 field-name">
         Email
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {{ user.email_addr }}
       </div>
     </div>
   </div>
 </div>
 
-<div class="card">
-  <div class="card-header">Requirements</div>
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>Requirements</h2></div>
   <div class="card-body">
     <div class="row">
       <div class="col-4 field-name">
         Accessibility
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {% if user.accessibility_reqs_yn == None %}
         unknown
         {% elif user.accessibility_reqs_yn %}
@@ -43,7 +43,7 @@
       <div class="col-4 field-name">
         Childcare
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {% if user.childcare_reqs_yn == None %}
         unknown
         {% elif user.childcare_reqs_yn %}
@@ -58,7 +58,7 @@
       <div class="col-4 field-name">
         Dietary
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {% if user.dietary_reqs_yn == None %}
         unknown
         {% elif user.dietary_reqs_yn %}
@@ -72,14 +72,14 @@
 </div>
 
 {% if user.get_ticket is not None %}
-<div class="card">
-  <div class="card-header">UK Python Association</div>
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>UK Python Association</h2></div>
   <div class="card-body">
     <div class="row">
       <div class="col-4 field-name">
         Membership
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {% if user.is_ukpa_member == None %}
         unknown
         {% elif user.is_ukpa_member %}
@@ -93,8 +93,8 @@
 </div>
 {% endif %}
 
-<div class="card">
-  <div class="card-header">Demographics</div>
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>Demographics</h2></div>
   <div class="card-body">
     {% if user.dont_ask_demographics %}
       <p>You have opted not to share demographic information with us.</p>
@@ -103,7 +103,7 @@
         <div class="col-4 field-name">
           Year of birth
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {{ user.year_of_birth|default:"unknown" }}
         </div>
       </div>
@@ -112,7 +112,7 @@
         <div class="col-4 field-name">
           Gender
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {{ user.gender|default:"unknown" }}
         </div>
       </div>
@@ -121,7 +121,7 @@
         <div class="col-4 field-name">
           Ethnicity
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {% if 'please describe' in user.ethnicity %}
             {{ user.ethnicity_free_text }}
           {% else %}
@@ -134,7 +134,7 @@
         <div class="col-4 field-name">
           Nationality
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {{ user.nationality|default:"unknown" }}
         </div>
       </div>
@@ -143,7 +143,7 @@
         <div class="col-4 field-name">
           Country of residence
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {{ user.country_of_residence|default:"unknown" }}
         </div>
       </div>

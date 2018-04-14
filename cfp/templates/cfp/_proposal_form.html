@@ -3,8 +3,8 @@
 <form method="post">
   {% csrf_token %}
 
-  <div class="card">
-    <div class="card-header">Basic information</div>
+  <div class="card bg-warning text-dark">
+    <div class="card-header"><h2>Basic information</h2></div>
     <div class="card-body">
       {% bootstrap_field form.session_type layout='horizontal' %}
       <hr>
@@ -16,8 +16,8 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header">About your proposal</div>
+  <div class="card bg-warning text-dark">
+    <div class="card-header"><h2>About your proposal</h2></div>
     <div class="card-body">
       {% bootstrap_field form.description layout='horizontal' %}
       <hr>
@@ -27,7 +27,7 @@
       <hr>
       <p>Is your session particularly suitable for:</p>
       <div class="row">
-        <div class="offset-md-1">
+        <div class="col offset-1">
           {% bootstrap_field form.aimed_at_new_programmers %}
           {% bootstrap_field form.aimed_at_teachers %}
           {% bootstrap_field form.aimed_at_data_scientists %}
@@ -36,7 +36,7 @@
       <hr>
       <p>Please tick if you would:</p>
       <div class="row">
-        <div class="offset-md-1">
+        <div class="col offset-1">
           {% bootstrap_field form.would_like_mentor %}
           {% bootstrap_field form.would_like_longer_slot %}
         </div>
@@ -46,8 +46,8 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header">Ticket information</div>
+  <div class="card bg-warning text-dark">
+    <div class="card-header"><h2>Ticket information</h2></div>
     <div class="card-body">
       <p>
         At PyCon UK, <em>all attendees</em> - including speakers and even the conference organising committee - need to have a ticket. We don't <em>automatically</em> issue speakers with free tickets, or provide benefits such as accommodation or travel funds.

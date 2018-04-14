@@ -48,7 +48,7 @@ class ApplicationForm(forms.ModelForm):
 
     requested_ticket_only = forms.ChoiceField(
         choices=Application.REQUESTED_TICKET_ONLY_CHOICES,
-        label='Do you need further finanical assistance?'
+        label='Do you need further financial assistance?'
     )
 
     days = forms.MultipleChoiceField(

@@ -19,3 +19,11 @@ input[type='checkbox'] {
 .btn-group-toggle.is-invalid~.invalid-feedback {
     display: block;
 }
+
+#price-table tr:first-child td, #price-table tr td:first-child {
+    font-weight: bold;
+}
+
+#price-table tr td:first-child {
+    width: 25%;
+}

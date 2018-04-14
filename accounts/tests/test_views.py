@@ -23,7 +23,7 @@ class ProfileTests(TestCase):
             ['Nationality', 'unknown'],
             ['Country of residence', 'unknown'],
         ]:
-            self.assertContains(rsp, f'<div class="col-4 field-name">{k}</div><div class="col-4">{v}</div>', html=True)
+            self.assertContains(rsp, f'<div class="col-4 field-name">{k}</div><div class="col-8">{v}</div>', html=True)
         self.assertNotContains(rsp, 'You have opted not to share demographic information with us')
 
     def test_get_profile_for_user_with_full_profile(self):
@@ -41,7 +41,7 @@ class ProfileTests(TestCase):
             ['Nationality', 'British'],
             ['Country of residence', 'United Kingdom'],
         ]:
-            self.assertContains(rsp, f'<div class="col-4 field-name">{k}</div><div class="col-4">{v}</div>', html=True)
+            self.assertContains(rsp, f'<div class="col-4 field-name">{k}</div><div class="col-8">{v}</div>', html=True)
         self.assertNotContains(rsp, 'You have opted not to share demographic information with us')
 
     def test_get_profile_for_user_with_dont_ask_demographics_set(self):

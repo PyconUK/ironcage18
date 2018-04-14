@@ -1,16 +1,14 @@
-<div class="card">
-  <div class="card-header">Basic information</div>
-  <div class="card-body">
-    <h3>[{{ proposal.proposal_id }}] {{ proposal.full_title }}</h3>
-    {% if not proposal.session_type == 'other' %}
-      <hr>
-      <div>This is a proposal for a {{ proposal.session_type }}.</div>
-    {% endif %}
-  </div>
-</div>
+<h1>[{{ proposal.proposal_id }}] {{ proposal.full_title }}</h1>
 
-<div class="card">
-  <div class="card-header">Proposal details</div>
+{% if not proposal.session_type == 'other' %}
+  <hr>
+  <div>This is a proposal for a {{ proposal.session_type }}.</div>
+{% endif %}
+
+<hr>
+
+<div class="card bg-warning text-dark">
+  <div class="card-header"><h2>Proposal details</h2></div>
   <div class="card-body">
 
     <h4>{{ form.description.label }}</h4>

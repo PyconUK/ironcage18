@@ -49,9 +49,9 @@ def new_proposal(request):
 
 def _new_proposal_after_cfp_closes(request):
     if request.method == 'POST':
-        messages.warning(request, "We're sorry, the Call For Participation has closed, and we were not able to process your submission")
+        messages.warning(request, "We're sorry, the Call For Proposals has closed, and we were not able to process your submission")
     else:
-        messages.warning(request, "We're sorry, the Call For Participation has closed")
+        messages.warning(request, "We're sorry, the Call For Proposals has closed")
 
     return redirect('index')
 
@@ -88,9 +88,9 @@ def _proposal_edit_after_cfp_closes(request, proposal_id):
     proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
 
     if request.method == 'POST':
-        messages.warning(request, "We're sorry, the Call For Participation has closed, and we were not able to process the change to your proposal")
+        messages.warning(request, "We're sorry, the Call For Proposals has closed, and we were not able to process the change to your proposal")
     else:
-        messages.warning(request, "We're sorry, the Call For Participation has closed, and we are not accepting any more changes to proposals")
+        messages.warning(request, "We're sorry, the Call For Proposals has closed, and we are not accepting any more changes to proposals")
 
     return redirect(proposal)
 
