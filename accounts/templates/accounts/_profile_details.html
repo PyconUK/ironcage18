@@ -5,7 +5,7 @@
       <div class="col-4 field-name">
         Name
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {{ user.name }}
       </div>
     </div>
@@ -14,7 +14,7 @@
       <div class="col-4 field-name">
         Email
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {{ user.email_addr }}
       </div>
     </div>
@@ -28,7 +28,7 @@
       <div class="col-4 field-name">
         Accessibility
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {% if user.accessibility_reqs_yn == None %}
         unknown
         {% elif user.accessibility_reqs_yn %}
@@ -43,7 +43,7 @@
       <div class="col-4 field-name">
         Childcare
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {% if user.childcare_reqs_yn == None %}
         unknown
         {% elif user.childcare_reqs_yn %}
@@ -58,7 +58,7 @@
       <div class="col-4 field-name">
         Dietary
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {% if user.dietary_reqs_yn == None %}
         unknown
         {% elif user.dietary_reqs_yn %}
@@ -79,7 +79,7 @@
       <div class="col-4 field-name">
         Membership
       </div>
-      <div class="col-4">
+      <div class="col-8">
         {% if user.is_ukpa_member == None %}
         unknown
         {% elif user.is_ukpa_member %}
@@ -103,7 +103,7 @@
         <div class="col-4 field-name">
           Year of birth
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {{ user.year_of_birth|default:"unknown" }}
         </div>
       </div>
@@ -112,7 +112,7 @@
         <div class="col-4 field-name">
           Gender
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {{ user.gender|default:"unknown" }}
         </div>
       </div>
@@ -121,7 +121,7 @@
         <div class="col-4 field-name">
           Ethnicity
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {% if 'please describe' in user.ethnicity %}
             {{ user.ethnicity_free_text }}
           {% else %}
@@ -134,7 +134,7 @@
         <div class="col-4 field-name">
           Nationality
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {{ user.nationality|default:"unknown" }}
         </div>
       </div>
@@ -143,7 +143,7 @@
         <div class="col-4 field-name">
           Country of residence
         </div>
-        <div class="col-4">
+        <div class="col-8">
           {{ user.country_of_residence|default:"unknown" }}
         </div>
       </div>
