@@ -114,7 +114,7 @@ class NewOrderTests(TestCase):
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon'],
+            'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 2 tickets')
@@ -134,7 +134,7 @@ class NewOrderTests(TestCase):
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon'],
+            'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 3 tickets')
@@ -210,7 +210,7 @@ class OrderEditTests(TestCase):
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon'],
+            'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 2 tickets')
@@ -230,7 +230,7 @@ class OrderEditTests(TestCase):
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon'],
+            'form-1-days': ['mon', 'tue', 'wed'],
         }
         rsp = self.client.post(self.url, form_data, follow=True)
         self.assertContains(rsp, 'You are ordering 3 tickets')

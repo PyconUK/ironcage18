@@ -90,7 +90,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon']
+            'form-1-days': ['mon', 'tue', 'wed']
         })
 
         formset = TicketForOthersFormSet(post_data)
@@ -119,7 +119,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': '',
-            'form-1-days': ['sat', 'sun', 'mon']
+            'form-1-days': ['mon', 'tue', 'wed']
         })
 
         formset = TicketForOthersFormSet(post_data)
@@ -185,7 +185,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['sat', 'sun'],
             'form-1-email_addr': 'test2@example.com',
-            'form-1-days': ['sat', 'sun', 'mon']
+            'form-1-days': ['mon', 'tue', 'wed']
         })
 
         formset = TicketForOthersFormSet(post_data)
