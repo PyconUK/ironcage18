@@ -29,18 +29,48 @@ class NewApplicationTests(TestCase):
         self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/grants/applications/new/">sign up</a> or <a href="/accounts/login/?next=/grants/applications/new/">sign in</a> to make an application.', html=True)
         self.assertNotContains(rsp, '<form method="post">')
 
-    def test_post(self):
+    def test_post_requesting_ticket_only(self):
         self.client.force_login(self.alice)
         form_data = {
-            'amount_requested': '1000',
             'days': ['sat', 'sun', 'mon'],
             'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': True,
         }
         rsp = self.client.post('/grants/applications/new/', form_data, follow=True)
         self.assertContains(rsp, 'Thank you for submitting your application')
 
         application = self.alice.get_grant_application()
-        self.assertEqual(application.amount_requested, 1000)
+        self.assertEqual(application.amount_requested, '£1000')
+        self.assertEqual(application.days(), ['Saturday', 'Sunday', 'Monday'])
+
+    def test_post_requesting_ticket_and_money_but_not_adding_detail_fails(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'days': ['sat', 'sun', 'mon'],
+            'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': False,
+        }
+        rsp = self.client.post('/grants/applications/new/', form_data, follow=True)
+        self.assertNotContains(rsp, 'Thank you for submitting your application')
+        self.assertContains(rsp, 'Please ensure you provide an amount of assistance you are requesting')
+
+    def test_post_requesting_ticket_and_money(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'days': ['sat', 'sun', 'mon'],
+            'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': False,
+            'amount_requested': '£1000',
+            'cost_breakdown': 'Train £500. Hotel £500.',
+        }
+        rsp = self.client.post('/grants/applications/new/', form_data, follow=True)
+        self.assertContains(rsp, 'Thank you for submitting your application')
+
+        application = self.alice.get_grant_application()
+        self.assertEqual(application.amount_requested, '£1000')
         self.assertEqual(application.days(), ['Saturday', 'Sunday', 'Monday'])
 
     def test_post_sends_slack_message(self):
@@ -49,9 +79,12 @@ class NewApplicationTests(TestCase):
 
         self.client.force_login(self.alice)
         form_data = {
-            'amount_requested': '1000',
             'days': ['sat', 'sun', 'mon'],
             'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': False,
+            'amount_requested': '£1000',
+            'cost_breakdown': 'Train £500. Hotel £500.',
         }
         self.client.post('/grants/applications/new/', form_data, follow=True)
 
@@ -86,17 +119,54 @@ class ApplicationEditTests(TestCase):
     def test_post(self):
         self.client.force_login(self.alice)
         form_data = {
-            'amount_requested': '2000',
             'days': ['sat', 'sun', 'mon', 'tue'],
             'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': False,
+            'amount_requested': '£2000',
+            'cost_breakdown': 'Train £1000. Hotel £1000.',
         }
         rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/', form_data, follow=True)
         self.assertContains(rsp, 'Thank you for updating your application')
 
         application = self.alice.get_grant_application()
         application.refresh_from_db()
-        self.assertEqual(application.amount_requested, 2000)
+        self.assertEqual(application.amount_requested, '£2000')
+        self.assertEqual(application.cost_breakdown, 'Train £1000. Hotel £1000.')
         self.assertEqual(application.days(), ['Saturday', 'Sunday', 'Monday', 'Tuesday'])
+
+    def test_post_removing_money_request(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'days': ['sat', 'sun', 'mon', 'tue'],
+            'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': True,
+        }
+        rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/', form_data, follow=True)
+        self.assertContains(rsp, 'Thank you for updating your application')
+
+        application = self.alice.get_grant_application()
+        application.refresh_from_db()
+        self.assertEqual(application.amount_requested, '')
+        self.assertEqual(application.cost_breakdown, '')
+        self.assertEqual(application.days(), ['Saturday', 'Sunday', 'Monday', 'Tuesday'])
+
+    def test_post_requesting_ticket_and_money_but_not_adding_detail_fails(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'days': ['sat', 'sun', 'mon', 'tue'],
+            'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': False,
+        }
+        application = self.alice.get_grant_application()
+        application.refresh_from_db()
+        rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/', form_data, follow=True)
+
+        self.assertNotContains(rsp, 'Thank you for updating your application')
+        self.assertContains(rsp, 'Please ensure you provide an amount of assistance you are requesting')
+        self.assertEqual(application.days(), ['Saturday', 'Sunday', 'Monday'])
 
     def test_get_when_not_authenticated(self):
         rsp = self.client.get(f'/grants/applications/{self.application.application_id}/edit/')
@@ -211,9 +281,12 @@ class ApplicationsClosedTests(TestCase):
 
     def test_post_new_application(self):
         form_data = {
-            'amount_requested': '1000',
             'days': ['sat', 'sun', 'mon'],
             'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': False,
+            'amount_requested': '£1000',
+            'cost_breakdown': 'Train £500. Hotel £500.',
         }
         rsp = self.client.post('/grants/applications/new/', form_data, follow=True)
         self.assertContains(rsp, 'financial assistance applications are closed')
@@ -222,9 +295,12 @@ class ApplicationsClosedTests(TestCase):
     def test_post_new_application_with_token(self):
         self.client.force_login(self.alice)
         form_data = {
-            'amount_requested': '1000',
             'days': ['sat', 'sun', 'mon'],
             'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': False,
+            'amount_requested': '£1000',
+            'cost_breakdown': 'Train £500. Hotel £500.',
         }
         rsp = self.client.post('/grants/applications/new/?deadline-bypass-token=abc123', form_data, follow=True)
         self.assertRedirects(rsp, f'/grants/applications/{self.application.application_id}/')
@@ -241,9 +317,12 @@ class ApplicationsClosedTests(TestCase):
 
     def test_post_application_edit(self):
         form_data = {
-            'amount_requested': '2000',
             'days': ['sat', 'sun', 'mon', 'tue'],
             'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': False,
+            'amount_requested': '£2000',
+            'cost_breakdown': 'Train £1000. Hotel £1000.',
         }
         rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/', form_data, follow=True)
         self.assertContains(rsp, 'financial assistance applications are closed')
@@ -251,9 +330,12 @@ class ApplicationsClosedTests(TestCase):
 
     def test_post_application_edit_with_token(self):
         form_data = {
-            'amount_requested': '2000',
             'days': ['sat', 'sun', 'mon', 'tue'],
             'about_you': 'I have two thumbs',
+            'about_why': 'I use thumbs to press my space bar',
+            'requested_ticket_only': False,
+            'amount_requested': '£2000',
+            'cost_breakdown': 'Train £1000. Hotel £1000.',
         }
         rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/?deadline-bypass-token=abc123', form_data, follow=True)
         self.assertNotContains(rsp, 'financial assistance applications are closed')
