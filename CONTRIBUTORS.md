@@ -5,5 +5,5 @@ Contributors to ironcage past and present
 * [Charlie Denton](https://github.com/meshy)
 * [George Hickman](https://github.com/ghickman)
 * [Chloe](https://github.com/MissMaximas)
-* [Kirk Northrop](https://github.com/MissMaximas)
-* [Adam Johnson](https://github.com/MissMaximas)
+* [Kirk Northrop](https://github.com/kirknorthrop)
+* [Adam Johnson](https://github.com/adamchainz)

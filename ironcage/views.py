@@ -5,6 +5,8 @@ import structlog
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils.html import mark_safe
 
 logger = structlog.get_logger()
 
@@ -14,7 +16,10 @@ def index(request):
 
     if user.is_authenticated:
         if user.get_ticket() is not None and not user.profile_complete():
-            messages.warning(request, 'Your profile is incomplete')
+            messages.warning(
+                request,
+                mark_safe('Your profile is incomplete. <a href="{}">Update your profile</a>'.format(reverse('accounts:edit_profile')))
+            )
         context = {
             'ticket': user.get_ticket(),
             'orders': user.orders.all(),
