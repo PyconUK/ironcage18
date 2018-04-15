@@ -75,6 +75,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     dietary_reqs = models.TextField(null=True, blank=True)
     is_ukpa_member = models.NullBooleanField(null=True, blank=True)
     is_contributor = models.BooleanField(default=False)
+    is_organiser = models.BooleanField(default=False)
+    accepted_terms = models.DateTimeField(auto_now_add=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

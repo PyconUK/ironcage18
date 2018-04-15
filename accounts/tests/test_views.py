@@ -168,12 +168,23 @@ class RegisterTests(TestCase):
         rsp = self.client.get('/accounts/register/?next=/tickets/orders/new/')
         self.assertContains(rsp, '<input type="hidden" name="next" value="/tickets/orders/new/" />', html=True)
 
+    def test_post_fails_if_terms_not_accepted(self):
+        data = {
+            'name': 'Alice',
+            'email_addr': 'alice@example.com',
+            'password1': 'Pa55w0rd',
+            'password2': 'Pa55w0rd',
+        }
+        rsp = self.client.post('/accounts/register/', data, follow=True)
+        self.assertContains(rsp, 'This field is required.')
+
     def test_post_success(self):
         data = {
             'name': 'Alice',
             'email_addr': 'alice@example.com',
             'password1': 'Pa55w0rd',
             'password2': 'Pa55w0rd',
+            'agree_terms': True,
         }
         rsp = self.client.post('/accounts/register/', data, follow=True)
         self.assertContains(rsp, 'Hello, Alice')
@@ -184,6 +195,7 @@ class RegisterTests(TestCase):
             'email_addr': 'alice@example.com',
             'password1': 'Pa55w0rd',
             'password2': 'Pa55wOrd',
+            'agree_terms': True,
         }
         rsp = self.client.post('/accounts/register/', data, follow=True)
         self.assertContains(rsp, "The two password fields didn&#39;t match")
@@ -194,6 +206,7 @@ class RegisterTests(TestCase):
             'email_addr': 'alice@example.com',
             'password1': 'pw',
             'password2': 'pw',
+            'agree_terms': True,
         }
         rsp = self.client.post('/accounts/register/', data, follow=True)
         self.assertContains(rsp, 'This password is too short')
@@ -205,6 +218,7 @@ class RegisterTests(TestCase):
             'email_addr': 'alice@example.com',
             'password1': 'Pa55w0rd',
             'password2': 'Pa55w0rd',
+            'agree_terms': True,
         }
         rsp = self.client.post('/accounts/register/', data, follow=True)
         self.assertContains(rsp, 'That email address has already been registered')
@@ -215,6 +229,7 @@ class RegisterTests(TestCase):
             'email_addr': 'alice@example.com',
             'password1': 'Pa55w0rd',
             'password2': 'Pa55w0rd',
+            'agree_terms': True,
             'next': '/tickets/orders/new/'
         }
         rsp = self.client.post('/accounts/register/', data, follow=True)

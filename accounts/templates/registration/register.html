@@ -1,5 +1,7 @@
 {% extends 'ironcage/base.html' %}
 
+{% load bootstrap4 %}
+
 {% block content %}
 
 {{ form.errors }}
@@ -7,38 +9,55 @@
 <form method="post" action="{% url 'register' %}" class="form-horizontal">
   {% csrf_token %}
   <input type="hidden" name="next" value="{{ next }}" />
-
-  <div class="form-group row">
-    <label for="{{ form.name.auto_id }}" class="col-sm-2 col-form-label">{{ form.name.label }}</label>
-    <div class="col-sm-10">
-      {{ form.name }}
-    </div>
-  </div>
-
-  <div class="form-group row">
-    <label for="{{ form.email_addr.auto_id }}" class="col-sm-2 col-form-label">{{ form.email_addr.label }}</label>
-    <div class="col-sm-10">
-      {{ form.email_addr }}
-    </div>
-  </div>
-
-  <div class="form-group row">
-    <label for="{{ form.password1.auto_id }}" class="col-sm-2 col-form-label">{{ form.password1.label }}</label>
-    <div class="col-sm-10">
-      {{ form.password1 }}
-    </div>
-  </div>
-
-  <div class="form-group row">
-    <label for="{{ form.password2.auto_id }}" class="col-sm-2 col-form-label">{{ form.password2.label }}</label>
-    <div class="col-sm-10">
-      {{ form.password2 }}
-    </div>
-  </div>
-
-  <div class="form-group row">
-    <div class="offset-sm-2 col-sm-10">
-      <button type="submit" class="btn btn-primary">Create your account</button>
+  <div class="card bg-danger text-dark">
+    <div class="card-header"><h2>Sign up</h2></div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-4">
+          <label>{{ form.name.label }}</label>
+        </div>
+        <div class="col-8">
+          {% bootstrap_field form.name layout='inline' %}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-4">
+          <label>{{ form.email_addr.label }}</label>
+        </div>
+        <div class="col-8">
+          {% bootstrap_field form.email_addr layout='inline' %}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-4">
+          <label>{{ form.password1.label }}</label>
+        </div>
+        <div class="col-8">
+          {% bootstrap_field form.password1 layout='inline' %}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-4">
+          <label>{{ form.password2.label }}</label>
+        </div>
+        <div class="col-8">
+          {% bootstrap_field form.password2 layout='inline' %}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col">
+          {% bootstrap_field form.agree_terms layout='inline' %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col card-text">
+          <button type="submit" class="btn btn-primary">Create your account</button>
+        </div>
+      </div>
     </div>
   </div>
 </form>

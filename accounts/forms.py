@@ -24,13 +24,19 @@ class RegisterForm(forms.ModelForm):
         'password_mismatch': "The two password fields didn't match.",
     }
 
+    agree_terms = forms.BooleanField(
+        required=True,
+        label='I have read and agree to the <a href="/legal" target="_blank">terms and conditions and privacy policy</a>'
+    )
+
     class Meta:
         model = User
         fields = [
             'email_addr',
             'name',
             'password1',
-            'password2'
+            'password2',
+            'agree_terms'
         ]
 
     def clean_password2(self):

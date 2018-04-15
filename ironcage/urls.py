@@ -7,6 +7,7 @@ import ironcage.views
 urlpatterns = [
     path('', ironcage.views.index, name='index'),
     path('accounts/register/', accounts.views.register, name='register'),
+    path('legal/', accounts.views.legal, name='legal'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('orders/', include('orders.urls')),
     path('profile/', include('accounts.urls')),
