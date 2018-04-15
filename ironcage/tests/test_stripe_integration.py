@@ -37,4 +37,4 @@ class StripeIntegrationTests(TestCase):
         factories.confirm_order(self.order)
         with utils.patched_refund_creation() as mock:
             stripe_integration.refund_item(self.order.all_tickets()[0])
-        mock.assert_called_with(charge='ch_abcdefghijklmnopqurstuvw', amount=12600)
+        mock.assert_called_with(charge='ch_abcdefghijklmnopqurstuvw', amount=15000)

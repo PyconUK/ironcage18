@@ -4,16 +4,16 @@ PRICES_EXCL_VAT = {
         'day_price': 0,
     },
     'individual': {
-        'ticket_price': 15,
+        'ticket_price': 35,
         'day_price': 30,
     },
     'corporate': {
-        'ticket_price': 30,
+        'ticket_price': 75,
         'day_price': 60,
     },
-    'education': {
-        'ticket_price': 5,
-        'day_price': 10,
+    'unwaged': {
+        'ticket_price': 25,
+        'day_price': 15,
     },
 }
 

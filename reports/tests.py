@@ -54,7 +54,7 @@ class TestAttendanceByDayReport(ReportsTestCase):
         report = reports.AttendanceByDayReport()
         expected = {
             'title': 'Attendance by day',
-            'headings': ['Day', 'Individual rate', 'Corporate rate', 'Education rate', 'Free', 'Total'],
+            'headings': ['Day', 'Individual rate', 'Corporate rate', 'Unwaged rate', 'Free', 'Total'],
             'rows': [
                 ['Saturday', 3, 2, 0, 0, 5],
                 ['Sunday', 2, 2, 0, 0, 4],
@@ -95,7 +95,7 @@ class TestTicketSalesReport(ReportsTestCase):
         report = reports.TicketSalesReport()
         expected = {
             'title': 'Ticket sales',
-            'headings': ['Days', 'Individual rate', 'Corporate rate', 'Education rate', 'Free', 'Total'],
+            'headings': ['Days', 'Individual rate', 'Corporate rate', 'Unwaged rate', 'Free', 'Total'],
             'num_tickets_rows': [
                 [1, 1, 0, 0, 0, 1],
                 [2, 0, 1, 0, 0, 1],
@@ -104,11 +104,11 @@ class TestTicketSalesReport(ReportsTestCase):
                 [5, 1, 0, 0, 0, 1],
             ],
             'ticket_cost_rows': [
-                [1, '£54', '£0', '£0', '£0', '£54'],
-                [2, '£0', '£180', '£0', '£0', '£180'],
-                [3, '£126', '£0', '£0', '£0', '£126'],
-                [4, '£0', '£324', '£0', '£0', '£324'],
-                [5, '£198', '£0', '£0', '£0', '£198'],
+                [1, '£78', '£0', '£0', '£0', '£78'],
+                [2, '£0', '£234', '£0', '£0', '£234'],
+                [3, '£150', '£0', '£0', '£0', '£150'],
+                [4, '£0', '£378', '£0', '£0', '£378'],
+                [5, '£222', '£0', '£0', '£0', '£222'],
             ]
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -135,8 +135,8 @@ class TestOrdersReport(ReportsTestCase):
             'title': 'All orders',
             'headings': ['ID', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [links[0], 'Alice', 'alice@example.com', 1, '£54', 'pending'],
-                [links[1], 'Bob', 'bob@example.com', 1, '£90', 'successful'],
+                [links[0], 'Alice', 'alice@example.com', 1, '£78', 'pending'],
+                [links[1], 'Bob', 'bob@example.com', 1, '£114', 'successful'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -163,7 +163,7 @@ class TestUnpaidOrdersReport(ReportsTestCase):
             'title': 'Unpaid orders',
             'headings': ['ID', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [link, 'Alice', 'alice@example.com', 1, '£54', 'pending'],
+                [link, 'Alice', 'alice@example.com', 1, '£78', 'pending'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -191,9 +191,9 @@ class TestTicketsReport(ReportsTestCase):
             'title': 'All tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [links[0], 'individual', 'Alice', 'Saturday, Sunday, Monday', '£126', 'Assigned'],
-                [links[1], 'individual', 'bob@example.com', 'Sunday, Monday', '£90', 'Unclaimed'],
-                [links[2], 'individual', 'carol@example.com', 'Monday, Tuesday', '£90', 'Unclaimed'],
+                [links[0], 'individual', 'Alice', 'Saturday, Sunday, Monday', '£150', 'Assigned'],
+                [links[1], 'individual', 'bob@example.com', 'Sunday, Monday', '£114', 'Unclaimed'],
+                [links[2], 'individual', 'carol@example.com', 'Monday, Tuesday', '£114', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -221,8 +221,8 @@ class TestUnclaimedTicketsReport(ReportsTestCase):
             'title': 'Unclaimed tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [links[0], 'individual', 'bob@example.com', 'Sunday, Monday', '£90', 'Unclaimed'],
-                [links[1], 'individual', 'carol@example.com', 'Monday, Tuesday', '£90', 'Unclaimed'],
+                [links[0], 'individual', 'bob@example.com', 'Sunday, Monday', '£114', 'Unclaimed'],
+                [links[1], 'individual', 'carol@example.com', 'Monday, Tuesday', '£114', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
