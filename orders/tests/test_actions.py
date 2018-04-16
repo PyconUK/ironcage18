@@ -26,7 +26,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.order_rows.count(), 1)
         [row] = order.all_order_rows()
 
-        self.assertEqual(row.cost_excl_vat, 105)
+        self.assertEqual(row.cost_excl_vat, 125)
         self.assertEqual(row.item_descr, '3-day individual-rate ticket')
         self.assertEqual(row.item_descr_extra, 'Saturday, Sunday, Monday')
 
@@ -52,7 +52,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.order_rows.count(), 2)
         [row1, row2] = order.all_order_rows()
 
-        self.assertEqual(row1.cost_excl_vat, 75)
+        self.assertEqual(row1.cost_excl_vat, 95)
         self.assertEqual(row1.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row1.item_descr_extra, 'Sunday, Monday')
 
@@ -65,7 +65,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(invitation1.email_addr, 'bob@example.com')
         self.assertEqual(invitation1.status, 'unclaimed')
 
-        self.assertEqual(row2.cost_excl_vat, 75)
+        self.assertEqual(row2.cost_excl_vat, 95)
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row2.item_descr_extra, 'Monday, Tuesday')
 
@@ -95,7 +95,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.order_rows.count(), 3)
         [row1, row2, row3] = order.all_order_rows()
 
-        self.assertEqual(row1.cost_excl_vat, 105)
+        self.assertEqual(row1.cost_excl_vat, 125)
         self.assertEqual(row1.item_descr, '3-day individual-rate ticket')
         self.assertEqual(row1.item_descr_extra, 'Saturday, Sunday, Monday')
 
@@ -104,7 +104,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(ticket1.rate, 'individual')
         self.assertEqual(ticket1.days(), ['Saturday', 'Sunday', 'Monday'])
 
-        self.assertEqual(row2.cost_excl_vat, 75)
+        self.assertEqual(row2.cost_excl_vat, 95)
         self.assertEqual(row2.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row2.item_descr_extra, 'Sunday, Monday')
 
@@ -117,7 +117,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(invitation2.email_addr, 'bob@example.com')
         self.assertEqual(invitation2.status, 'unclaimed')
 
-        self.assertEqual(row3.cost_excl_vat, 75)
+        self.assertEqual(row3.cost_excl_vat, 95)
         self.assertEqual(row3.item_descr, '2-day individual-rate ticket')
         self.assertEqual(row3.item_descr_extra, 'Monday, Tuesday')
 
@@ -255,7 +255,7 @@ class RefundTicketTests(TestCase):
 
         order_row.refresh_from_db()
         self.assertIsNone(order_row.item)
-        self.assertEqual(order_row.cost_excl_vat, 105)
+        self.assertEqual(order_row.cost_excl_vat, 125)
         self.assertEqual(order_row.item_descr, '3-day individual-rate ticket')
         self.assertEqual(order_row.item_descr_extra, 'Saturday, Sunday, Monday')
         self.assertIsNotNone(order_row.refund)

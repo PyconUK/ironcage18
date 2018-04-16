@@ -20,7 +20,7 @@ class OrderTests(TestCase):
             <td>Alice</td>
             <td>3-day individual-rate ticket</td>
             <td>Saturday, Sunday, Monday</td>
-            <td>£126</td>
+            <td>£150</td>
         </tr>
         ''', html=True)
 
@@ -37,7 +37,7 @@ class OrderTests(TestCase):
             <td>bob@example.com</td>
             <td>2-day individual-rate ticket</td>
             <td>Sunday, Monday</td>
-            <td>£90</td>
+            <td>£114</td>
         </tr>
         ''', html=True)
 
@@ -46,7 +46,7 @@ class OrderTests(TestCase):
             <td>carol@example.com</td>
             <td>2-day individual-rate ticket</td>
             <td>Monday, Tuesday</td>
-            <td>£90</td>
+            <td>£114</td>
         </tr>
         ''', html=True)
 
@@ -63,7 +63,7 @@ class OrderTests(TestCase):
             <td>Alice</td>
             <td>3-day individual-rate ticket</td>
             <td>Saturday, Sunday, Monday</td>
-            <td>£126</td>
+            <td>£150</td>
         </tr>
         ''', html=True)
 
@@ -72,7 +72,7 @@ class OrderTests(TestCase):
             <td>bob@example.com</td>
             <td>2-day individual-rate ticket</td>
             <td>Sunday, Monday</td>
-            <td>£90</td>
+            <td>£114</td>
         </tr>
         ''', html=True)
 
@@ -81,7 +81,7 @@ class OrderTests(TestCase):
             <td>carol@example.com</td>
             <td>2-day individual-rate ticket</td>
             <td>Monday, Tuesday</td>
-            <td>£90</td>
+            <td>£114</td>
         </tr>
         ''', html=True)
 
@@ -103,7 +103,7 @@ class OrderTests(TestCase):
             <td>Alice</td>
             <td>3-day individual-rate ticket</td>
             <td>Saturday, Sunday, Monday</td>
-            <td>£126</td>
+            <td>£150</td>
         </tr>
         ''', html=True)
 
@@ -112,7 +112,7 @@ class OrderTests(TestCase):
             <td>bob@example.com</td>
             <td>2-day individual-rate ticket</td>
             <td>Sunday, Monday</td>
-            <td>£90</td>
+            <td>£114</td>
         </tr>
         ''', html=True)
 
@@ -121,7 +121,7 @@ class OrderTests(TestCase):
             <td>Refunded</td>
             <td>2-day individual-rate ticket</td>
             <td>Monday, Tuesday</td>
-            <td>£90</td>
+            <td>£114</td>
         </tr>
         ''', html=True)
 
@@ -132,7 +132,7 @@ class OrderTests(TestCase):
         rsp = self.client.get(f'/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertContains(rsp, '<div id="stripe-form">')
-        self.assertContains(rsp, 'data-amount="12600"')
+        self.assertContains(rsp, 'data-amount="15000"')
         self.assertContains(rsp, 'data-email="alice@example.com"')
 
         self.assertContains(rsp, '''
@@ -140,7 +140,7 @@ class OrderTests(TestCase):
             <td>Alice</td>
             <td>3-day individual-rate ticket</td>
             <td>Saturday, Sunday, Monday</td>
-            <td>£126</td>
+            <td>£150</td>
         </tr>
         ''', html=True)
 
@@ -270,26 +270,26 @@ class OrderReceiptTests(TestCase):
         self.assertContains(rsp, '3 tickets for PyCon UK 2018')
         self.assertContains(rsp, '<th>Date</th><td>21 May 2018</td>', html=True)
         self.assertContains(rsp, '<th>Invoice number</th><td>S-2018-0001</td>', html=True)
-        self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£255</td>', html=True)
-        self.assertContains(rsp, '<th>VAT at 20%</th><td>£51</td>', html=True)
-        self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£306</td>', html=True)
+        self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£315</td>', html=True)
+        self.assertContains(rsp, '<th>VAT at 20%</th><td>£63</td>', html=True)
+        self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£378</td>', html=True)
         self.assertContains(rsp, '''
             <tr>
                 <td>2-day individual-rate ticket</td>
                 <td>2</td>
-                <td>£75</td>
-                <td>£90</td>
-                <td>£150</td>
-                <td>£180</td>
+                <td>£95</td>
+                <td>£114</td>
+                <td>£190</td>
+                <td>£228</td>
             </tr>''', html=True)
         self.assertContains(rsp, '''
             <tr>
                 <td>3-day individual-rate ticket</td>
                 <td>1</td>
-                <td>£105</td>
-                <td>£126</td>
-                <td>£105</td>
-                <td>£126</td>
+                <td>£125</td>
+                <td>£150</td>
+                <td>£125</td>
+                <td>£150</td>
             </tr>''', html=True)
         self.assertContains(rsp, '''
             <tr>
@@ -297,8 +297,8 @@ class OrderReceiptTests(TestCase):
                 <th></th>
                 <th></th>
                 <th></th>
-                <th>£255</th>
-                <th>£306</th>
+                <th>£315</th>
+                <th>£378</th>
             </tr>''', html=True)
 
     def test_when_not_authenticated(self):
@@ -341,17 +341,17 @@ class RefundCreditNoteTests(TestCase):
         self.assertContains(rsp, '<th>Date</th><td>21 May 2018</td>', html=True)
         self.assertContains(rsp, '<th>Original invoice number</th><td>S-2018-0001</td>', html=True)
         self.assertContains(rsp, '<th>Credit note number</th><td>R-2018-0001-01</td>', html=True)
-        self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£105</td>', html=True)
-        self.assertContains(rsp, '<th>VAT at 20%</th><td>£21</td>', html=True)
-        self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£126</td>', html=True)
+        self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£125</td>', html=True)
+        self.assertContains(rsp, '<th>VAT at 20%</th><td>£25</td>', html=True)
+        self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£150</td>', html=True)
         self.assertContains(rsp, '''
             <tr>
                 <td>3-day individual-rate ticket</td>
                 <td>1</td>
-                <td>£105</td>
-                <td>£126</td>
-                <td>£105</td>
-                <td>£126</td>
+                <td>£125</td>
+                <td>£150</td>
+                <td>£125</td>
+                <td>£150</td>
             </tr>''', html=True)
         self.assertContains(rsp, '''
             <tr>
@@ -359,8 +359,8 @@ class RefundCreditNoteTests(TestCase):
                 <th></th>
                 <th></th>
                 <th></th>
-                <th>£105</th>
-                <th>£126</th>
+                <th>£125</th>
+                <th>£150</th>
             </tr>''', html=True)
 
     def test_when_not_authenticated(self):
