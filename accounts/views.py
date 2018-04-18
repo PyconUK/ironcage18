@@ -60,3 +60,7 @@ def register(request):
     }
 
     return render(request, 'registration/register.html', context)
+
+
+def legal(request):
+    return render(request, 'registration/legal.html')

@@ -1,0 +1,21 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+
+<h1>Terms and Conditions and Privacy Policy</h1>
+
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>Terms and Conditions</h2></div>
+  <div class="card-body">
+    {% include './_terms_and_conditions.html' %}
+  </div>
+</div>
+
+<div class="card bg-danger text-dark">
+  <div class="card-header"><h2>Privacy Policy</h2></div>
+  <div class="card-body">
+      {% include './_privacy_policy.html' %}
+  </div>
+</div>
+
+{% endblock %}
