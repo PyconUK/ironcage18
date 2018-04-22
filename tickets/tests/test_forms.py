@@ -237,8 +237,9 @@ class TicketForOthersFormSetTests(TestCase):
             'form-0-email_addr': 'test1@example.com',
             'form-0-name': 'Test 1',
             'form-0-days': ['sat', 'sun'],
-            'form-1-email_addr': '',
+            'form-1-email_addr': 'test2@example.com',
             'form-1-name': 'Test 2',
+            'form-1-days': ['sat', 'sun'],
             'form-1-DELETE': 'on',
         })
 
