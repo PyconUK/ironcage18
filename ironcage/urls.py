@@ -1,4 +1,5 @@
 from django.urls import include, path
+from django.contrib import admin
 
 import accounts.views
 import ironcage.views
@@ -17,4 +18,5 @@ urlpatterns = [
     path('grants/', include('grants.urls')),
     path('500/', ironcage.views.error, name='error'),
     path('log/', ironcage.views.log, name='log'),
+    path('admin/', admin.site.urls),
 ]
