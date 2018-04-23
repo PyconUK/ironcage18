@@ -103,6 +103,10 @@ class BaseTicketForOthersFormset(forms.BaseFormSet):
                 # This was an empty form, so we ignore it
                 continue
 
+            if form.cleaned_data['DELETE']:
+                # This was deleted so should be ignored
+                continue
+
             email_addr = form.cleaned_data['email_addr']
             name = form.cleaned_data['name']
             days = form.cleaned_data['days']
