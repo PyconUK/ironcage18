@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from django.utils.html import mark_safe
 
 from . import actions
 from .models import Order, Refund
@@ -25,7 +26,10 @@ def order(request, order_id):
     if order.status == 'failed':
         messages.error(request, f'Payment for this order failed ({order.stripe_charge_failure_reason})')
     elif order.status == 'errored':
-        messages.error(request, 'There was an error creating your order.  You card may have been charged, but if so the charge will have been refunded.  Please make a new order.')
+        messages.error(
+            request,
+            mark_safe('There was an error creating your order. Your card may have been charged, but if so the charge will have been refunded. Please contact us at <a href="mailto:pyconuk-committee@uk.python.org">pyconuk-committee@uk.python.org</a> and we will be able to resolve the problem.')
+        )
 
     ticket = request.user.get_ticket()
     if ticket is not None and ticket.order != order:
