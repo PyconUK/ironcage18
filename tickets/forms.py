@@ -95,6 +95,7 @@ class TicketForOtherForm(forms.Form):
 class BaseTicketForOthersFormset(forms.BaseFormSet):
     def clean(self):
         self.email_addrs_and_days = []
+        emails = []
         for form in self.forms:
             if form.errors:
                 continue
@@ -110,7 +111,10 @@ class BaseTicketForOthersFormset(forms.BaseFormSet):
             email_addr = form.cleaned_data['email_addr']
             name = form.cleaned_data['name']
             days = form.cleaned_data['days']
+            if email_addr in emails:
+                raise ValidationError('Email addresses must be different. If you are block booking and do not yet have the addresses of the attendees, please contact pyconuk-committee@uk.python.org')
             self.email_addrs_and_days.append((email_addr, name, days))
+            emails.append(email_addr)
 
         if not self.email_addrs_and_days:
             raise ValidationError('No valid forms')

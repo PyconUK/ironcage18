@@ -22,9 +22,10 @@ def process_stripe_charge(order, token):
         confirm_order(order, charge.id, charge.created)
     except stripe.error.CardError as e:
         mark_order_as_failed(order, e._message)
-    except IntegrityError:
+    except IntegrityError as e:
         stripe_integration.refund_charge(charge.id)
         mark_order_as_errored_after_charge(order, charge.id)
+        logger.exception('An order faced an integrity error')
 
 
 def confirm_order(order, charge_id, charge_created):

@@ -249,3 +249,23 @@ class TicketForOthersFormSetTests(TestCase):
             formset.email_addrs_and_days,
             [('test1@example.com', 'Test 1', ['sat', 'sun'])]
         )
+
+    def test_is_not_valid_with_same_email_addr(self):
+        post_data = build_querydict({
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
+            'form-0-days': ['sat', 'sun'],
+            'form-1-email_addr': 'test1@example.com',
+            'form-1-name': 'Test 2',
+            'form-1-days': ['mon', 'tue', 'wed']
+        })
+
+        formset = TicketForOthersFormSet(post_data)
+        self.assertEqual(
+            formset.non_form_errors(),
+            ['Email addresses must be different. If you are block booking and do not yet have the addresses of the attendees, please contact pyconuk-committee@uk.python.org']
+        )

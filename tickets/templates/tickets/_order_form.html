@@ -71,6 +71,16 @@
         </script>
 
         <input type="button" value="Add another" data-formset-add class="btn btn-primary">
+
+        {% if others_formset.non_form_errors %}
+          <div class="col{% if others_formset.non_form_errors %} is-invalid{% endif %}">
+            <div class="invalid-feedback">
+              {% for error in others_formset.non_form_errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
