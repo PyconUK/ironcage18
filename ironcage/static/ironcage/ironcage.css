@@ -20,6 +20,10 @@ input[type='checkbox'] {
     display: block;
 }
 
+div.is-invalid > .invalid-feedback {
+    display: block;
+}
+
 #price-table tr:first-child td, #price-table tr td:first-child {
     font-weight: bold;
 }
