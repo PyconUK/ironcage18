@@ -121,9 +121,9 @@ class Ticket(models.Model):
 
 class TicketInvitation(models.Model):
     ticket = models.ForeignKey(Ticket, related_name='invitations', on_delete=models.CASCADE)  # TODO make this a OneToOneField
-    email_addr = models.EmailField(unique=True)
+    email_addr = models.EmailField()
     name = models.CharField(max_length=100)
-    token = models.CharField(max_length=12, unique=True)  # An index is automatically created since unique=True
+    token = models.CharField(max_length=24, unique=True)  # An index is automatically created since unique=True
     status = models.CharField(max_length=10, default='unclaimed')
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -131,7 +131,7 @@ class TicketInvitation(models.Model):
 
     class Manager(models.Manager):
         def create(self, **kwargs):
-            token = get_random_string(length=12)
+            token = get_random_string(length=24)
             return super().create(token=token, **kwargs)
 
     objects = Manager()
