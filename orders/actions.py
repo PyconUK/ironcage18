@@ -25,6 +25,7 @@ def process_stripe_charge(order, token):
     except IntegrityError:
         stripe_integration.refund_charge(charge.id)
         mark_order_as_errored_after_charge(order, charge.id)
+        logger.exception('An order faced an integrity error')
 
 
 def confirm_order(order, charge_id, charge_created):
