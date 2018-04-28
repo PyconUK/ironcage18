@@ -2,10 +2,10 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from tickets.models import Ticket
+from tickets.models import Ticket, TicketInvitation
 
-from import_export.admin import ExportMixin
 from ironcage.admin import OurActionsOnlyMixin
+
 
 @admin.register(Ticket)
 class TicketAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
@@ -35,3 +35,30 @@ class TicketAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
     def order_status(self, obj):
         return obj.order.status
+
+
+@admin.register(TicketInvitation)
+class TicketInvitationAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
+
+    view_on_site = False
+
+    def get_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return ['link_to_ticket', 'email_addr', 'name', 'token', 'status']
+
+        return None
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser and obj and obj.status == 'unclaimed':
+            return ['link_to_ticket', 'token', 'status']
+
+        return self.get_fields(request, obj)
+
+    def link_to_ticket(self, obj):
+        if obj.ticket:
+            url = reverse('admin:tickets_ticket_change', args=[obj.ticket.id])
+            return format_html("<a href='{}'>{}</a>", url, obj.ticket.ticket_id)
+        else:
+            return None
+    link_to_ticket.admin_order_field = 'ticket'
+    link_to_ticket.short_description = 'ticket'
