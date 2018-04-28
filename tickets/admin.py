@@ -41,18 +41,25 @@ class TicketAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 class TicketInvitationAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
     view_on_site = False
+    list_filter = ('status', )
 
     def get_fields(self, request, obj=None):
         if request.user.is_superuser:
             return ['link_to_ticket', 'email_addr', 'name', 'token', 'status']
 
-        return None
+        return []
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser and obj and obj.status == 'unclaimed':
             return ['link_to_ticket', 'token', 'status']
 
         return self.get_fields(request, obj)
+
+    def get_list_display(self, request):
+        if request.user.is_superuser:
+            return ['link_to_ticket', 'email_addr', 'name', 'token', 'status']
+
+        return []
 
     def link_to_ticket(self, obj):
         if obj.ticket:
