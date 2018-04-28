@@ -54,7 +54,8 @@ INSTALLED_APPS = [
 
     'bootstrap4',
     'django_slack',
-    'django_object_actions',
+    'import_export',
+    # 'django_object_actions',
 
     'django.contrib.admin',
     'django.contrib.auth',

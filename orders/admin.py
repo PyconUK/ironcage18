@@ -6,7 +6,7 @@ from orders.models import Order, OrderRow
 # from tickets.actions import refund_order
 
 from import_export.admin import ExportMixin
-from django_object_actions import DjangoObjectActions
+# from django_object_actions import DjangoObjectActions
 from ironcage.admin import OurActionsOnlyMixin
 
 
@@ -39,7 +39,7 @@ class OrderRowInline(OurActionsOnlyMixin, admin.TabularInline):
 
 
 @admin.register(Order)
-class OrderAdmin(DjangoObjectActions, OurActionsOnlyMixin, admin.ModelAdmin):
+class OrderAdmin(OurActionsOnlyMixin, admin.ModelAdmin):  # DjangoObjectActions at beginning
 
     # # def refund(self, request, obj):
     # #     refund_order(obj)

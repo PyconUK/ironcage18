@@ -4,11 +4,11 @@ from django.utils.html import format_html
 
 from tickets.models import Ticket
 
-from django_object_actions import DjangoObjectActions
+from import_export.admin import ExportMixin
 from ironcage.admin import OurActionsOnlyMixin
 
 @admin.register(Ticket)
-class TicketAdmin(DjangoObjectActions, OurActionsOnlyMixin, admin.ModelAdmin):
+class TicketAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
     view_on_site = False
     fields = readonly_fields = ('ticket_id', 'link_to_owner', 'link_to_order',
