@@ -1,7 +1,29 @@
 from django.contrib import admin
+
 from accounts.models import User
 from tickets.models import Ticket
-from ironcage.admin import OurActionsOnlyMixin
+from ironcage.admin import (
+    OurActionsOnlyMixin,
+    RequirementsListFilter
+)
+
+
+class AccessibilityListFilter(RequirementsListFilter):
+    title = 'Accessibility Requirements'
+
+    parameter_name = 'accessibility_reqs'
+
+
+class ChildcareListFilter(RequirementsListFilter):
+    title = 'Childcare Requirements'
+
+    parameter_name = 'childcare_reqs'
+
+
+class DietaryListFilter(RequirementsListFilter):
+    title = 'Dietary Requirements'
+
+    parameter_name = 'dietary_reqs'
 
 
 class TicketInline(OurActionsOnlyMixin, admin.TabularInline):
@@ -53,6 +75,7 @@ class UserAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
         if request.user.is_superuser:
             return ['is_contributor', 'is_organiser', 'is_staff',
-                    'accessibility_reqs', 'childcare_reqs', 'dietary_reqs']
+                    AccessibilityListFilter, ChildcareListFilter,
+                    DietaryListFilter]
         else:
             return ['is_contributor', 'is_organiser']

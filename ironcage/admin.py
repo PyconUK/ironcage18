@@ -1,3 +1,6 @@
+from django.contrib import admin
+
+
 class OurActionsOnlyMixin():
 
     def has_add_permission(self, request):
@@ -25,3 +28,23 @@ class OurActionsOnlyMixin():
 
         return super().change_view(request, object_id,
                                    extra_context=extra_context)
+
+
+class RequirementsListFilter(admin.SimpleListFilter):
+    def lookups(self, request, model_admin):
+        return (
+            (True, 'Has requirements'),
+            (False, 'Does not have requirements'),
+        )
+
+    def queryset(self, request, queryset):
+        kwargs = {}
+
+        if self.value() is None:
+            return queryset
+        elif self.value() == 'True':
+            kwargs[self.parameter_name + '__isnull'] = False
+        elif self.value() == 'False':
+            kwargs[self.parameter_name + '__isnull'] = True
+
+        return queryset.filter(**kwargs)

@@ -44,7 +44,6 @@ class OrderAdmin(OurActionsOnlyMixin, admin.ModelAdmin):  # DjangoObjectActions 
     # # def refund(self, request, obj):
     # #     refund_order(obj)
 
-
     # def get_change_actions(self, request, object_id, form_url):
     #     actions = super().get_change_actions(request, object_id, form_url)
     #     actions = list(actions)
