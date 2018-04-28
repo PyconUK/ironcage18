@@ -1,6 +1,6 @@
 from django.contrib import admin
 from cfp.models import Proposal
-from tickets.admin import OurActionsOnlyMixin
+from ironcage.admin import OurActionsOnlyMixin
 
 
 @admin.register(Proposal)

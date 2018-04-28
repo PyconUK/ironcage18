@@ -89,6 +89,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = Manager()
 
+    def __str__(self):
+        return self.user_id
+
     @property
     def user_id(self):
         if self.id is None:

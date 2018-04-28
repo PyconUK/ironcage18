@@ -1,6 +1,6 @@
 from django.contrib import admin
 from grants.models import Application
-from tickets.admin import OurActionsOnlyMixin
+from ironcage.admin import OurActionsOnlyMixin
 
 
 @admin.register(Application)
