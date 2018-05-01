@@ -104,129 +104,15 @@ class TestTicketSalesReport(ReportsTestCase):
                 [5, 1, 0, 0, 0, 1],
             ],
             'ticket_cost_rows': [
-                [1, '£78', '£0', '£0', '£0', '£78'],
-                [2, '£0', '£234', '£0', '£0', '£234'],
-                [3, '£150', '£0', '£0', '£0', '£150'],
-                [4, '£0', '£378', '£0', '£0', '£378'],
-                [5, '£222', '£0', '£0', '£0', '£222'],
+                [1, '£65', '£0', '£0', '£0', '£65'],
+                [2, '£0', '£195', '£0', '£0', '£195'],
+                [3, '£125', '£0', '£0', '£0', '£125'],
+                [4, '£0', '£315', '£0', '£0', '£315'],
+                [5, '£185', '£0', '£0', '£0', '£185'],
             ]
         }
         self.assertEqual(report.get_context_data(), expected)
 
     def test_get(self):
         rsp = self.client.get('/reports/ticket-sales/')
-        self.assertEqual(rsp.status_code, 200)
-
-
-class TestOrdersReport(ReportsTestCase):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.order1 = tickets_factories.create_pending_order_for_self(cls.alice, num_days=1)
-        cls.order2 = tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
-
-    def test_get_context_data(self):
-        report = reports.OrdersReport()
-        links = [{
-            'href': f'/reports/tickets/orders/{order.order_id}/',
-            'text': order.order_id,
-        } for order in [self.order1, self.order2]]
-        expected = {
-            'title': 'All orders',
-            'headings': ['ID', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
-            'rows': [
-                [links[0], 'Alice', 'alice@example.com', 1, '£78', 'pending'],
-                [links[1], 'Bob', 'bob@example.com', 1, '£114', 'successful'],
-            ],
-        }
-        self.assertEqual(report.get_context_data(), expected)
-
-    def test_get(self):
-        rsp = self.client.get('/reports/all-orders/')
-        self.assertEqual(rsp.status_code, 200)
-
-
-class TestUnpaidOrdersReport(ReportsTestCase):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.order1 = tickets_factories.create_pending_order_for_self(cls.alice, num_days=1)
-        tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
-
-    def test_get_context_data(self):
-        report = reports.UnpaidOrdersReport()
-        link = {
-            'href': f'/reports/tickets/orders/{self.order1.order_id}/',
-            'text': self.order1.order_id,
-        }
-        expected = {
-            'title': 'Unpaid orders',
-            'headings': ['ID', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
-            'rows': [
-                [link, 'Alice', 'alice@example.com', 1, '£78', 'pending'],
-            ],
-        }
-        self.assertEqual(report.get_context_data(), expected)
-
-    def test_get(self):
-        rsp = self.client.get('/reports/unpaid-orders/')
-        self.assertEqual(rsp.status_code, 200)
-
-
-class TestTicketsReport(ReportsTestCase):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.ticket1 = tickets_factories.create_ticket(cls.alice)
-        order = tickets_factories.create_confirmed_order_for_others(cls.alice)
-        cls.ticket2, cls.ticket3 = order.all_tickets()
-
-    def test_get_context_data(self):
-        report = reports.TicketsReport()
-        links = [{
-            'href': f'/reports/tickets/tickets/{ticket.ticket_id}/',
-            'text': ticket.ticket_id,
-        } for ticket in [self.ticket1, self.ticket2, self.ticket3]]
-        expected = {
-            'title': 'All tickets',
-            'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
-            'rows': [
-                [links[0], 'individual', 'Alice', 'Saturday, Sunday, Monday', '£150', 'Assigned'],
-                [links[1], 'individual', 'bob@example.com', 'Sunday, Monday', '£114', 'Unclaimed'],
-                [links[2], 'individual', 'carol@example.com', 'Monday, Tuesday', '£114', 'Unclaimed'],
-            ],
-        }
-        self.assertEqual(report.get_context_data(), expected)
-
-    def test_get(self):
-        rsp = self.client.get('/reports/all-tickets/')
-        self.assertEqual(rsp.status_code, 200)
-
-
-class TestUnclaimedTicketsReport(ReportsTestCase):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        tickets_factories.create_ticket(cls.alice)
-        order = tickets_factories.create_confirmed_order_for_others(cls.alice)
-        cls.ticket2, cls.ticket3 = order.all_tickets()
-
-    def test_get_context_data(self):
-        report = reports.UnclaimedTicketsReport()
-        links = [{
-            'href': f'/reports/tickets/tickets/{ticket.ticket_id}/',
-            'text': ticket.ticket_id,
-        } for ticket in [self.ticket2, self.ticket3]]
-        expected = {
-            'title': 'Unclaimed tickets',
-            'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
-            'rows': [
-                [links[0], 'individual', 'bob@example.com', 'Sunday, Monday', '£114', 'Unclaimed'],
-                [links[1], 'individual', 'carol@example.com', 'Monday, Tuesday', '£114', 'Unclaimed'],
-            ],
-        }
-        self.assertEqual(report.get_context_data(), expected)
-
-    def test_get(self):
-        rsp = self.client.get('/reports/unclaimed-tickets/')
         self.assertEqual(rsp.status_code, 200)

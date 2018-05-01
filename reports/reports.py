@@ -8,7 +8,7 @@ from accounts.models import User
 from orders.models import Order
 from tickets.constants import DAYS
 from tickets.models import Ticket
-from tickets.prices import PRICES_EXCL_VAT, cost_incl_vat
+from tickets.prices import PRICES_EXCL_VAT, cost_excl_vat
 
 
 @method_decorator(staff_member_required(login_url='login'), name='dispatch')
@@ -47,7 +47,7 @@ class TicketSummaryReport(ReportView):
         rows = [
             ['Tickets', len(tickets)],
             ['Days', sum(t.num_days() for t in tickets)],
-            ['Cost (excl. VAT)', f'£{sum(t.cost_excl_vat() for t in tickets)}'],
+            ['Cost (excl. VAT)', f'£{sum(t.cost_excl_vat for t in tickets)}'],
         ]
 
         return {
@@ -114,9 +114,9 @@ class TicketSalesReport(ReportView):
 
         for ix in range(5):
             num_days = ix + 1
-            individual_rate = cost_incl_vat('individual', num_days)
-            corporate_rate = cost_incl_vat('corporate', num_days)
-            unwaged_rate = cost_incl_vat('unwaged', num_days)
+            individual_rate = cost_excl_vat('individual', num_days)
+            corporate_rate = cost_excl_vat('corporate', num_days)
+            unwaged_rate = cost_excl_vat('unwaged', num_days)
 
             num_tickets = {rate: 0 for rate in PRICES_EXCL_VAT}
 
@@ -296,13 +296,4 @@ reports = [
     AttendanceByDayReport,
     TicketSummaryReport,
     TicketSalesReport,
-    OrdersReport,
-    UnpaidOrdersReport,
-    TicketsReport,
-    UnclaimedTicketsReport,
-    AttendeesWithAccessibilityReqs,
-    AttendeesWithChildcareReqs,
-    AttendeesWithDietaryReqs,
-    PeopleReport,
-    StaffReport,
 ]

@@ -8,4 +8,17 @@
   <li><a href="{% url report.namespaced_url_name %}">{{ report.title }}</a></li>
   {% endfor %}
 </ul>
+
+<ul>
+	<li><a href="{% url 'admin:orders_order_changelist' %}">All orders</a></li>
+	<li><a href="/admin/tickets/ticket/?order_rows__order__status=pending">Unpaid Orders</a></li>
+	<li><a href="{% url 'admin:tickets_ticket_changelist' %}">All tickets</a></li>
+	<li><a href="/admin/tickets/ticketinvitation/?status=unclaimed">Unclaimed tickets</a></li>
+	<li><a href="/admin/accounts/user/?accessibility_reqs=True">Attendees with accessibility requirements</a></li>
+	<li><a href="/admin/accounts/user/?childcare_reqs=True">Attendees with childcare requirements</a></li>
+	<li><a href="/admin/accounts/user/?dietary_reqs=True">Attendees with dietary requirements</a></li>
+	<li><a href="{% url 'admin:accounts_user_changelist' %}">People</a></li>
+	<li><a href="/admin/accounts/user/?is_staff__exact=1">Staff</a></li>
+
+</ul>
 {% endblock %}
