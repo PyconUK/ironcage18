@@ -13,6 +13,9 @@ class Proposal(models.Model):
         ('talk', 'A talk (25 minutes)'),
         ('workshop', 'A workshop (3 hours)'),
         ('poster', 'A poster'),
+        ('kidsworkshop', 'Education Summit workshop for young coders (Saturday, 50 mins)'),
+        ('teachersworkshop', 'Education Summit workshop for educators (Sunday, 50 mins)'),
+        ('teacherstalk', 'Education Summit talk for educators (Sunday, 25 mins)'),
         ('other', 'Something else'),
     )
 
@@ -24,6 +27,7 @@ class Proposal(models.Model):
     description = models.TextField(validators=[validate_max_300_words])
     description_private = models.TextField(validators=[validate_max_300_words], blank=True)
     outline = models.TextField(blank=True)
+    equipment = models.TextField(blank=True)
     aimed_at_new_programmers = models.BooleanField()
     aimed_at_teachers = models.BooleanField()
     aimed_at_data_scientists = models.BooleanField()

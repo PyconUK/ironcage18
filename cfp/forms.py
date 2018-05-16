@@ -16,6 +16,7 @@ class ProposalForm(forms.ModelForm):
             'description',
             'description_private',
             'outline',
+            'equipment',
             'aimed_at_new_programmers',
             'aimed_at_teachers',
             'aimed_at_data_scientists',
@@ -31,6 +32,7 @@ class ProposalForm(forms.ModelForm):
             'description': 'What is your session about?',
             'description_private': 'Is there anything else we should know about your proposal?',
             'outline': 'Can you give us an outline of your proposed session?',
+            'equipment': 'What are your equipment and other requirements?',
             'aimed_at_new_programmers': 'new programmers?',
             'aimed_at_teachers': 'teachers?',
             'aimed_at_data_scientists': 'data scientists?',
@@ -45,6 +47,7 @@ class ProposalForm(forms.ModelForm):
             'description': 'If your session is selected, this is the basis of what will be published in the programme. Limit: 300 words. Required.',
             'description_private': 'Your answer here is for the benefit of the programme committee, and will not be published. Limit: 300 words.',
             'outline': 'An outline of your session is optional, but helps the programme committee. A proposal with an outline is more likely to be selected than one without. More detail, including timings, is better. The outline will not be published.',
+            'equipment': 'We’ll provide: a projector for talks and workshops; a large board for posters; a room full of Raspberry Pis and micro:bits for Education Summit sessions. Is there anything else you will need us to provide? Optional.'
         }
 
         widgets = {
@@ -54,6 +57,7 @@ class ProposalForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'placeholder': False}),
             'description_private': forms.Textarea(attrs={'placeholder': False}),
             'outline': forms.Textarea(attrs={'placeholder': False}),
+            'equipment': forms.Textarea(attrs={'placeholder': False}),
         }
 
     # Model form does not allow required=True on booleans unless explicitly defined
