@@ -13,6 +13,8 @@
       {% bootstrap_field form.subtitle layout='horizontal' %}
       <hr>
       {% bootstrap_field form.copresenter_names layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.would_like_longer_slot %}
     </div>
   </div>
 
@@ -24,6 +26,8 @@
       {% bootstrap_field form.description_private layout='horizontal' %}
       <hr>
       {% bootstrap_field form.outline layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.equipment layout='horizontal' %}
       <hr>
       <p>Is your session particularly suitable for:</p>
       <div class="row">
@@ -38,7 +42,6 @@
       <div class="row">
         <div class="col offset-1">
           {% bootstrap_field form.would_like_mentor %}
-          {% bootstrap_field form.would_like_longer_slot %}
         </div>
       </div>
       <hr>

@@ -2,7 +2,7 @@
 
 {% if not proposal.session_type == 'other' %}
   <hr>
-  <div>This is a proposal for a {{ proposal.session_type }}.</div>
+  <div>This is a proposal for a {{ proposal.get_session_type_display }}.</div>
 {% endif %}
 
 <hr>
@@ -24,6 +24,12 @@
       <hr>
       <h4>{{ form.outline.label }}</h4>
       <div>{{ proposal.outline|linebreaks }}</div>
+    {% endif %}
+
+    {% if proposal.equipment %}
+      <hr>
+      <h4>{{ form.equipment.label }}</h4>
+      <div>{{ proposal.equipment|linebreaks }}</div>
     {% endif %}
 
     {% if proposal.aimed_at_new_programmers or proposal.aimed_at_teachers or proposal.aimed_at_data_scientists or proposal.would_like_mentor or proposal.would_like_longer_slot %}
