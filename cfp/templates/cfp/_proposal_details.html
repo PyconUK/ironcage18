@@ -2,7 +2,7 @@
 
 {% if not proposal.session_type == 'other' %}
   <hr>
-  <div>This is a proposal for a {{ proposal.session_type }}.</div>
+  <div>This is a proposal for a {{ proposal.get_session_type_display }}.</div>
 {% endif %}
 
 <hr>

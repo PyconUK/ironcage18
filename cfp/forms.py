@@ -37,7 +37,7 @@ class ProposalForm(forms.ModelForm):
             'aimed_at_teachers': 'teachers?',
             'aimed_at_data_scientists': 'data scientists?',
             'would_like_mentor': 'like a mentor',
-            'would_like_longer_slot': 'like to be considered for a longer talk slot',
+            'would_like_longer_slot': 'I would like to be considered for a longer talk slot',
         }
 
         help_texts = {
