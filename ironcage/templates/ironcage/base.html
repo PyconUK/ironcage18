@@ -17,9 +17,8 @@
   <body>
 
     <div class="masthead">
-
+      <a class="navbar-brand" href="/"><span>PyCon UK</span></a>
       <nav class="navbar navbar-expand-lg">
-        <a class="navbar-brand" href="https://2018.pyconuk.org/"><span>PyCon UK</span></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>Menu
         </button>
@@ -54,6 +53,7 @@
           <li class="breadcrumb-item">
             {% if user.is_staff %}
             <span><a href="{% url 'reports:index' %}">Reports</a></span> &bull;
+            <span><a href="{% url 'admin:index' %}">Admin</a></span> &bull;
             {% endif %}
             {% if user.is_authenticated %}
             <span><a href="{% url 'index' %}">Registration Office</a></span> &bull; <span><a href="{% url 'logout' %}">Sign out</a></span>
