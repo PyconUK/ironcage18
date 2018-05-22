@@ -112,7 +112,7 @@ class TicketForOtherBaseForm(forms.Form):
     )
 
 
-class TicketForOtherForm(forms.Form):
+class TicketForOtherForm(TicketForOtherBaseForm):
     days = forms.MultipleChoiceField(
         choices=DAY_CHOICES,
         widget=ButtonsCheckbox
