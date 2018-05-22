@@ -115,6 +115,7 @@ def create_pending_order_for_educator_self_and_others(user=None, rate=None):
         ]
     )
 
+
 def confirm_order(order):
     order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1526887563)
 
