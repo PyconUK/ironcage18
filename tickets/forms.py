@@ -17,6 +17,10 @@ RATE_CHOICES = [
     ('unwaged', 'Unwaged'),
 ]
 
+EDUCATOR_RATE_CHOICES = [
+    ('educator-employer', 'Employer funded'),
+    ('educator-self', 'Self funded'),
+]
 
 DAY_CHOICES = [
     ('sat', 'Saturday'),
@@ -26,14 +30,15 @@ DAY_CHOICES = [
     ('wed', 'Wednesday'),
 ]
 
+EDUCATOR_DAY_CHOICES = [
+    ('sat', 'Saturday'),
+    ('sun', 'Sunday'),
+]
 
-class TicketForm(forms.Form):
+
+class TicketBaseForm(forms.Form):
     who = forms.ChoiceField(
         choices=WHO_CHOICES,
-        widget=ButtonsRadio
-    )
-    rate = forms.ChoiceField(
-        choices=RATE_CHOICES,
         widget=ButtonsRadio
     )
 
@@ -60,12 +65,20 @@ class TicketForm(forms.Form):
 
         return cls(data)
 
-
-class TicketForSelfForm(forms.Form):
-    days = forms.MultipleChoiceField(
-        choices=DAY_CHOICES,
-        widget=ButtonsCheckbox
+class TicketForm(TicketBaseForm):
+    rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        widget=ButtonsRadio
     )
+
+class EducatorTicketForm(TicketBaseForm):
+    rate = forms.ChoiceField(
+        choices=EDUCATOR_RATE_CHOICES,
+        widget=ButtonsRadio
+    )
+
+
+class TicketForSelfBaseForm(forms.Form):
 
     @classmethod
     def from_pending_order(cls, order):
@@ -78,19 +91,38 @@ class TicketForSelfForm(forms.Form):
 
         return cls({'days': days_for_self})
 
+class TicketForSelfForm(TicketForSelfBaseForm):
+    days = forms.MultipleChoiceField(
+        choices=DAY_CHOICES,
+        widget=ButtonsCheckbox
+    )
 
-class TicketForOtherForm(forms.Form):
+class TicketForSelfEducatorForm(TicketForSelfBaseForm):
+    days = forms.MultipleChoiceField(
+        choices=EDUCATOR_DAY_CHOICES,
+        widget=ButtonsCheckbox
+    )
+
+class TicketForOtherBaseForm(forms.Form):
     email_addr = forms.EmailField(
         widget=EmailInput(attrs={'class': 'form-control'}),
     )
     name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
     )
+
+
+class TicketForOtherForm(forms.Form):
     days = forms.MultipleChoiceField(
         choices=DAY_CHOICES,
         widget=ButtonsCheckbox
     )
 
+class TicketForOtherEducatorForm(TicketForOtherBaseForm):
+    days = forms.MultipleChoiceField(
+        choices=EDUCATOR_DAY_CHOICES,
+        widget=ButtonsCheckbox
+    )
 
 class BaseTicketForOthersFormset(forms.BaseFormSet):
     def clean(self):
@@ -139,6 +171,14 @@ class BaseTicketForOthersFormset(forms.BaseFormSet):
 
 TicketForOthersFormSet = forms.formset_factory(
     TicketForOtherForm,
+    formset=BaseTicketForOthersFormset,
+    min_num=1,
+    extra=1,
+    can_delete=True
+)
+
+TicketForOthersEducatorFormSet = forms.formset_factory(
+    TicketForOtherEducatorForm,
     formset=BaseTicketForOthersFormset,
     min_num=1,
     extra=1,

@@ -3,7 +3,11 @@
 {% block content %}
 <div class="row">
   <div class="col-md-6">
-    {% include './_ticket_info.html' %}
+    {% if educator_order %}
+        {% include './_educator_ticket_info.html' %}
+    {% else %}
+        {% include './_ticket_info.html' %}
+    {% endif %}
   </div>
 
   <div class="col-md-6">

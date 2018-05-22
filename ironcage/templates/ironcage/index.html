@@ -27,6 +27,8 @@
         {% if orders|length == 0 %}
           {% if ticket_sales_open %}
             <a href="{% url 'tickets:new_order' %}">Order conference tickets</a>
+            <hr>
+            <a href="{% url 'tickets:new_educator_order' %}">Order education summit tickets</a>
           {% endif %}
         {% elif orders|length == 1 %}
           <hr>
@@ -46,6 +48,8 @@
           {% if ticket_sales_open %}
             <hr>
             <a href="{% url 'tickets:new_order' %}">Order more conference tickets</a>
+            <hr>
+            <a href="{% url 'tickets:new_educator_order' %}">Order more education summit tickets</a>
           {% endif %}
         {% endif %}
       </div>
