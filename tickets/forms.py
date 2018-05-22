@@ -65,11 +65,13 @@ class TicketBaseForm(forms.Form):
 
         return cls(data)
 
+
 class TicketForm(TicketBaseForm):
     rate = forms.ChoiceField(
         choices=RATE_CHOICES,
         widget=ButtonsRadio
     )
+
 
 class EducatorTicketForm(TicketBaseForm):
     rate = forms.ChoiceField(
@@ -91,17 +93,20 @@ class TicketForSelfBaseForm(forms.Form):
 
         return cls({'days': days_for_self})
 
+
 class TicketForSelfForm(TicketForSelfBaseForm):
     days = forms.MultipleChoiceField(
         choices=DAY_CHOICES,
         widget=ButtonsCheckbox
     )
 
+
 class TicketForSelfEducatorForm(TicketForSelfBaseForm):
     days = forms.MultipleChoiceField(
         choices=EDUCATOR_DAY_CHOICES,
         widget=ButtonsCheckbox
     )
+
 
 class TicketForOtherBaseForm(forms.Form):
     email_addr = forms.EmailField(
@@ -118,11 +123,13 @@ class TicketForOtherForm(TicketForOtherBaseForm):
         widget=ButtonsCheckbox
     )
 
+
 class TicketForOtherEducatorForm(TicketForOtherBaseForm):
     days = forms.MultipleChoiceField(
         choices=EDUCATOR_DAY_CHOICES,
         widget=ButtonsCheckbox
     )
+
 
 class BaseTicketForOthersFormset(forms.BaseFormSet):
     def clean(self):
