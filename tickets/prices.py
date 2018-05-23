@@ -15,6 +15,14 @@ PRICES_EXCL_VAT = {
         'ticket_price': 25,
         'day_price': 15,
     },
+    'educator-employer': {
+        'ticket_price': 35,
+        'day_price': 30,
+    },
+    'educator-self': {
+        'ticket_price': 25,
+        'day_price': 15,
+    },
 }
 
 VAT_RATE = 0.2

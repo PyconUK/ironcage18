@@ -21,6 +21,23 @@ def create_pending_order_for_self(user=None, rate=None, num_days=None):
     )
 
 
+def create_pending_order_for_educator_self(user=None, rate=None, num_days=None):
+    user = user or create_user()
+    rate = rate or 'educator-self'
+    num_days = num_days or 2
+    billing_details = {
+        'name': 'University of Maximegalon',
+        'addr': 'Dept. of Neomathematics',
+    }
+
+    return actions.create_pending_order(
+        purchaser=user,
+        billing_details=billing_details,
+        rate=rate,
+        days_for_self=['sat', 'sun'][:num_days],
+    )
+
+
 def create_pending_order_for_others(user=None, rate=None):
     user = user or create_user()
     rate = rate or 'individual'
@@ -36,6 +53,25 @@ def create_pending_order_for_others(user=None, rate=None):
         email_addrs_and_days_for_others=[
             ('bob@example.com', 'Bob', ['sun', 'mon']),
             ('carol@example.com', 'Carol', ['mon', 'tue']),
+        ]
+    )
+
+
+def create_pending_order_for_educator_others(user=None, rate=None):
+    user = user or create_user()
+    rate = rate or 'educator-self'
+    billing_details = {
+        'name': 'University of Maximegalon',
+        'addr': 'Dept. of Neomathematics',
+    }
+
+    return actions.create_pending_order(
+        purchaser=user,
+        billing_details=billing_details,
+        rate=rate,
+        email_addrs_and_days_for_others=[
+            ('bob@example.com', 'Bob', ['sat', 'sun']),
+            ('carol@example.com', 'Carol', ['sat', 'sun']),
         ]
     )
 
@@ -56,6 +92,26 @@ def create_pending_order_for_self_and_others(user=None, rate=None):
         email_addrs_and_days_for_others=[
             ('bob@example.com', 'Bob', ['sun', 'mon']),
             ('carol@example.com', 'Carol', ['mon', 'tue']),
+        ]
+    )
+
+
+def create_pending_order_for_educator_self_and_others(user=None, rate=None):
+    user = user or create_user()
+    rate = rate or 'educator-self'
+    billing_details = {
+        'name': 'University of Maximegalon',
+        'addr': 'Dept. of Neomathematics',
+    }
+
+    return actions.create_pending_order(
+        purchaser=user,
+        billing_details=billing_details,
+        rate=rate,
+        days_for_self=['sat', 'sun'],
+        email_addrs_and_days_for_others=[
+            ('bob@example.com', 'Bob', ['sat', 'sun']),
+            ('carol@example.com', 'Carol', ['sat', 'sun']),
         ]
     )
 

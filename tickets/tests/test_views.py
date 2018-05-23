@@ -154,6 +154,152 @@ class NewOrderTests(TestCase):
         self.assertRedirects(rsp, '/accounts/login/')
 
 
+class NewEducatorOrderTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user()
+        cls.url = '/tickets/orders/educator/new/'
+
+    def test_get(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get(self.url)
+        self.assertContains(rsp, '<tr><td class="text-center">2 days</td><td class="text-center">£114</td><td class="text-center">£66</td></tr>', html=True)
+        self.assertContains(rsp, '<form method="post" id="order-form">')
+        self.assertNotContains(rsp, 'to buy a ticket')
+
+    @override_settings(TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+    def test_get_when_ticket_sales_have_closed(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get(self.url, follow=True)
+        self.assertContains(rsp, 'ticket sales have closed')
+        self.assertRedirects(rsp, '/')
+
+    @override_settings(
+        TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1),
+        TICKET_DEADLINE_BYPASS_TOKEN='abc123',
+    )
+    def test_get_when_ticket_sales_have_closed_but_correct_token_is_provided(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get(f'{self.url}?deadline-bypass-token=abc123', follow=True)
+        self.assertNotContains(rsp, 'ticket sales have closed')
+        self.assertContains(rsp, '<form method="post" id="order-form">')
+
+    @override_settings(
+        TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1),
+        TICKET_DEADLINE_BYPASS_TOKEN='abc123',
+    )
+    def test_get_when_ticket_sales_have_closed_and_incorrect_token_is_provided(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get(f'{self.url}?deadline-bypass-token=321cba', follow=True)
+        self.assertContains(rsp, 'ticket sales have closed')
+        self.assertRedirects(rsp, '/')
+
+    def test_get_when_user_has_order_for_self(self):
+        self.client.force_login(self.alice)
+        factories.create_confirmed_order_for_self(self.alice)
+        rsp = self.client.get(self.url)
+        self.assertNotContains(rsp, '<input type="radio" name="who" value="self">')
+        self.assertContains(rsp, '<input type="hidden" name="who" value="others">')
+
+    def test_get_when_user_has_order_but_not_for_self(self):
+        self.client.force_login(self.alice)
+        factories.create_confirmed_order_for_others(self.alice)
+        rsp = self.client.get(self.url)
+        self.assertContains(rsp, '<input type="radio" name="who" value="self">')
+        self.assertNotContains(rsp, '<input type="hidden" name="who" value="others">')
+
+    def test_post_for_self_individual(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'who': 'self',
+            'rate': 'educator-self',
+            'days': ['sat', 'sun'],
+            'billing_name': 'Alice Apple',
+            'billing_addr': 'Eadrax, Sirius Tau',
+            # The formset gets POSTed even when order is only for self
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': '',
+            'form-1-email_addr': '',
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'You are ordering 1 ticket')
+
+    def test_post_for_self_corporate(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'who': 'self',
+            'rate': 'educator-employer',
+            'days': ['sat', 'sun'],
+            'billing_name': 'Sirius Cybernetics Corp.',
+            'billing_addr': 'Eadrax, Sirius Tau',
+            # The formset gets POSTed even when order is only for self
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': '',
+            'form-1-email_addr': '',
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'You are ordering 1 ticket')
+
+    def test_post_for_others(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'who': 'others',
+            'rate': 'educator-self',
+            'billing_name': 'Alice Apple',
+            'billing_addr': 'Eadrax, Sirius Tau',
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
+            'form-0-days': ['sat', 'sun'],
+            'form-1-email_addr': 'test2@example.com',
+            'form-1-name': 'Test 2',
+            'form-1-days': ['sun'],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'You are ordering 2 tickets')
+
+    def test_post_for_self_and_others(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'who': 'self and others',
+            'rate': 'educator-employer',
+            'days': ['sat', 'sun'],
+            'billing_name': 'Alice Apple',
+            'billing_addr': 'Eadrax, Sirius Tau',
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': 'test1@example.com',
+            'form-0-name': 'Test 1',
+            'form-0-days': ['sat'],
+            'form-1-email_addr': 'test2@example.com',
+            'form-1-name': 'Test 2',
+            'form-1-days': ['sun'],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'You are ordering 3 tickets')
+
+    def test_get_when_not_authenticated(self):
+        rsp = self.client.get(self.url)
+        self.assertContains(rsp, '<tr><td class="text-center">2 days</td><td class="text-center">£114</td><td class="text-center">£66</td></tr>', html=True)
+        self.assertNotContains(rsp, '<form method="post" id="order-form">')
+        self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/tickets/orders/educator/new/">sign up</a> or <a href="/accounts/login/?next=/tickets/orders/educator/new/">sign in</a> to buy a ticket.', html=True)
+
+    def test_post_when_not_authenticated(self):
+        rsp = self.client.post(self.url, follow=True)
+        self.assertRedirects(rsp, '/accounts/login/')
+
+
 class OrderEditTests(TestCase):
     @classmethod
     def setUpTestData(cls):
