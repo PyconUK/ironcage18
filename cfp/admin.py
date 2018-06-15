@@ -46,8 +46,8 @@ class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
         users_permissions = request.user.get_all_permissions()
         if ('cfp.review_education_proposal' in users_permissions
-                and 'cfp.change_proposal' in users_permissions
-                and 'cfp.review_proposal' not in users_permissions):
+                and 'cfp.change_proposal' in users_permissions  # noqa: W503
+                and 'cfp.review_proposal' not in users_permissions):  # noqa: W503
             return queryset.filter(session_type__in=[
                 'kidsworkshop', 'teachersworkshop', 'teacherstalk'
             ])
