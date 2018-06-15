@@ -49,6 +49,7 @@ class Proposal(models.Model):
     class Meta:
         permissions = [
             ('review_proposal', 'Can review proposals'),
+            ('review_education_proposal', 'Can review education proposals'),
         ]
 
     class Manager(models.Manager):
