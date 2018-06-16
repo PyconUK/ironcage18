@@ -39,6 +39,8 @@ class UserAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
         TicketInline,
     ]
 
+    search_fields = ['name', 'email_addr']
+
     def get_fields(self, request, obj=None):
         if request.user.is_superuser:
             return ['name', 'email_addr', 'last_login', 'is_contributor',
