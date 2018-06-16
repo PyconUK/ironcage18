@@ -8,6 +8,10 @@ GROUPS = {
         ('change_application', 'grants', 'application'),
         ('change_orderrow', 'orders', 'orderrow'),
         ('change_ticket', 'tickets', 'ticket'),
+    ],
+    'Education': [
+        ('change_proposal', 'cfp', 'proposal'),
+        ('review_education_proposal', 'cfp', 'proposal'),
     ]
 }
 

@@ -31,10 +31,7 @@ class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
         return self.get_fields(request, obj)
 
     def get_list_display(self, request):
-        if request.user.is_superuser:
-            return ('proposer_name', 'session_type', 'title', 'subtitle')
-
-        return ('session_type', 'title', 'subtitle')
+        return ('title', 'subtitle', 'proposer_name', 'session_type')
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
@@ -42,6 +39,20 @@ class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
                     'description_private', 'outline']
 
         return ['title', 'subtitle', 'description']
+
+    def get_queryset(self, request):
+
+        queryset = super().get_queryset(request)
+
+        users_permissions = request.user.get_all_permissions()
+        if ('cfp.review_education_proposal' in users_permissions
+                and 'cfp.change_proposal' in users_permissions  # noqa: W503
+                and 'cfp.review_proposal' not in users_permissions):  # noqa: W503
+            return queryset.filter(session_type__in=[
+                'kidsworkshop', 'teachersworkshop', 'teacherstalk'
+            ])
+        else:
+            return queryset
 
     def proposer_name(self, obj):
         return obj.proposer.name
