@@ -30,16 +30,15 @@
             <a href="{% url 'tickets:new_order' %}">Order conference tickets</a>
             <hr>
             <a href="{% url 'tickets:new_educator_order' %}">Order education summit tickets</a>
+            <hr>
           {% endif %}
         {% elif orders|length == 1 %}
-          <hr>
           <a href="{% url 'orders:order' orders.0.order_id %}">View your order</a>
           {% if ticket_sales_open %}
             <hr>
             <a href="{% url 'tickets:new_order' %}">Order more conference tickets</a>
           {% endif %}
         {% else %}
-          <hr>
           View your orders:
           <ul>
             {% for order in orders %}
@@ -60,47 +59,51 @@
 
 <div class="row">
   <div class="col col-12 col-xs-12 col-sm-12 col-md-6">
-    <div class="card bg-warning text-dark">
-      <div class="card-header"><h2>Call for Proposals</h2></div>
-      <div class="card-body">
-        {% if proposals|length == 0 %}
-          {% if cfp_open %}
-            <a href="{% url 'cfp:new_proposal' %}">Make a proposal to our Call for Proposals</a>
+    {% if proposals|length > 0 or cfp_open %}
+      <div class="card bg-warning text-dark">
+        <div class="card-header"><h2>Call for Proposals</h2></div>
+        <div class="card-body">
+          {% if proposals|length == 0 %}
+            {% if cfp_open %}
+              <a href="{% url 'cfp:new_proposal' %}">Make a proposal to our Call for Proposals</a>
+            {% endif %}
+          {% elif proposals|length == 1 %}
+            <a href="{% url 'cfp:proposal' proposals.0.proposal_id %}">View your proposal to our Call for Proposals</a> ({{ proposals.0.title }})
+            {% if cfp_open %}
+              <hr>
+              <a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Proposals</a>
+            {% endif %}
+          {% else %}
+            View your proposals to our Call for Proposals
+            <ul>
+              {% for proposal in proposals %}
+              <li><a href="{% url 'cfp:proposal' proposal.proposal_id %}">{{ proposal.title }}</a></li>
+              {% endfor %}
+            </ul>
+            {% if cfp_open %}
+              <hr>
+              <a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Proposals</a>
+            {% endif %}
           {% endif %}
-        {% elif proposals|length == 1 %}
-          <a href="{% url 'cfp:proposal' proposals.0.proposal_id %}">View your proposal to our Call for Proposals</a> ({{ proposals.0.title }})
-          {% if cfp_open %}
-            <hr>
-            <a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Proposals</a>
-          {% endif %}
-        {% else %}
-          View your proposals to our Call for Proposals
-          <ul>
-            {% for proposal in proposals %}
-            <li><a href="{% url 'cfp:proposal' proposal.proposal_id %}">{{ proposal.title }}</a></li>
-            {% endfor %}
-          </ul>
-          {% if cfp_open %}
-            <hr>
-            <a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Proposals</a>
-          {% endif %}
-        {% endif %}
+        </div>
       </div>
-    </div>
+    {% endif %}
   </div>
   <div class="col col-12 col-xs-12 col-sm-12 col-md-6">
-    <div class="card bg-primary">
-      <div class="card-header"><h2>Financial Assistance</h2></div>
-      <div class="card-body">
-        {% if grant_application %}
-          <a href="{% url 'grants:application' grant_application.application_id %}">View your application for financial assistance</a>
-        {% else %}
-          {% if grant_applications_open %}
-            <a href="{% url 'grants:new_application' %}">Apply for financial assistance</a>
+    {% if grant_application or grant_applications_open %}
+      <div class="card bg-primary">
+        <div class="card-header"><h2>Financial Assistance</h2></div>
+        <div class="card-body">
+          {% if grant_application %}
+            <a href="{% url 'grants:application' grant_application.application_id %}">View your application for financial assistance</a>
+          {% else %}
+            {% if grant_applications_open %}
+              <a href="{% url 'grants:new_application' %}">Apply for financial assistance</a>
+            {% endif %}
           {% endif %}
-        {% endif %}
+        </div>
       </div>
-    </div>
+    {% endif %}
   </div>
 </div>
 
