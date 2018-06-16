@@ -22,13 +22,18 @@ class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
         return ['id', 'session_type', 'title', 'subtitle', 'description']
 
     def get_readonly_fields(self, request, obj=None):
-        if request.user.is_superuser:
-            return ['id', 'proposer_name', 'session_type', 'title', 'subtitle',
-                    'copresenter_names', 'description', 'description_private',
-                    'outline', 'would_like_mentor', 'would_like_longer_slot',
-                    'state', 'track', 'scheduled_room', 'scheduled_time']
+        fields = self.get_fields(request, obj)
 
-        return self.get_fields(request, obj)
+        users_permissions = request.user.get_all_permissions()
+        if ('cfp.review_proposal' in users_permissions
+                or 'cfp.review_education_proposal' in users_permissions):  # noqa: W503
+            fields.remove('aimed_at_new_programmers')
+            fields.remove('aimed_at_teachers')
+            fields.remove('aimed_at_data_scientists')
+            fields.remove('state')
+            fields.remove('special_reply_required')
+
+        return fields
 
     def get_list_display(self, request):
         return ('title', 'subtitle', 'proposer_name', 'session_type')

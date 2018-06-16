@@ -19,6 +19,12 @@ class Proposal(models.Model):
         ('other', 'Something else'),
     )
 
+    STATE_TYPE_CHOICES = (
+        ('accept', 'Accepted'),
+        ('reject', 'Plan to Reject'),
+        ('withdrawn', 'Withdrawn')
+    )
+
     proposer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='proposals', on_delete=models.CASCADE)
     session_type = models.CharField(max_length=40, choices=SESSION_TYPE_CHOICES)
     title = models.CharField(max_length=60)
@@ -33,7 +39,7 @@ class Proposal(models.Model):
     aimed_at_data_scientists = models.BooleanField()
     would_like_mentor = models.BooleanField()
     would_like_longer_slot = models.BooleanField()
-    state = models.CharField(max_length=40, blank=True)
+    state = models.CharField(max_length=40, blank=True, choices=STATE_TYPE_CHOICES)
     track = models.CharField(max_length=40, blank=True)
     special_reply_required = models.BooleanField(default=False)
     scheduled_room = models.CharField(max_length=40, blank=True)
