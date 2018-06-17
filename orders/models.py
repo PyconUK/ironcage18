@@ -68,6 +68,7 @@ class Order(models.Model, SalesRecord):
     stripe_charge_created = models.DateTimeField(null=True)
     stripe_charge_failure_reason = models.CharField(max_length=400, blank=True)
     unconfirmed_details = JSONField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -80,24 +81,25 @@ class Order(models.Model, SalesRecord):
             return get_object_or_404(self.model, pk=id)
 
         def create_pending(self, purchaser, billing_details, rate, days_for_self=None, email_addrs_and_days_for_others=None):
-            assert days_for_self is not None or email_addrs_and_days_for_others is not None
+            if self.content_type == ContentType.objects.get(app_label="tickets", model="ticket"):
+                assert days_for_self is not None or email_addrs_and_days_for_others is not None
 
-            billing_name = billing_details['name']
-            billing_addr = billing_details['addr']
+                billing_name = billing_details['name']
+                billing_addr = billing_details['addr']
 
-            unconfirmed_details = {
-                'rate': rate,
-                'days_for_self': days_for_self,
-                'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
-            }
+                unconfirmed_details = {
+                    'rate': rate,
+                    'days_for_self': days_for_self,
+                    'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+                }
 
-            return self.create(
-                purchaser=purchaser,
-                billing_name=billing_name,
-                billing_addr=billing_addr,
-                status='pending',
-                unconfirmed_details=unconfirmed_details,
-            )
+                return self.create(
+                    purchaser=purchaser,
+                    billing_name=billing_name,
+                    billing_addr=billing_addr,
+                    status='pending',
+                    unconfirmed_details=unconfirmed_details,
+                )
 
     objects = Manager()
 
@@ -120,16 +122,18 @@ class Order(models.Model, SalesRecord):
 
     def update(self, billing_details, rate, days_for_self=None, email_addrs_and_days_for_others=None):
         assert self.payment_required()
-        assert days_for_self is not None or email_addrs_and_days_for_others is not None
 
-        self.billing_name = billing_details['name']
-        self.billing_addr = billing_details['addr']
-        self.unconfirmed_details = {
-            'rate': rate,
-            'days_for_self': days_for_self,
-            'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
-        }
-        self.save()
+        if self.content_type == ContentType.objects.get(app_label="tickets", model="ticket"):
+            assert days_for_self is not None or email_addrs_and_days_for_others is not None
+
+            self.billing_name = billing_details['name']
+            self.billing_addr = billing_details['addr']
+            self.unconfirmed_details = {
+                'rate': rate,
+                'days_for_self': days_for_self,
+                'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+            }
+            self.save()
 
     def confirm(self, charge_id, charge_created):
         assert self.payment_required()
@@ -177,25 +181,27 @@ class Order(models.Model, SalesRecord):
 
         rows = []
 
-        days_for_self = self.unconfirmed_details['days_for_self']
-        if days_for_self is not None:
-            ticket = Ticket.objects.build(
-                rate=self.unconfirmed_details['rate'],
-                owner=self.purchaser,
-                days=days_for_self,
-            )
-            row = self.order_rows.build_for_item(ticket)
-            rows.append(row)
+        if self.content_type == ContentType.objects.get(app_label="tickets", model="ticket"):
 
-        email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
-        if email_addrs_and_days_for_others is not None:
-            for email_addr, name, days in email_addrs_and_days_for_others:
+            days_for_self = self.unconfirmed_details['days_for_self']
+            if days_for_self is not None:
                 ticket = Ticket.objects.build(
                     rate=self.unconfirmed_details['rate'],
-                    email_addr=email_addr,
-                    days=days,
+                    owner=self.purchaser,
+                    days=days_for_self,
                 )
-                rows.append(self.order_rows.build_for_item(ticket))
+                row = self.order_rows.build_for_item(ticket)
+                rows.append(row)
+
+            email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
+            if email_addrs_and_days_for_others is not None:
+                for email_addr, name, days in email_addrs_and_days_for_others:
+                    ticket = Ticket.objects.build(
+                        rate=self.unconfirmed_details['rate'],
+                        email_addr=email_addr,
+                        days=days,
+                    )
+                    rows.append(self.order_rows.build_for_item(ticket))
 
         return rows
 
