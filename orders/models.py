@@ -210,6 +210,16 @@ class Order(models.Model, SalesRecord):
     def num_tickets(self):
         return len(self.all_tickets())
 
+    def num_items(self):
+        return len(self.all_items())
+
+    def is_ticket_order(self):
+        ticket_content_type = ContentType.objects.get(app_label="tickets", model="ticket")
+        return any([order_row.content_type == ticket_content_type for order_row in self.all_order_rows()])
+
+    def order_content_type(self):
+        return self.all_order_rows()[0].content_type
+
     def unclaimed_tickets(self):
         return [ticket for ticket in self.all_tickets() if ticket.owner is None]
 

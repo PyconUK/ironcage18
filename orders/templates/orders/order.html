@@ -5,10 +5,18 @@
 {% block content %}
 <h1>Details of your order ({{ order.order_id }})</h1>
 
-{% if order.payment_required %}
-<p>You are ordering {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }}.</p>
+{% if order.is_ticket_order %}
+  {% if order.payment_required %}
+  <p>You are ordering {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }}.</p>
+  {% else %}
+  <p>You have ordered {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }}.</p>
+  {% endif %}
 {% else %}
-<p>You have ordered {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }}.</p>
+  {% if order.payment_required %}
+  <p>You are ordering {{ order.num_items }} item{{ order.num_items|pluralize }}.</p>
+  {% else %}
+  <p>You have ordered {{ order.num_items }} item{{ order.num_items|pluralize }}.</p>
+  {% endif %}
 {% endif %}
 
 {% include './_order_details.html' %}
