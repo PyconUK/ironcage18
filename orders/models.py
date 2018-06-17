@@ -80,26 +80,20 @@ class Order(models.Model, SalesRecord):
             id = self.model.id_scrambler.backward(order_id)
             return get_object_or_404(self.model, pk=id)
 
-        def create_pending(self, purchaser, billing_details, rate, days_for_self=None, email_addrs_and_days_for_others=None):
-            if self.content_type == ContentType.objects.get(app_label="tickets", model="ticket"):
-                assert days_for_self is not None or email_addrs_and_days_for_others is not None
+        def create_pending(self, purchaser, billing_details, unconfirmed_details, content_type):
+            assert unconfirmed_details is not None
 
-                billing_name = billing_details['name']
-                billing_addr = billing_details['addr']
+            billing_name = billing_details['name']
+            billing_addr = billing_details['addr']
 
-                unconfirmed_details = {
-                    'rate': rate,
-                    'days_for_self': days_for_self,
-                    'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
-                }
-
-                return self.create(
-                    purchaser=purchaser,
-                    billing_name=billing_name,
-                    billing_addr=billing_addr,
-                    status='pending',
-                    unconfirmed_details=unconfirmed_details,
-                )
+            return self.create(
+                purchaser=purchaser,
+                billing_name=billing_name,
+                billing_addr=billing_addr,
+                status='pending',
+                unconfirmed_details=unconfirmed_details,
+                content_type=content_type
+            )
 
     objects = Manager()
 
@@ -120,19 +114,15 @@ class Order(models.Model, SalesRecord):
         row_ids = [row.id for row in self.all_order_rows()]
         return Refund.objects.filter(order_rows__id__in=row_ids)
 
-    def update(self, billing_details, rate, days_for_self=None, email_addrs_and_days_for_others=None):
+    def update(self, billing_details, details):
         assert self.payment_required()
 
         if self.content_type == ContentType.objects.get(app_label="tickets", model="ticket"):
-            assert days_for_self is not None or email_addrs_and_days_for_others is not None
+            assert details['days_for_self'] is not None or details['email_addrs_and_days_for_others'] is not None
 
             self.billing_name = billing_details['name']
             self.billing_addr = billing_details['addr']
-            self.unconfirmed_details = {
-                'rate': rate,
-                'days_for_self': days_for_self,
-                'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
-            }
+            self.unconfirmed_details = details
             self.save()
 
     def confirm(self, charge_id, charge_created):

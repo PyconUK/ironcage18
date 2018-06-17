@@ -12,6 +12,7 @@
 #    functions in this module.  This means that test data should always be
 #    in a consistent state.
 
+from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 
 from .mailer import send_invitation_mail
@@ -25,19 +26,32 @@ logger = structlog.get_logger()
 def create_pending_order(purchaser, billing_details, rate, days_for_self=None, email_addrs_and_days_for_others=None):
     logger.info('create_pending_order', purchaser=purchaser.id, rate=rate)
     with transaction.atomic():
+
+        unconfirmed_details = {
+            'rate': rate,
+            'days_for_self': days_for_self,
+            'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+        }
+
+        ticket_content_type = ContentType.objects.get(app_label="tickets", model="ticket")
+
         return Order.objects.create_pending(
             purchaser,
             billing_details,
-            rate,
-            days_for_self,
-            email_addrs_and_days_for_others,
+            unconfirmed_details,
+            ticket_content_type
         )
 
 
 def update_pending_order(order, billing_details, rate, days_for_self=None, email_addrs_and_days_for_others=None):
     logger.info('update_pending_order', order=order.order_id, rate=rate)
     with transaction.atomic():
-        order.update(billing_details, rate, days_for_self, email_addrs_and_days_for_others)
+        details = {
+            'rate': rate,
+            'days_for_self': days_for_self,
+            'email_addrs_and_days_for_others': email_addrs_and_days_for_others
+        }
+        order.update(billing_details, details)
 
 
 def send_ticket_invitations(order):
