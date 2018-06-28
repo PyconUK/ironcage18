@@ -1,10 +1,11 @@
 from django.contrib import admin
 from cfp.models import Proposal
 from ironcage.admin import OurActionsOnlyMixin
+from import_export.admin import ExportMixin
 
 
 @admin.register(Proposal)
-class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
+class ProposalAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
     list_filter = ('session_type', )
     search_fields = ['proposer__name', 'title', 'description',
                      'description_private', 'outline']

@@ -1,10 +1,11 @@
 from django.contrib import admin
 from grants.models import Application
 from ironcage.admin import OurActionsOnlyMixin
+from import_export.admin import ExportMixin
 
 
 @admin.register(Application)
-class ApplicationAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
+class ApplicationAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
 
     def get_fields(self, request, obj=None):
         if request.user.is_superuser:
