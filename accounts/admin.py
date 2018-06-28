@@ -6,6 +6,7 @@ from ironcage.admin import (
     OurActionsOnlyMixin,
     RequirementsListFilter
 )
+from import_export.admin import ExportMixin
 
 
 class AccessibilityListFilter(RequirementsListFilter):
@@ -33,7 +34,7 @@ class TicketInline(OurActionsOnlyMixin, admin.TabularInline):
 
 
 @admin.register(User)
-class UserAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
+class UserAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
 
     inlines = [
         TicketInline,
