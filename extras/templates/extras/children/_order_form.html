@@ -1,0 +1,66 @@
+{% load bootstrap4 %}
+
+<form method="post" id="order-form">
+  {% csrf_token %}
+  <div class="card bg-primary text-dark">
+    <div class="card-header"><h2>About your order</h2></div>
+    <div class="card-body">
+
+      {% bootstrap_field form.adult_name layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.adult_email_addr layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.adult_phone_number layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.name layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.age layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.accessibility_reqs layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.dietary_reqs layout='horizontal' %}
+    </div>
+  </div>
+
+  <div class="card bg-primary text-dark">
+    <div class="card-header"><h2>Billing details</h2></div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <label>Billing name</label>
+        </div>
+        <div class="col-12 col-md-9">
+          {{ billing_details_form.billing_name }}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <label>Billing address</label>
+        </div>
+        <div class="col-12 col-md-9">
+          {{ billing_details_form.billing_addr }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-primary text-dark">
+    <div class="card-header"><h2>Summary</h2></div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col col-3 col-md-3">
+          <b>Total cost (incl. VAT)</b>
+        </div>
+        <div class="col col-9 col-md-9">
+          &pound;6
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <input type="submit" value="Place my order" class="btn btn-primary" />
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

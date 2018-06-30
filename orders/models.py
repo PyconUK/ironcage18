@@ -12,6 +12,7 @@ from django.urls import reverse
 
 from ironcage.utils import Scrambler
 from tickets.models import Ticket
+from extras.models import ExtraItem
 
 
 class SalesRecord:
@@ -120,10 +121,10 @@ class Order(models.Model, SalesRecord):
         if self.content_type == ContentType.objects.get(app_label="tickets", model="ticket"):
             assert details['days_for_self'] is not None or details['email_addrs_and_days_for_others'] is not None
 
-            self.billing_name = billing_details['name']
-            self.billing_addr = billing_details['addr']
-            self.unconfirmed_details = details
-            self.save()
+        self.billing_name = billing_details['name']
+        self.billing_addr = billing_details['addr']
+        self.unconfirmed_details = details
+        self.save()
 
     def confirm(self, charge_id, charge_created):
         assert self.payment_required()
@@ -192,6 +193,20 @@ class Order(models.Model, SalesRecord):
                         days=days,
                     )
                     rows.append(self.order_rows.build_for_item(ticket))
+
+        elif self.content_type == ContentType.objects.get(app_label="extras", model="childrenticket"):
+
+            childrens_ticket_content_type = ContentType.objects.get(
+                app_label="extras", model="childrenticket"
+            )
+
+            ticket = ExtraItem.objects.build(
+                content_type=childrens_ticket_content_type,
+                owner=self.purchaser,
+                details=self.unconfirmed_details,
+            )
+            row = self.order_rows.build_for_item(ticket)
+            rows.append(row)
 
         return rows
 

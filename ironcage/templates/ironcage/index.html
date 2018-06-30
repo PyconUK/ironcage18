@@ -22,6 +22,7 @@
           <a href="{% url 'tickets:ticket' ticket.ticket_id %}">View your conference ticket</a>
           <hr>
           <a href="{% url 'accounts:profile' %}">Update your profile</a>
+          <hr>
         {% endif %}
 
         {% if orders|length == 0 %}
@@ -55,7 +56,30 @@
       </div>
     </div>
   </div>
+
+  <div class="col">
+    <div class="card bg-primary text-dark">
+      <div class="card-header"><h2>Extras</h2></div>
+      <div class="card-body">
+        {% if childrensday|length == 0 %}
+          {% if ticket_sales_open %}
+            <a href="{% url 'extras:new_order' %}">Order children's day tickets</a>
+            <hr>
+          {% endif %}
+        {% else %}
+          {% for order in childrensday %}
+            <li><a href="{% url 'orders:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
+          {% endfor %}
+          <hr>
+          {% if ticket_sales_open %}
+            <a href="{% url 'extras:new_order' %}">Order more children's day tickets</a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
+
 
 <div class="row">
   <div class="col col-12 col-xs-12 col-sm-12 col-md-6">
