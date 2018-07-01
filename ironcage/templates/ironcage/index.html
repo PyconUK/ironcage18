@@ -63,7 +63,7 @@
       <div class="card-body">
         {% if childrensday|length == 0 %}
           {% if ticket_sales_open %}
-            <a href="{% url 'extras:new_order' %}">Order children's day tickets</a>
+            <a href="{% url 'extras:new_children_order' %}">Order children's day tickets</a>
             <hr>
           {% endif %}
         {% else %}
@@ -72,7 +72,7 @@
           {% endfor %}
           <hr>
           {% if ticket_sales_open %}
-            <a href="{% url 'extras:new_order' %}">Order more children's day tickets</a>
+            <a href="{% url 'extras:new_children_order' %}">Order more children's day tickets</a>
           {% endif %}
         {% endif %}
       </div>

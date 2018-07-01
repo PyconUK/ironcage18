@@ -17,7 +17,7 @@ def index(request):
 
     if user.is_authenticated:
         ticket_content_type = ContentType.objects.get(app_label="tickets", model="ticket")
-        childrens_ticket_content_type = ContentType.objects.get(app_label="extras", model="childrenticket")
+        children_ticket_content_type = ContentType.objects.get(app_label="extras", model="childrenticket")
 
         if user.get_ticket() is not None and not user.profile_complete():
             messages.warning(
@@ -27,7 +27,7 @@ def index(request):
         context = {
             'ticket': user.get_ticket(),
             'orders': user.orders.filter(content_type=ticket_content_type).all(),
-            'childrensday': user.orders.filter(content_type=childrens_ticket_content_type).all(),
+            'childrensday': user.orders.filter(content_type=children_ticket_content_type).all(),
             'proposals': user.proposals.all(),
             'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
             'grant_application': user.get_grant_application(),

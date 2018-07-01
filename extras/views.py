@@ -12,7 +12,7 @@ from tickets.forms import BillingDetailsForm
 from orders.models import Order
 
 
-def new_order(request):
+def new_children_order(request):
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return redirect(settings.LOGIN_URL)
@@ -66,7 +66,7 @@ def new_order(request):
     return render(request, 'extras/children/new_order.html', context)
 
 
-def order_edit(request, order_id):
+def children_order_edit(request, order_id):
     order = Order.objects.get_by_order_id_or_404(order_id)
 
     if request.user != order.purchaser:

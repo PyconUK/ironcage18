@@ -176,10 +176,10 @@ def new_educator_order(request):
 def order_edit(request, order_id):
     order = Order.objects.get_by_order_id_or_404(order_id)
 
-    childrens_ticket_content_type = ContentType.objects.get(app_label="extras", model="childrenticket")
+    children_ticket_content_type = ContentType.objects.get(app_label="extras", model="childrenticket")
 
-    if order.content_type == childrens_ticket_content_type:
-        return redirect('extras:order_edit', order_id=order_id)
+    if order.content_type == children_ticket_content_type:
+        return redirect('extras:children_order_edit', order_id=order_id)
 
     if request.user != order.purchaser:
         messages.warning(request, 'Only the purchaser of an order can update the order')

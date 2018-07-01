@@ -10,7 +10,7 @@ logger = structlog.get_logger()
 def create_pending_children_ticket_order(purchaser, billing_details, unconfirmed_details):
     logger.info('create_pending_children_ticket_order', purchaser=purchaser.id)
 
-    childrens_ticket_content_type = ContentType.objects.get(
+    children_ticket_content_type = ContentType.objects.get(
         app_label="extras", model="childrenticket"
     )
 
@@ -19,7 +19,7 @@ def create_pending_children_ticket_order(purchaser, billing_details, unconfirmed
             purchaser,
             billing_details,
             unconfirmed_details,
-            childrens_ticket_content_type
+            children_ticket_content_type
         )
 
 

@@ -196,12 +196,12 @@ class Order(models.Model, SalesRecord):
 
         elif self.content_type == ContentType.objects.get(app_label="extras", model="childrenticket"):
 
-            childrens_ticket_content_type = ContentType.objects.get(
+            children_ticket_content_type = ContentType.objects.get(
                 app_label="extras", model="childrenticket"
             )
 
             ticket = ExtraItem.objects.build(
-                content_type=childrens_ticket_content_type,
+                content_type=children_ticket_content_type,
                 owner=self.purchaser,
                 details=self.unconfirmed_details,
             )
