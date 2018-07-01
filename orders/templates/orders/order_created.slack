@@ -3,5 +3,9 @@
 {% block text %}
 New order {{ order.order_id }}
 
-{{ order.purchaser.name }} has just placed an order for {{ order.num_tickets }} ticket{{ order.num_tickets.pluralize }}.
+{% if order.num_tickets %}
+	{{ order.purchaser.name }} has just placed an order for {{ order.num_tickets }} ticket{{ order.num_tickets.pluralize }}.
+{% else %}
+	{{ order.purchaser.name }} has just placed an order for {{ order.num_items }} item{{ order.num_items.pluralize }}.
+{% endif %}
 {% endblock %}
