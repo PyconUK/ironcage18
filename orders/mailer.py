@@ -11,6 +11,7 @@ def send_order_confirmation_mail(order):
     assert not order.payment_required()
 
     template = get_template('orders/emails/order-confirmation.txt')
+
     context = {
         'purchaser_name': order.purchaser.name,
         'num_tickets': order.num_tickets(),
