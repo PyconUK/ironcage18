@@ -7,7 +7,11 @@
 
 <p>Issued to {{ order.purchaser.name }}, {{ order.billing_name }}, {{ order.billing_addr_formatted }}</p>
 
-<p>{{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} for PyCon UK 2018</p>
+{% if order.num_tickets %}
+  <p>{{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} for PyCon UK 2018</p>
+{% else %}
+  <p>{{ order.num_items }} item{{ order.num_items|pluralize }} for PyCon UK 2018</p>
+{% endif %}
 
 <div class="row">
   <div class="col-6">
