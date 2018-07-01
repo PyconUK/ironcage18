@@ -77,10 +77,10 @@
           <hr>
           View your orders:
           <ul>
-          {% for order in childrensday %}
-            <li><a href="{% url 'orders:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
+            {% for order in childrensday %}
+              <li><a href="{% url 'orders:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
+            {% endfor %}
           </ul>
-          {% endfor %}
         {% endif %}
       </div>
     </div>

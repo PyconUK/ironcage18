@@ -69,6 +69,7 @@ def new_children_order(request):
     return render(request, 'extras/children/new_order.html', context)
 
 
+@login_required
 def children_order_edit(request, order_id):
     order = Order.objects.get_by_order_id_or_404(order_id)
 
@@ -140,7 +141,7 @@ def children_ticket(request):
     ).all()
 
     if not len(tickets):
-        messages.error(request, 'You do not have any Children\'s Day tickets')
+        messages.error(request, "You do not have any Children's Day tickets")
         return redirect('index')
 
     if not request.user.profile_complete():
