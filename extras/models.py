@@ -32,6 +32,8 @@ class ExtraItem(models.Model):
 
             item = item_class(**details)
 
+            item.save()
+
             extra_item = self.model(
                 owner=owner,
                 item=item,
