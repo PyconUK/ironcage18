@@ -27,17 +27,8 @@ def create_pending_children_ticket_order(user=None):
     )
 
 
-
 def confirm_order(order):
     order_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1526887563)
-
-
-# def mark_order_as_failed(order):
-#     order_actions.mark_order_as_failed(order, 'Your card was declined.')
-
-
-# def mark_order_as_errored_after_charge(order):
-#     order_actions.mark_order_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw')
 
 
 def create_confirmed_children_ticket_order(user=None):
@@ -46,31 +37,6 @@ def create_confirmed_children_ticket_order(user=None):
     return order
 
 
-# def create_failed_order(user=None, rate=None):
-#     order = create_pending_order_for_self(user, rate)
-#     mark_order_as_failed(order)
-#     return order
-
-
-# def create_errored_order(user=None, rate=None):
-#     order = create_pending_order_for_self(user, rate)
-#     mark_order_as_errored_after_charge(order)
-#     return order
-
-
 def create_children_ticket(user=None):
     order = create_confirmed_children_ticket_order(user)
     return order.all_items()[0]
-
-
-# def create_ticket_with_unclaimed_invitation():
-#     order = create_confirmed_order_for_others()
-#     return order.all_items()[0]
-
-
-# def create_ticket_with_claimed_invitation(owner=None):
-#     order = create_confirmed_order_for_others()
-#     ticket = order.all_items()[0]
-#     owner = owner or create_user()
-#     actions.claim_ticket_invitation(owner, ticket.invitation())
-#     return ticket

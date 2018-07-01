@@ -4,8 +4,6 @@ from django.test import TestCase, override_settings
 
 from . import factories
 
-from extras import actions
-
 
 class NewChildrenTicketOrderTests(TestCase):
     @classmethod
@@ -172,12 +170,12 @@ class ChildrenTicketTests(TestCase):
         self.assertNotContains(rsp, 'Update your ticket')
 
     def test_when_not_authenticated(self):
-        ticket = factories.create_children_ticket()
+        factories.create_children_ticket()
         rsp = self.client.get(f'/extras/children/tickets/', follow=True)
         self.assertRedirects(rsp, f'/accounts/login/?next=/extras/children/tickets/')
 
     def test_when_not_authorized(self):
-        ticket = factories.create_children_ticket()
+        factories.create_children_ticket()
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.get(f'/extras/children/tickets/', follow=True)
