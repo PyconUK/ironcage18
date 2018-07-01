@@ -1,6 +1,10 @@
 Hi {{ purchaser_name }},
 
+{% if order.num_tickets %}
 You have purchased {{ num_tickets }} ticket{{ num_tickets|pluralize }} for PyCon UK 2018.
+{% else %}
+You have purchased {{ num_items }} item{{ num_items|pluralize }} for PyCon UK 2018.
+{% endif %}
 
 {% if tickets_for_others %}
 Ticket invitations have been sent to the following:
