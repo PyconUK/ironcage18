@@ -1,6 +1,5 @@
 from django import forms
-
-from ironcage.widgets import ButtonsCheckbox
+from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 
 from .models import ChildrenTicket
 
@@ -40,10 +39,10 @@ class ChildrenTicketForm(forms.ModelForm):
 
         widgets = {
             'adult_name': forms.TextInput(attrs={'placeholder': False}),
-            'adult_email_addr': forms.TextInput(attrs={'placeholder': False}),
             'adult_phone_number': forms.TextInput(attrs={'placeholder': False}),
+            'adult_email_addr': forms.EmailInput(attrs={'placeholder': False}),
             'name': forms.TextInput(attrs={'placeholder': False}),
-            'age': forms.TextInput(attrs={'placeholder': False}),
+            'age': forms.NumberInput(attrs={'placeholder': False}),
             'accessibility_reqs': forms.Textarea(attrs={'placeholder': False}),
             'dietary_reqs': forms.Textarea(attrs={'placeholder': False}),
         }

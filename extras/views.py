@@ -2,12 +2,15 @@ from datetime import datetime, timezone
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils.html import mark_safe
 
 from . import actions
-from .forms import (
-    ChildrenTicketForm
-)
+from .forms import ChildrenTicketForm
+from .models import ExtraItem
 from tickets.forms import BillingDetailsForm
 from orders.models import Order
 
@@ -126,3 +129,27 @@ def children_order_edit(request, order_id):
     }
 
     return render(request, 'extras/children/order_edit.html', context)
+
+
+@login_required
+def children_ticket(request):
+    children_ticket_content_type = ContentType.objects.get(app_label="extras", model="childrenticket")
+    tickets = ExtraItem.objects.filter(
+        owner=request.user,
+        content_type=children_ticket_content_type
+    ).all()
+
+    if not len(tickets):
+        messages.error(request, 'You do not have any Children\'s Day tickets')
+        return redirect('index')
+
+    if not request.user.profile_complete():
+        messages.warning(
+            request,
+            mark_safe('Your profile is incomplete. <a href="{}">Update your profile</a>'.format(reverse('accounts:edit_profile')))
+        )
+
+    context = {
+        'tickets': tickets,
+    }
+    return render(request, 'extras/children/ticket.html', context)

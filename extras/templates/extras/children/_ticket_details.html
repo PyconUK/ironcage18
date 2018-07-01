@@ -1,0 +1,46 @@
+<table class="table">
+  <tr>
+    <th>Supervising Adult's Name</th>
+    <td>{{ ticket.item.adult_name }}</td>
+  </tr>
+  <tr>
+    <th>Supervising Adult's Email Address</th>
+    <td>{{ ticket.item.adult_email_addr }}</td>
+  </tr>
+  <tr>
+    <th>Supervising Adult's Phone Number</th>
+    <td>{{ ticket.item.adult_phone_number }}</td>
+  </tr>
+  <tr>
+    <th>Child's Name</th>
+    <td>{{ ticket.item.name }}</td>
+  </tr>
+  <tr>
+    <th>Child's Age</th>
+    <td>{{ ticket.item.age }}</td>
+  </tr>
+  <tr>
+    <th>Cost (incl. VAT)</th>
+    <td>&pound;{{ ticket.cost_incl_vat }}</td>
+  </tr>
+  <tr>
+    <th>Accessibility</th>
+    <td>
+      {% if ticket.item.accessibility_reqs is None %}
+        none
+      {% else %}
+        {{ ticket.item.accessibility_reqs }}
+      {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <th>Dietary</th>
+    <td>
+      {% if ticket.item.dietary_reqs is None %}
+        none
+      {% else %}
+        {{ ticket.item.dietary_reqs }}
+      {% endif %}
+    </td>
+  </tr>
+</table>

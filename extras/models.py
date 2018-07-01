@@ -44,6 +44,12 @@ class ExtraItem(models.Model):
     objects = Manager()
 
     @property
+    def item_id(self):
+        if self.id is None:
+            return None
+        return self.id_scrambler.forward(self.id)
+
+    @property
     def descr_for_order(self):
         return "Children's day ticket"
 

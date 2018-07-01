@@ -64,16 +64,23 @@
         {% if childrensday|length == 0 %}
           {% if ticket_sales_open %}
             <a href="{% url 'extras:new_children_order' %}">Order children's day tickets</a>
-            <hr>
           {% endif %}
         {% else %}
-          {% for order in childrensday %}
-            <li><a href="{% url 'orders:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
-          {% endfor %}
+          <a href="{% url 'extras:children_ticket' %}">View your children's day ticket{{ childrensday|pluralize }}</a>
           <hr>
           {% if ticket_sales_open %}
             <a href="{% url 'extras:new_children_order' %}">Order more children's day tickets</a>
           {% endif %}
+        {% endif %}
+
+        {% if childrensday %}
+          <hr>
+          View your orders:
+          <ul>
+          {% for order in childrensday %}
+            <li><a href="{% url 'orders:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
+          </ul>
+          {% endfor %}
         {% endif %}
       </div>
     </div>
