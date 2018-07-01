@@ -14,6 +14,7 @@ def send_order_confirmation_mail(order):
     context = {
         'purchaser_name': order.purchaser.name,
         'num_tickets': order.num_tickets(),
+        'num_items': order.num_items(),
         'tickets_for_others': order.tickets_for_others(),
         'ticket_for_self': order.ticket_for_self(),
         'receipt_url': settings.DOMAIN + reverse('orders:order_receipt', args=[order.order_id]),
