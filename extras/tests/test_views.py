@@ -14,7 +14,7 @@ class NewChildrenTicketOrderTests(TestCase):
     def test_get(self):
         self.client.force_login(self.alice)
         rsp = self.client.get(self.url)
-        self.assertContains(rsp, '<p>Blurb here</p>', html=True)
+        self.assertContains(rsp, '<p>Please note that only one ticket can be purchased at a time, but multiple orders can be placed.</p>', html=True)
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'to buy a ticket')
 
@@ -63,7 +63,7 @@ class NewChildrenTicketOrderTests(TestCase):
 
     def test_get_when_not_authenticated(self):
         rsp = self.client.get(self.url)
-        self.assertContains(rsp, '<p>Blurb here</p>', html=True)
+        self.assertContains(rsp, '<p>Please note that only one ticket can be purchased at a time, but multiple orders can be placed.</p>', html=True)
         self.assertNotContains(rsp, '<form method="post" id="order-form">')
         self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/extras/children/orders/new/">sign up</a> or <a href="/accounts/login/?next=/extras/children/orders/new/">sign in</a> to buy a ticket.', html=True)
 
@@ -81,7 +81,7 @@ class ChildrenTicketOrderEditTests(TestCase):
     def test_get(self):
         self.client.force_login(self.order.purchaser)
         rsp = self.client.get(self.url)
-        self.assertContains(rsp, '<p>Blurb here</p>', html=True)
+        self.assertContains(rsp, '<p>Please note that only one ticket can be purchased at a time, but multiple orders can be placed.</p>', html=True)
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'Please create an account to buy a ticket.')
 
