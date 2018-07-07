@@ -207,6 +207,8 @@ class Order(models.Model, SalesRecord):
             )
             row = self.order_rows.build_for_item(ticket)
             rows.append(row)
+        else:
+            assert False
 
         return rows
 

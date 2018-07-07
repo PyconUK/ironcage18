@@ -6,6 +6,10 @@ You have purchased {{ num_tickets }} ticket{{ num_tickets|pluralize }} for PyCon
 You have purchased {{ num_items }} item{{ num_items|pluralize }} for PyCon UK 2018.
 {% endif %}
 
+{% for record in order_rows_summary %}
+{{ record.item_descr|safe }} x {{ record.quantity }} (£{{ record.total_cost_incl_vat }} inc VAT)
+{% endfor %}
+
 {% if tickets_for_others %}
 Ticket invitations have been sent to the following:
 {% for ticket in tickets_for_others %}
