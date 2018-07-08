@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -11,7 +11,7 @@ from . import actions
 from .forms import (
     BillingDetailsForm, TicketForm, TicketForSelfForm,
     TicketForOthersFormSet, EducatorTicketForm, TicketForSelfEducatorForm,
-    TicketForOthersEducatorFormSet
+    TicketForOthersEducatorFormSet, FreeTicketForm
 )
 from .models import Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
@@ -311,6 +311,40 @@ def ticket_invitation(request, token):
         assert False
 
     return redirect(ticket)
+
+
+@permission_required('tickets.create_free_ticket', raise_exception=True)
+def new_free_ticket(request):
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect(settings.LOGIN_URL)
+
+        form = FreeTicketForm(request.POST)
+
+        if form.is_valid():
+
+            email_addr = form.cleaned_data['email_addr']
+            reason = form.cleaned_data['reason']
+            days = form.cleaned_data['days']
+
+            order = actions.create_free_ticket(
+                email_addr=email_addr,
+                free_reason=reason,
+                days=days
+            )
+
+            messages.success(request, f'Ticket generated for {email_addr}')
+
+            return redirect('tickets:new_free_ticket')
+
+    else:
+        form = FreeTicketForm()
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'tickets/new_free_ticket.html', context)
 
 
 def _rates_data():

@@ -174,3 +174,21 @@ def create_ticket_with_claimed_invitation(owner=None):
     owner = owner or create_user()
     actions.claim_ticket_invitation(owner, ticket.invitation())
     return ticket
+
+
+def create_free_ticket(email_addr=None, free_reason='Financial assistance'):
+    if email_addr is None:
+        email_addr = create_user().email_addr
+    return actions.create_free_ticket(email_addr, free_reason)
+
+
+def create_claimed_free_ticket(user, free_reason='Financial assistance'):
+    ticket = create_free_ticket(user.email_addr, free_reason)
+    actions.claim_ticket_invitation(user, ticket.invitation())
+    return ticket
+
+
+def create_completed_free_ticket(user, free_reason='Financial assistance'):
+    ticket = create_claimed_free_ticket(user, free_reason)
+    actions.update_free_ticket(ticket, ['sat', 'sun', 'mon'])
+    return ticket

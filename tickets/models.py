@@ -20,11 +20,17 @@ class Ticket(models.Model):
     tue = models.BooleanField()
     wed = models.BooleanField()
     order_rows = GenericRelation('orders.OrderRow')
+    free_reason = models.CharField(max_length=100, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     id_scrambler = Scrambler(2000)
+
+    class Meta:
+        permissions = [
+            ('create_free_ticket', 'Can create free tickets'),
+        ]
 
     class Manager(models.Manager):
         def get_by_ticket_id_or_404(self, ticket_id):
@@ -41,6 +47,15 @@ class Ticket(models.Model):
 
             return ticket
 
+        def create_free_with_invitation(self, email_addr, free_reason, days=None):
+            if days is None:
+                days = {day: False for day in DAYS}
+            else:
+                days = {day: (day in days) for day in DAYS}
+            ticket = self.create(free_reason=free_reason, **days)
+            ticket.invitations.create(email_addr=email_addr)
+            return ticket
+
     objects = Manager()
 
     def __str__(self):
@@ -52,8 +67,8 @@ class Ticket(models.Model):
             return None
         return self.id_scrambler.forward(self.id)
 
-    def save(self):
-        super().save()
+    def save(self, **kwargs):
+        super().save(**kwargs)
         if hasattr(self, 'email_addr'):
             self.invitations.create(email_addr=self.email_addr)
 
@@ -98,7 +113,7 @@ class Ticket(models.Model):
 
     @property
     def order(self):
-        if self.is_saved:
+        if self.is_saved and not self.free_reason:
             return self.order_row.order
         else:
             return None
@@ -117,6 +132,15 @@ class Ticket(models.Model):
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
         return self.invitations.get()
+
+    def update_days(self, days):
+        CHANGEABLE_REASONS = [
+            'Django Girls'
+        ]
+        if self.free_reason in CHANGEABLE_REASONS:
+            for day in DAYS:
+                setattr(self, day, (day in days))
+            self.save()
 
 
 class TicketInvitation(models.Model):
