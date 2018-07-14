@@ -444,6 +444,114 @@ class TicketTests(TestCase):
         self.assertContains(rsp, 'Only the owner of a ticket can view the ticket')
 
 
+class TicketUpdateTests(TestCase):
+    def test_free_ticket_non_editable(self):
+        bob = factories.create_user('Bob')
+        ticket = factories.create_completed_free_ticket(bob)
+        self.client.force_login(ticket.owner)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your ticket ({ticket.ticket_id})')
+        self.assertNotContains(rsp, 'Cost (incl. VAT)')
+        self.assertContains(rsp, 'Your profile is incomplete')
+        self.assertContains(rsp, 'Update your profile')
+        self.assertNotContains(rsp, 'Update your ticket')
+
+    def test_free_ticket_editable(self):
+        bob = factories.create_user('Bob')
+        ticket = factories.create_completed_free_ticket(bob, 'Django Girls')
+        self.client.force_login(ticket.owner)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your ticket ({ticket.ticket_id})')
+        self.assertNotContains(rsp, 'Cost (incl. VAT)')
+        self.assertContains(rsp, 'Your profile is incomplete')
+        self.assertContains(rsp, 'Update your profile')
+        self.assertContains(rsp, 'Update your ticket')
+
+    def test_edit_non_editable_free_ticket(self):
+        # Arrange
+        bob = factories.create_user('Bob')
+        ticket = factories.create_completed_free_ticket(bob)
+        form_data = {
+            'days': ['sun', 'mon', 'tue'],
+        }
+        self.client.force_login(ticket.owner)
+
+        # Act
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
+        ticket.refresh_from_db()
+
+        # Assert
+        self.assertTrue(ticket.sat)
+        self.assertTrue(ticket.sun)
+        self.assertTrue(ticket.mon)
+        self.assertFalse(ticket.tue)
+        self.assertFalse(ticket.wed)
+
+    def test_edit_non_editable_non_free_ticket(self):
+        # Arrange
+        order = factories.create_confirmed_order_for_self()
+        ticket = order.ticket_for_self()
+        form_data = {
+            'days': ['sun', 'mon', 'tue'],
+        }
+        self.client.force_login(ticket.owner)
+
+        # Act
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
+        ticket.refresh_from_db()
+
+        # Assert
+        self.assertTrue(ticket.sat)
+        self.assertTrue(ticket.sun)
+        self.assertTrue(ticket.mon)
+        self.assertFalse(ticket.tue)
+        self.assertFalse(ticket.wed)
+        self.assertNotContains(rsp, 'Your ticket has been updated.')
+
+    def test_edit_editable_free_ticket(self):
+        # Arrange
+        bob = factories.create_user('Bob')
+        ticket = factories.create_completed_free_ticket(bob, 'Django Girls')
+        form_data = {
+            'days': ['sun', 'mon', 'tue'],
+        }
+        self.client.force_login(ticket.owner)
+
+        # Act
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
+        ticket.refresh_from_db()
+
+        # Assert
+        self.assertFalse(ticket.sat)
+        self.assertTrue(ticket.sun)
+        self.assertTrue(ticket.mon)
+        self.assertTrue(ticket.tue)
+        self.assertFalse(ticket.wed)
+        self.assertContains(rsp, 'Your ticket has been updated.')
+
+    @override_settings(TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+    def test_cant_edit_editable_free_ticket_after_ticket_sales_closed(self):
+        # Arrange
+        bob = factories.create_user('Bob')
+        ticket = factories.create_completed_free_ticket(bob, 'Django Girls')
+        form_data = {
+            'days': ['sun', 'mon', 'tue'],
+        }
+        self.client.force_login(ticket.owner)
+
+        # Act
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
+        ticket.refresh_from_db()
+
+        # Assert
+        self.assertTrue(ticket.sat)
+        self.assertTrue(ticket.sun)
+        self.assertTrue(ticket.mon)
+        self.assertFalse(ticket.tue)
+        self.assertFalse(ticket.wed)
+        self.assertContains(rsp, 'ticket changes are no longer available.')
+
+
 class TicketInvitationTests(TestCase):
     @classmethod
     def setUpTestData(cls):

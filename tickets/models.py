@@ -10,6 +10,10 @@ from ironcage.utils import Scrambler
 from .constants import DAYS
 from . import prices
 
+CHANGEABLE_REASONS = [
+    'Django Girls'
+]
+
 
 class Ticket(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
@@ -134,13 +138,18 @@ class Ticket(models.Model):
         return self.invitations.get()
 
     def update_days(self, days):
-        CHANGEABLE_REASONS = [
-            'Django Girls'
-        ]
-        if self.free_reason in CHANGEABLE_REASONS:
+        if self.is_changeable or len(self.days()) == 0:
             for day in DAYS:
                 setattr(self, day, (day in days))
             self.save()
+
+    @property
+    def is_free_ticket(self):
+        return self.free_reason is not None
+
+    @property
+    def is_changeable(self):
+        return self.free_reason in CHANGEABLE_REASONS
 
 
 class TicketInvitation(models.Model):

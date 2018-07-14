@@ -8,10 +8,11 @@ from django.urls import reverse
 from django.utils.html import mark_safe
 
 from . import actions
+from .constants import DAYS
 from .forms import (
     BillingDetailsForm, TicketForm, TicketForSelfForm,
     TicketForOthersFormSet, EducatorTicketForm, TicketForSelfEducatorForm,
-    TicketForOthersEducatorFormSet, FreeTicketForm
+    TicketForOthersEducatorFormSet, FreeTicketForm, FreeTicketUpdateForm
 )
 from .models import Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
@@ -285,6 +286,25 @@ def ticket(request, ticket_id):
     context = {
         'ticket': ticket,
     }
+
+    if request.method == 'POST':
+        if datetime.now(timezone.utc) > settings.TICKET_SALES_CLOSE_AT:
+            if request.GET.get('deadline-bypass-token', '') != settings.TICKET_DEADLINE_BYPASS_TOKEN:
+                messages.warning(request, "We're sorry, ticket changes are no longer available.")
+        else:
+            form = FreeTicketUpdateForm(request.POST)
+
+            if form.is_valid() and ticket.is_changeable:
+                actions.update_free_ticket(ticket, form.cleaned_data['days'])
+                messages.success(request, f'Your ticket has been updated.')
+
+    if ticket.is_free_ticket and ticket.is_changeable:
+        form = FreeTicketUpdateForm(
+            {'days': [day for day in DAYS if getattr(ticket, day)]}
+        )
+
+        context['form'] = form
+
     return render(request, 'tickets/ticket.html', context)
 
 
