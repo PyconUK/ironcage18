@@ -347,7 +347,7 @@ def new_free_ticket(request):
             reason = form.cleaned_data['reason']
             days = form.cleaned_data['days']
 
-            order = actions.create_free_ticket(
+            actions.create_free_ticket(
                 email_addr=email_addr,
                 free_reason=reason,
                 days=days

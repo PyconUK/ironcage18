@@ -477,7 +477,7 @@ class TicketUpdateTests(TestCase):
         self.client.force_login(ticket.owner)
 
         # Act
-        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
+        self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
         ticket.refresh_from_db()
 
         # Assert
