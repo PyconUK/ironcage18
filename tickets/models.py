@@ -75,6 +75,11 @@ class Ticket(models.Model):
         else:
             return self.email_addr
 
+    def order_company_name(self):
+        if self.rate == 'corporate' and self.order:
+            return self.order.billing_name
+        return ''
+
     @property
     def descr_for_order(self):
         return f'{self.num_days()}-day {self.rate}-rate ticket'

@@ -18,17 +18,25 @@ def profile(request):
 
 @login_required
 def edit_profile(request):
+    user_ticket = request.user.get_ticket()
+    ticket_company = user_ticket.order_company_name()
+
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=request.user)
         if form.is_valid():
+            if user_ticket.rate == "corporate":
+                form.cleaned_data['badge_company'] = ticket_company
             form.save()
             return redirect('accounts:profile')
     else:
         form = ProfileForm(instance=request.user)
 
     context = {
+        'is_organiser': request.user.is_organiser,
+        'is_contributor': request.user.is_contributor,
+        'ticket_company': ticket_company,
         'form': form,
-        'js_paths': ['accounts/profile_form.js'],
+        'js_paths': ['accounts/profile_form.js', 'accounts/badges.js'],
     }
 
     return render(request, 'accounts/edit_profile.html', context)

@@ -79,7 +79,18 @@ class ProfileForm(forms.ModelForm):
             'ethnicity_free_text',
             'nationality',
             'country_of_residence',
+            'badge_company',
+            'badge_twitter',
+            'badge_pronoun',
+            'badge_snake_colour',
+            'badge_snake_extras',
         ]
+
+        widgets = {
+            'badge_company': forms.TextInput(attrs={'placeholder': False}),
+            'badge_twitter': forms.TextInput(attrs={'placeholder': False}),
+            'badge_pronoun': forms.TextInput(attrs={'placeholder': False}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

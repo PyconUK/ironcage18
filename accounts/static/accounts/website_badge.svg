@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg height="148mm" id="svg8" inkscape:version="0.92.2 5c3e80d, 2017-08-06" sodipodi:docname="a badge v3.svg" version="1.1" viewBox="0 0 105 148" width="105mm" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg">
+
+  <sodipodi:namedview bordercolor="#666666" borderopacity="1.0" id="base" inkscape:current-layer="detail-block" inkscape:cx="102.11435" inkscape:cy="324.02181" inkscape:document-units="mm" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:window-height="723" inkscape:window-maximized="1" inkscape:window-width="1366" inkscape:window-x="0" inkscape:window-y="1" inkscape:zoom="0.65304212" pagecolor="#ffffff" showgrid="false"/>
+  <metadata id="metadata5">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <style id="style8309">/*
+    <![CDATA[ */
+    .block-on rect {
+      fill: #000000;
+      fill-opacity: 1;
+      stroke: none;
+    }
+    .block-on text {
+      font-weight: bold;
+      font-size: 3.52777767px;
+      font-family: 'Helvetica Neue';
+      text-align: center;
+      text-anchor: middle;
+      fill: #ffffff;
+      fill-opacity: 1;
+      stroke: none;
+    }
+    .block-off rect {
+      fill: #ffffff;
+      fill-opacity: 1;
+      stroke: none;
+    }
+    .block-off text {
+      font-weight: normal;
+      font-size: 3.52777767px;
+      font-family: 'Helvetica Neue';
+      text-align: center;
+      text-anchor: middle;
+      fill: #aaaaaa;
+      fill-opacity: 1;
+      stroke: none;
+    }
+    .detail-text {
+      font-size: 3.52777767px;
+      font-family: 'Helvetica Neue';
+      text-align: center;
+      text-anchor: left;
+      fill: #000000;
+      fill-opacity: 1;
+      stroke: none;
+    }
+    .large-name {
+      font-size: 10.58333302px;
+      font-family: Futura;
+      text-align: center;
+      text-anchor: middle;
+    }
+    .name-extras {
+      font-size: 4.93888903px;
+      font-family: Futura;
+      text-align: center;
+      text-anchor: middle;
+    }
+    .yellow {
+      fill: #ffcc00;
+      fill-opacity: 1;
+      stroke: none;
+    }
+    .blue {
+      fill: #0071bc;
+      fill-opacity: 1;
+      stroke: none;
+    }
+    .red {
+      fill: #ed1c24;
+      fill-opacity: 1;
+      stroke: none;
+    }
+    /* ]]>
+    */</style>
+  <path d="M 0,0 V 86.78374 L 105,75.4616 V 0 Z" id="background" class="yellow" />
+  <g id="name-block" transform="translate(52.5,104)">
+    <text id="name" x="0" y="0" class="large-name">Delegate Name</text>
+    <text id="company" x="0" y="8" class="name-extras">Company</text>
+    <text id="extratext" x="0" y="20" class="name-extras">pronoun - @twitter</text>
+  </g>
+  <g id="snake-block" transform="translate(52.5,48)">
+    <circle cx="0" cy="0" id="snake-background-circle" r="38.981998" style="fill:#ffffff;fill-opacity:1;stroke:none;"/>
+    <use id="snake-snake" height="77.963997" width="77.963997" x="-38.981998" y="-38.981998" href="/static/accounts/snakes/deerstalker.svg#snake"></use>
+    <circle cx="0.0005" cy="0.0005" id="snake-outer-circle" r="39.104668" style="fill:none;stroke:#000000;stroke-width:4.71566677;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"/>
+  </g>
+</svg>

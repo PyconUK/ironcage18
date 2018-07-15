@@ -7,16 +7,16 @@
   <div class="col">
     <form method="post">
       {% csrf_token %}
-
       <div class="card bg-danger text-dark">
         <div class="card-header"><h2>Basic information</h2></div>
         <div class="card-body">
           <div class="row">
             <div class="col-4">
-              <label>Name (this will appear on your conference badge)</label>
+              <label>Name</label>
             </div>
             <div class="col-8">
               {% bootstrap_field form.name layout='inline' %}
+              <small class="form-text text-muted">This will appear on your conference badge. Required.</small>
             </div>
           </div>
           <hr>
@@ -30,6 +30,51 @@
           </div>
         </div>
       </div>
+
+      <div class="card bg-danger text-dark">
+        <div class="card-header"><h2>Badge Information</h2></div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-8">
+              <div class="row">
+                <div class="col-4">
+                  <label>Company Name</label>
+                </div>
+                <div class="col-8">
+                  {% bootstrap_field form.badge_company layout='inline' %}
+                  <small class="form-text text-muted">The company or organisation you are representing. Optional for non-corporate tickets.</small>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-4">
+                  <label>Pronoun</label>
+                </div>
+                <div class="col-8">
+                  {% bootstrap_field form.badge_pronoun layout='inline' %}
+                  <small class="form-text text-muted">You may choose to display your pronouns on your badge - for example he/him or they/them. Optional.</small>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-4">
+                  <label>Twitter</label>
+                </div>
+                <div class="col-8">
+                  {% bootstrap_field form.badge_twitter layout='inline' %}
+                  <small class="form-text text-muted">You may choose to display your Twitter username on your badge. This will be prefixed with @. Optional.</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <h3>Badge Preview</h3>
+              <object id="badge" data="/static/accounts/website_badge.svg" type="image/svg+xml" width="75%" style="border: 1px solid black;"></object>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
 
       <div class="card bg-danger text-dark">
         <div class="card-header"><h2>Requirements</h2></div>
@@ -177,4 +222,10 @@
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block json_data %}
+var isContributor = "{{ is_contributor|safe }}" == "True";
+var isOrganiser = "{{ is_organiser|safe }}" == "True";
+var ticketCompany = "{{ ticket_company|safe }}";
 {% endblock %}
