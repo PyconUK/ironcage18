@@ -1,12 +1,11 @@
 from django.contrib import admin
 from cfp.models import Proposal
 from ironcage.admin import OurActionsOnlyMixin
-from import_export.admin import ExportMixin
 
 
 @admin.register(Proposal)
-class ProposalAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
-    list_filter = ('session_type', )
+class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
+    list_filter = ('session_type', 'state')
     search_fields = ['proposer__name', 'title', 'description',
                      'description_private', 'outline']
 
@@ -46,7 +45,7 @@ class ProposalAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
         return fields
 
     def get_list_display(self, request):
-        return ('title', 'subtitle', 'proposer_name', 'session_type')
+        return ('title', 'subtitle', 'proposer_name', 'session_type', 'state')
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
