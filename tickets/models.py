@@ -11,7 +11,8 @@ from .constants import DAYS
 from . import prices
 
 CHANGEABLE_REASONS = [
-    'Django Girls'
+    'Django Girls',
+    'Financial Assistance'
 ]
 
 

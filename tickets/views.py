@@ -288,15 +288,11 @@ def ticket(request, ticket_id):
     }
 
     if request.method == 'POST':
-        if datetime.now(timezone.utc) > settings.TICKET_SALES_CLOSE_AT:
-            if request.GET.get('deadline-bypass-token', '') != settings.TICKET_DEADLINE_BYPASS_TOKEN:
-                messages.warning(request, "We're sorry, ticket changes are no longer available.")
-        else:
-            form = FreeTicketUpdateForm(request.POST)
+        form = FreeTicketUpdateForm(request.POST)
 
-            if form.is_valid() and ticket.is_changeable:
-                actions.update_free_ticket(ticket, form.cleaned_data['days'])
-                messages.success(request, f'Your ticket has been updated.')
+        if form.is_valid() and ticket.is_changeable:
+            actions.update_free_ticket(ticket, form.cleaned_data['days'])
+            messages.success(request, f'Your ticket has been updated.')
 
     if ticket.is_free_ticket and ticket.is_changeable:
         form = FreeTicketUpdateForm(
@@ -356,6 +352,8 @@ def new_free_ticket(request):
             messages.success(request, f'Ticket generated for {email_addr}')
 
             return redirect('tickets:new_free_ticket')
+        else:
+            messages.error(request, f'There was an error with your request.')
 
     else:
         form = FreeTicketForm()

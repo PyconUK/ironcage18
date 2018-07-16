@@ -529,28 +529,6 @@ class TicketUpdateTests(TestCase):
         self.assertFalse(ticket.wed)
         self.assertContains(rsp, 'Your ticket has been updated.')
 
-    @override_settings(TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
-    def test_cant_edit_editable_free_ticket_after_ticket_sales_closed(self):
-        # Arrange
-        bob = factories.create_user('Bob')
-        ticket = factories.create_completed_free_ticket(bob, 'Django Girls')
-        form_data = {
-            'days': ['sun', 'mon', 'tue'],
-        }
-        self.client.force_login(ticket.owner)
-
-        # Act
-        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
-        ticket.refresh_from_db()
-
-        # Assert
-        self.assertTrue(ticket.sat)
-        self.assertTrue(ticket.sun)
-        self.assertTrue(ticket.mon)
-        self.assertFalse(ticket.tue)
-        self.assertFalse(ticket.wed)
-        self.assertContains(rsp, 'ticket changes are no longer available.')
-
 
 class TicketInvitationTests(TestCase):
     @classmethod
@@ -584,3 +562,68 @@ class TicketInvitationTests(TestCase):
         rsp = self.client.get(self.url, follow=True)
         self.assertContains(rsp, '<div class="alert alert-info" role="alert">You need to create an account to claim your invitation</div>', html=True)
         self.assertRedirects(rsp, f'/accounts/register/?next={self.url}')
+
+
+class NewTicketTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user()
+        cls.alice.is_superuser = True
+        cls.alice.save()
+        cls.url = '/tickets/free/new/'
+
+    def test_get(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get(self.url)
+        self.assertContains(rsp, 'Free ticket details')
+        self.assertNotContains(rsp, 'to buy a ticket')
+
+    def test_get_as_normal_user(self):
+        bob = factories.create_user()
+        self.client.force_login(bob)
+        rsp = self.client.get(self.url)
+        self.assertEqual(rsp.status_code, 403)
+
+    def test_post_free_ticket(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'email_addr': 'bob@example.com',
+            'reason': 'Financial Assistance',
+            'days': ['sat', 'sun', 'mon'],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'Ticket generated for bob@example.com')
+
+    def test_post_free_ticket_fails_without_email(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'email_addr': '',
+            'reason': 'Financial Assistance',
+            'days': ['sat', 'sun', 'mon'],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'There was an error with your request.')
+        self.assertNotContains(rsp, 'Ticket generated for')
+
+    def test_post_free_ticket_fails_without_reason(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'email_addr': 'bob@example.com',
+            'reason': '',
+            'days': ['sat', 'sun', 'mon'],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'There was an error with your request.')
+        self.assertNotContains(rsp, 'Ticket generated for bob@example.com')
+
+    def test_post_free_ticket_fails_without_days(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'email_addr': 'bob@example.com',
+            'reason': 'Financial Assistance',
+            'days': [],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'There was an error with your request.')
+        self.assertNotContains(rsp, 'Ticket generated for bob@example.com')
