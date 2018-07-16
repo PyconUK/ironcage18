@@ -1,17 +1,18 @@
 from datetime import datetime, timezone
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.html import mark_safe
 
 from . import actions
+from .constants import DAYS
 from .forms import (
     BillingDetailsForm, TicketForm, TicketForSelfForm,
     TicketForOthersFormSet, EducatorTicketForm, TicketForSelfEducatorForm,
-    TicketForOthersEducatorFormSet
+    TicketForOthersEducatorFormSet, FreeTicketForm, FreeTicketUpdateForm
 )
 from .models import Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
@@ -285,6 +286,21 @@ def ticket(request, ticket_id):
     context = {
         'ticket': ticket,
     }
+
+    if request.method == 'POST':
+        form = FreeTicketUpdateForm(request.POST)
+
+        if form.is_valid() and ticket.is_changeable:
+            actions.update_free_ticket(ticket, form.cleaned_data['days'])
+            messages.success(request, f'Your ticket has been updated.')
+
+    if ticket.is_free_ticket and ticket.is_changeable:
+        form = FreeTicketUpdateForm(
+            {'days': [day for day in DAYS if getattr(ticket, day)]}
+        )
+
+        context['form'] = form
+
     return render(request, 'tickets/ticket.html', context)
 
 
@@ -311,6 +327,42 @@ def ticket_invitation(request, token):
         assert False
 
     return redirect(ticket)
+
+
+@permission_required('tickets.create_free_ticket', raise_exception=True)
+def new_free_ticket(request):
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect(settings.LOGIN_URL)
+
+        form = FreeTicketForm(request.POST)
+
+        if form.is_valid():
+
+            email_addr = form.cleaned_data['email_addr']
+            reason = form.cleaned_data['reason']
+            days = form.cleaned_data['days']
+
+            actions.create_free_ticket(
+                email_addr=email_addr,
+                free_reason=reason,
+                days=days
+            )
+
+            messages.success(request, f'Ticket generated for {email_addr}')
+
+            return redirect('tickets:new_free_ticket')
+        else:
+            messages.error(request, f'There was an error with your request.')
+
+    else:
+        form = FreeTicketForm()
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'tickets/new_free_ticket.html', context)
 
 
 def _rates_data():

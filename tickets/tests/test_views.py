@@ -444,6 +444,92 @@ class TicketTests(TestCase):
         self.assertContains(rsp, 'Only the owner of a ticket can view the ticket')
 
 
+class TicketUpdateTests(TestCase):
+    def test_free_ticket_non_editable(self):
+        bob = factories.create_user('Bob')
+        ticket = factories.create_completed_free_ticket(bob)
+        self.client.force_login(ticket.owner)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your ticket ({ticket.ticket_id})')
+        self.assertNotContains(rsp, 'Cost (incl. VAT)')
+        self.assertContains(rsp, 'Your profile is incomplete')
+        self.assertContains(rsp, 'Update your profile')
+        self.assertNotContains(rsp, 'Update your ticket')
+
+    def test_free_ticket_editable(self):
+        bob = factories.create_user('Bob')
+        ticket = factories.create_completed_free_ticket(bob, 'Django Girls')
+        self.client.force_login(ticket.owner)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your ticket ({ticket.ticket_id})')
+        self.assertNotContains(rsp, 'Cost (incl. VAT)')
+        self.assertContains(rsp, 'Your profile is incomplete')
+        self.assertContains(rsp, 'Update your profile')
+        self.assertContains(rsp, 'Update your ticket')
+
+    def test_edit_non_editable_free_ticket(self):
+        # Arrange
+        bob = factories.create_user('Bob')
+        ticket = factories.create_completed_free_ticket(bob)
+        form_data = {
+            'days': ['sun', 'mon', 'tue'],
+        }
+        self.client.force_login(ticket.owner)
+
+        # Act
+        self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
+        ticket.refresh_from_db()
+
+        # Assert
+        self.assertTrue(ticket.sat)
+        self.assertTrue(ticket.sun)
+        self.assertTrue(ticket.mon)
+        self.assertFalse(ticket.tue)
+        self.assertFalse(ticket.wed)
+
+    def test_edit_non_editable_non_free_ticket(self):
+        # Arrange
+        order = factories.create_confirmed_order_for_self()
+        ticket = order.ticket_for_self()
+        form_data = {
+            'days': ['sun', 'mon', 'tue'],
+        }
+        self.client.force_login(ticket.owner)
+
+        # Act
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
+        ticket.refresh_from_db()
+
+        # Assert
+        self.assertTrue(ticket.sat)
+        self.assertTrue(ticket.sun)
+        self.assertTrue(ticket.mon)
+        self.assertFalse(ticket.tue)
+        self.assertFalse(ticket.wed)
+        self.assertNotContains(rsp, 'Your ticket has been updated.')
+
+    def test_edit_editable_free_ticket(self):
+        # Arrange
+        bob = factories.create_user('Bob')
+        ticket = factories.create_completed_free_ticket(bob, 'Django Girls')
+        form_data = {
+            'days': ['sun', 'mon', 'tue'],
+        }
+        self.client.force_login(ticket.owner)
+
+        # Act
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/', form_data, follow=True)
+        ticket.refresh_from_db()
+
+        # Assert
+        self.assertFalse(ticket.sat)
+        self.assertTrue(ticket.sun)
+        self.assertTrue(ticket.mon)
+        self.assertTrue(ticket.tue)
+        self.assertFalse(ticket.wed)
+        self.assertContains(rsp, 'Your ticket has been updated.')
+
+
 class TicketInvitationTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -476,3 +562,68 @@ class TicketInvitationTests(TestCase):
         rsp = self.client.get(self.url, follow=True)
         self.assertContains(rsp, '<div class="alert alert-info" role="alert">You need to create an account to claim your invitation</div>', html=True)
         self.assertRedirects(rsp, f'/accounts/register/?next={self.url}')
+
+
+class NewTicketTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user()
+        cls.alice.is_superuser = True
+        cls.alice.save()
+        cls.url = '/tickets/free/new/'
+
+    def test_get(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get(self.url)
+        self.assertContains(rsp, 'Free ticket details')
+        self.assertNotContains(rsp, 'to buy a ticket')
+
+    def test_get_as_normal_user(self):
+        bob = factories.create_user()
+        self.client.force_login(bob)
+        rsp = self.client.get(self.url)
+        self.assertEqual(rsp.status_code, 403)
+
+    def test_post_free_ticket(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'email_addr': 'bob@example.com',
+            'reason': 'Financial Assistance',
+            'days': ['sat', 'sun', 'mon'],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'Ticket generated for bob@example.com')
+
+    def test_post_free_ticket_fails_without_email(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'email_addr': '',
+            'reason': 'Financial Assistance',
+            'days': ['sat', 'sun', 'mon'],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'There was an error with your request.')
+        self.assertNotContains(rsp, 'Ticket generated for')
+
+    def test_post_free_ticket_fails_without_reason(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'email_addr': 'bob@example.com',
+            'reason': '',
+            'days': ['sat', 'sun', 'mon'],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'There was an error with your request.')
+        self.assertNotContains(rsp, 'Ticket generated for bob@example.com')
+
+    def test_post_free_ticket_fails_without_days(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'email_addr': 'bob@example.com',
+            'reason': 'Financial Assistance',
+            'days': [],
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'There was an error with your request.')
+        self.assertNotContains(rsp, 'Ticket generated for bob@example.com')

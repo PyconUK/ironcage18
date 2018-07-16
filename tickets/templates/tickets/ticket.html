@@ -8,8 +8,8 @@
     {% include './_ticket_details.html' %}
 
     <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">Update your profile</a>
-    {% if ticket.is_free_ticket %}
-    <a href="{% url 'tickets:ticket_edit' ticket_id=ticket.ticket_id %}" class="btn btn-primary">Update your ticket</a>
+    {% if ticket.is_free_ticket and ticket.is_changeable %}
+    	{% include './_ticket_edit.html' %}
     {% endif %}
   </div>
 </div>

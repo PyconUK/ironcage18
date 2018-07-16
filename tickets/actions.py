@@ -16,6 +16,7 @@ from django.db import transaction
 
 from .mailer import send_invitation_mail
 from orders.models import Order
+from .models import Ticket
 
 import structlog
 logger = structlog.get_logger()
@@ -49,3 +50,21 @@ def claim_ticket_invitation(owner, invitation):
     logger.info('claim_ticket_invitation', owner=owner.id, invitation=invitation.token)
     with transaction.atomic():
         invitation.claim_for_owner(owner)
+
+
+def create_free_ticket(email_addr, free_reason, days=None):
+    logger.info('create_free_ticket', email_addr=email_addr, free_reason=free_reason, days=days)
+    with transaction.atomic():
+        ticket = Ticket.objects.create_free_with_invitation(
+            email_addr=email_addr,
+            free_reason=free_reason,
+            days=days
+        )
+    send_invitation_mail(ticket)
+    return ticket
+
+
+def update_free_ticket(ticket, days):
+    logger.info('update_free_ticket', ticket=ticket.ticket_id, days=days)
+    with transaction.atomic():
+        ticket.update_days(days)
