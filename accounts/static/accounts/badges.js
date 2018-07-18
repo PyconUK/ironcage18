@@ -45,6 +45,16 @@ $(document).ready(function() {
 		updateBadge();
 	});
 
+	$(".snake-body").on('click', function(e) {
+		badgeSvg.getElementById("snake-body").setAttribute('xlink:href', '#solid-snake-body')
+		badgeSvg.getElementById("snake-body").setAttribute('class',  e.target.dataset.id + '-snake snake-body')
+	})
+
+	$(".snake-extras").on('click', function(e) {
+		badgeSvg.getElementById("snake-back").setAttribute('xlink:href', '#' + e.target.dataset.id + '-back')
+		badgeSvg.getElementById("snake-front").setAttribute('xlink:href', '#' + e.target.dataset.id + '-front')
+	})
+
 	function updateBadge() {
 
 		var extraText = "";
