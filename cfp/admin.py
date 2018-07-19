@@ -45,8 +45,7 @@ class ProposalAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
 
         return fields
 
-    def get_list_display(self, request):
-        return ('title', 'subtitle', 'proposer_name', 'session_type', 'state')
+    list_display = ('title', 'subtitle', 'proposer_name', 'session_type', 'state')
 
     list_editable = ['state']
 
