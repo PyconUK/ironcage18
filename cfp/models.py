@@ -49,6 +49,7 @@ class Proposal(models.Model):
     coc_conformity = models.BooleanField()
     ticket = models.BooleanField()
     confirmed = models.DateTimeField(null=True)
+    replied_to = models.DateTimeField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
