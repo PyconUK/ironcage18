@@ -193,6 +193,31 @@ TicketForOthersEducatorFormSet = forms.formset_factory(
 )
 
 
+class FreeTicketForm(TicketForSelfBaseForm):
+    email_addr = forms.EmailField(
+        widget=EmailInput(attrs={'class': 'form-control'}),
+    )
+
+    days = forms.MultipleChoiceField(
+        choices=DAY_CHOICES,
+        widget=ButtonsCheckbox,
+        initial=['sat', 'sun', 'mon', 'tue', 'wed']
+    )
+
+    reason = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )
+
+
+class FreeTicketUpdateForm(forms.Form):
+
+    days = forms.MultipleChoiceField(
+        choices=DAY_CHOICES,
+        widget=ButtonsCheckbox,
+        initial=['sat', 'sun', 'mon', 'tue', 'wed']
+    )
+
+
 class BillingDetailsForm(forms.Form):
     billing_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'})

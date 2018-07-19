@@ -1,3 +1,4 @@
+from django.core import mail
 from django.test import TestCase
 
 from . import factories
@@ -257,3 +258,32 @@ class TicketInvitationTests(TestCase):
         actions.claim_ticket_invitation(bob, invitation)
 
         self.assertIsNotNone(bob.get_ticket())
+
+
+class CreateFreeTicketTests(TestCase):
+    def test_create_free_ticket(self):
+        ticket = actions.create_free_ticket('alice@example.com', 'Financial assistance')
+
+        self.assertEqual(ticket.days(), [])
+        self.assertEqual(ticket.free_reason, 'Financial assistance')
+        self.assertEqual(ticket.invitation().email_addr, 'alice@example.com')
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_create_free_ticket_with_days(self):
+        days = ['sat']
+        ticket = actions.create_free_ticket('alice@example.com', 'Django Girls', days)
+
+        self.assertEqual(ticket.days(), ['Saturday'])
+        self.assertEqual(ticket.free_reason, 'Django Girls')
+        self.assertEqual(ticket.invitation().email_addr, 'alice@example.com')
+        self.assertEqual(len(mail.outbox), 1)
+
+
+class UpdateFreeTicketTests(TestCase):
+    def test_update_free_ticket(self):
+        ticket = factories.create_free_ticket(free_reason='Django Girls')
+
+        actions.update_free_ticket(ticket, ['sat', 'sun', 'mon'])
+        ticket.refresh_from_db()
+
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday', 'Monday'])

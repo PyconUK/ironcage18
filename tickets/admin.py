@@ -28,13 +28,17 @@ class TicketAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
     link_to_owner.short_description = 'owner'
 
     def link_to_order(self, obj):
-        url = reverse('admin:orders_order_change', args=[obj.order.id])
-        return format_html("<a href='{}'>{}</a>", url, obj.order.order_id)
+        if obj.order:
+            url = reverse('admin:orders_order_change', args=[obj.order.id])
+            return format_html("<a href='{}'>{}</a>", url, obj.order.order_id)
+        return None
     link_to_order.admin_order_field = 'order'
     link_to_order.short_description = 'order'
 
     def order_status(self, obj):
-        return obj.order.status
+        if obj.order:
+            return obj.order.status
+        return 'Free Ticket'
 
 
 @admin.register(TicketInvitation)
