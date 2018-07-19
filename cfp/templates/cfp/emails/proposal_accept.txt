@@ -1,0 +1,24 @@
+Dear {{ proposal.proposer.name }},
+
+Thanks for your submission to our call for proposals, {{ proposal.title }} ({{ proposal.get_session_type_display }}).
+
+I’m delighted to inform you that we have selected this proposal for our programme.
+
+As usual, we have received far more proposals than we can possibly accept, and
+choosing the right proposals for our programme has been very difficult.
+{% if user_proposal_count > 1 %}
+If you have submitted other proposals, you’ll be hearing from us about them in the
+coming days. The same goes for any application you have made for financial assistance.
+{% endif %}
+
+We’d like you to confirm that you will be able to attend and present this session by
+clicking the ‘Confirm’ button at the following link: {{ proposal_url }}
+
+In case you have not already done so, we remind you that speakers also need to register
+for the event and purchase a ticket.
+
+Thanks once again for taking the time and effort to proposal a session for the event.
+
+With best regards,
+
+The PyCon UK 2018 programme selection team.

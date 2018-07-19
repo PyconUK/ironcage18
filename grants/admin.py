@@ -11,12 +11,16 @@ class ApplicationAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
         if request.user.is_superuser:
             return ('id', 'applicant_name', 'about_you', 'about_why',
                     'requested_ticket_only', 'amount_requested',
-                    'cost_breakdown', 'sat', 'sun', 'mon', 'tue', 'wed')
+                    'cost_breakdown', 'sat', 'sun', 'mon', 'tue', 'wed',
+                    'ticket_awarded', 'amount_awarded')
 
         return []
 
     def get_readonly_fields(self, request, obj=None):
-        return self.get_fields(request, obj)
+        fields = list(self.get_fields(request, obj))
+        fields.remove('ticket_awarded')
+        fields.remove('amount_awarded')
+        return fields
 
     def get_list_display(self, request):
         if request.user.is_superuser:

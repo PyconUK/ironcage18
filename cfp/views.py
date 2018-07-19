@@ -1,14 +1,26 @@
+import csv
+
 from datetime import datetime, timezone
 
 from django_slack import slack_message
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from django.http import StreamingHttpResponse
 from django.shortcuts import redirect, render
 
 from .forms import ProposalForm
 from .models import Proposal
+
+
+class Echo:
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
 
 
 def _can_submit(request):
@@ -109,3 +121,54 @@ def proposal(request, proposal_id):
         'cfp_open': _can_submit(request),
     }
     return render(request, 'cfp/proposal.html', context)
+
+
+@login_required
+def proposal_confirm(request, proposal_id):
+    proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
+
+    if request.user != proposal.proposer:
+        messages.warning(request, 'Only the proposer of a proposal can confirm the proposal')
+        return redirect('index')
+
+    if request.method == 'POST' and proposal.state in ['accept', 'confirm']:
+        proposal.state = 'confirm'
+        proposal.confirmed = datetime.now()
+        proposal.save()
+        messages.success(request, "Thank you for confirming you will be able to present your proposal. See you in Cardiff!")
+    else:
+        messages.success(request, "Unfortunately your proposal has not been accepted, and therefore cannot be confirmed.")
+
+    return redirect(proposal)
+
+
+@permission_required('cfp.can_review_proposals', raise_exception=True)
+def get_schedule_generate_csv(request):
+    proposals = Proposal.objects.filter(state='accept').all()
+
+    rows = [(
+        'name', 'email_address', 'session_type', 'title',
+        'duration', 'tag', 'subtitle', 'description', 'demand'
+    )]
+
+    for proposal in proposals:
+        rows.append(
+            (
+                proposal.proposer.name,
+                proposal.proposer.email_addr,
+                proposal.session_type,
+                proposal.title,
+                30,  # description
+                '',  # tag eg pydata
+                proposal.subtitle,
+                proposal.description,
+                0  # demand
+            )
+        )
+
+    pseudo_buffer = Echo()
+    writer = csv.writer(pseudo_buffer)
+    response = StreamingHttpResponse((writer.writerow(row) for row in rows),
+                                     content_type="text/csv")
+    response['Content-Disposition'] = 'attachment; filename="proposals.csv"'
+    return response
