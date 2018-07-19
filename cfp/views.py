@@ -122,6 +122,24 @@ def proposal(request, proposal_id):
     }
     return render(request, 'cfp/proposal.html', context)
 
+@login_required
+def proposal_confirm(request, proposal_id):
+    proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
+
+    if request.user != proposal.proposer:
+        messages.warning(request, 'Only the proposer of a proposal can confirm the proposal')
+        return redirect('index')
+
+    if request.method == 'POST' and proposal.state in ['accept', 'confirm']:
+        proposal.state = 'confirm'
+        proposal.confirmed = datetime.now()
+        proposal.save()
+        messages.success(request, "Thank you for confirming you will be able to present your proposal. See you in Cardiff!")
+    else:
+        messages.success(request, "Unfortunately your proposal has not been accepted, and therefore cannot be confirmed.")
+
+    return redirect(proposal)
+
 
 @permission_required('cfp.can_review_proposals', raise_exception=True)
 def get_schedule_generate_csv(request):

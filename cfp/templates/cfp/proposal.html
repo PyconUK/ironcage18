@@ -5,6 +5,15 @@
   <div class="col">
     {% include './_proposal_details.html' %}
 
+    {% if proposal.state == 'accept' %}
+      <form action="{% url 'cfp:proposal_confirm' proposal.proposal_id %}" method="post">
+        {% csrf_token %}
+        <p>Your proposal has been accepted for PyCon UK 2018! Please confirm you will be attending the conference and presenting it by clicking the button below.</p>
+        <p>Please remember that you need to have a ticket, either through financial assistance or purchased yourself.</p>
+        <button type="submit" class="btn btn-primary">Confirm your proposal</button>
+      </form>
+    {% endif %}
+
     {% if cfp_open %}
     <a href="{% url 'cfp:proposal_edit' proposal.proposal_id %}" class="btn btn-primary">Update your proposal</a>
     {% endif %}

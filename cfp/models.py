@@ -20,6 +20,8 @@ class Proposal(models.Model):
     )
 
     STATE_TYPE_CHOICES = (
+        ('confirm', 'Confirmed'),
+        ('cancel', 'Cancelled'),
         ('accept', 'Accepted'),
         ('reject', 'Plan to Reject'),
         ('withdrawn', 'Withdrawn')
@@ -46,6 +48,7 @@ class Proposal(models.Model):
     scheduled_time = models.DateTimeField(null=True)
     coc_conformity = models.BooleanField()
     ticket = models.BooleanField()
+    confirmed = models.DateTimeField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

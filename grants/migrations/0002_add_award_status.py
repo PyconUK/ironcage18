@@ -19,6 +19,5 @@ class Migration(migrations.Migration):
             model_name='application',
             name='ticket_awarded',
             field=models.BooleanField(default=False),
-            preserve_default=False,
         ),
     ]
