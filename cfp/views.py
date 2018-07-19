@@ -122,6 +122,7 @@ def proposal(request, proposal_id):
     }
     return render(request, 'cfp/proposal.html', context)
 
+
 @login_required
 def proposal_confirm(request, proposal_id):
     proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)

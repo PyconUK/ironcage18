@@ -53,7 +53,6 @@ class TestEmailProposals(TestCase):
         self.assertTrue(re.search('If you have submitted other proposals', email.body))
         self.assertTrue(re.search('I’m sorry to inform you that we have not selected this proposal for our programme.', email.body))
 
-
     def test_propsals_dont_get_email_twice(self):
         mail.outbox = []
 
