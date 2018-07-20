@@ -1,0 +1,22 @@
+<h2>Update your ticket</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col">
+      <label>Which days are you coming?</label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="btn-group btn-group-toggle{% if self_form.days.errors %} error{% endif %}" data-toggle="buttons" role="group">
+        {{ form.days }}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <input type="submit" value="Update my ticket" class="btn btn-primary" />
+    </div>
+  </div>
+</form>

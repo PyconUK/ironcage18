@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^orders/(?P<order_id>\w+)/edit/$', views.order_edit, name='order_edit'),
     url(r'^tickets/(?P<ticket_id>\w+)/$', views.ticket, name='ticket'),
     url(r'^invitations/(?P<token>\w+)/$', views.ticket_invitation, name='ticket_invitation'),
+    url(r'^free/new/$', views.new_free_ticket, name='new_free_ticket'),
 ]
