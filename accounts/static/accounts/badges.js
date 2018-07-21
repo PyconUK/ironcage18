@@ -1,21 +1,7 @@
 $(document).ready(function() {
 	var badgeSvg;
 
-	$("#badge").on('load', function() {
-	 	badgeSvg = document.getElementById("badge").contentDocument;
-
-	 	if(ticketRate == "corporate") {
-	 		$('#id_badge_company')[0].disabled = true;
-	 	}
-
-		if(isOrganiser) {
-			badgeSvg.getElementById("background").className.baseVal = "red";
-		} else if(isContributor) {
-			badgeSvg.getElementById("background").className.baseVal = "blue";
-		}
-
-		updateBadge();
-	});
+	$(window).bind("load", onLoadBadge);
 
 	$("#id_name").on('change', function(e) {
 		name = e.target.value;
