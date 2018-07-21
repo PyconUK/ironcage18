@@ -67,7 +67,7 @@ def edit_profile(request):
     context = {
         'is_organiser': request.user.is_organiser,
         'is_contributor': request.user.is_contributor,
-        'ticket_rate': user_ticket.rate,
+        'ticket_rate': user_ticket.rate if user_ticket else '',
         'form': form,
         'js_paths': ['accounts/profile_form.js', 'accounts/badges.js'],
     }

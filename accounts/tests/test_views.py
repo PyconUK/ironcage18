@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from . import factories
+from tickets.tests.factories import create_confirmed_order_for_self
 
 
 class ProfileTests(TestCase):
@@ -14,6 +15,9 @@ class ProfileTests(TestCase):
         for k, v in [
             ['Name', 'Alice'],
             ['Email', 'alice@example.com'],
+            ['Company', 'None'],
+            ['Twitter', 'None'],
+            ['Pronoun', 'None'],
             ['Accessibility', 'unknown'],
             ['Childcare', 'unknown'],
             ['Dietary', 'unknown'],
@@ -32,6 +36,9 @@ class ProfileTests(TestCase):
         for k, v in [
             ['Name', 'Alice'],
             ['Email', 'alice@example.com'],
+            ['Company', 'MegaCorp'],
+            ['Twitter', '@alice'],
+            ['Pronoun', 'she/her'],
             ['Accessibility', 'none'],
             ['Childcare', 'none'],
             ['Dietary', 'Vegan'],
@@ -48,6 +55,17 @@ class ProfileTests(TestCase):
         self.client.force_login(factories.create_user_with_dont_ask_demographics_set())
         rsp = self.client.get('/profile/')
         self.assertContains(rsp, 'You have opted not to share demographic information with us')
+
+    def test_get_snake_allocated(self):
+        alice = factories.create_user()
+        self.client.force_login(alice)
+
+        rsp = self.client.get('/profile/')
+
+        alice.refresh_from_db()
+
+        self.assertTrue(alice.badge_snake_colour in ['red', 'blue', 'orange', 'yellow', 'green', 'purple'])
+        self.assertTrue(alice.badge_snake_extras in ['deerstalker', 'glasses', 'mortar', 'astronaut', 'bowie', 'dragon'])
 
 
 class EditProfileTests(TestCase):
@@ -126,6 +144,72 @@ class EditProfileTests(TestCase):
         self.assertEqual(alice.country_of_residence, 'Abkhazia')
         self.assertEqual(alice.nationality, 'Abkhazian')
         self.assertEqual(alice.dont_ask_demographics, False)
+
+    def test_post_update_to_snake(self):
+        alice = factories.create_user()
+        self.client.force_login(alice)
+
+        data = {
+            'name': 'Alice',
+            'email_addr': 'alice@example.com',
+            'badge_company': 'BigCorp',
+            'badge_snake_colour': 'red',
+            'badge_snake_extras': 'deerstalker',
+            'badge_twitter': '@notalice',
+            'badge_pronoun': 'they/them',
+        }
+        self.client.post('/profile/edit/', data, follow=True)
+        alice.refresh_from_db()
+
+        self.assertEqual(alice.badge_company, 'BigCorp')
+        self.assertEqual(alice.badge_snake_colour, 'red')
+        self.assertEqual(alice.badge_snake_extras, 'deerstalker')
+        self.assertEqual(alice.badge_twitter, '@notalice')
+        self.assertEqual(alice.badge_pronoun, 'they/them')
+
+    def test_get_snake_allocated(self):
+        alice = factories.create_user()
+        self.client.force_login(alice)
+
+        data = {
+            'name': 'Alice Wonderland',
+            'email_addr': 'alice@example.com',
+        }
+        self.client.post('/profile/edit/', data, follow=True)
+        alice.refresh_from_db()
+
+        self.assertEqual(alice.name, 'Alice Wonderland')
+        self.assertTrue(alice.badge_snake_colour in ['red', 'blue', 'orange', 'yellow', 'green', 'purple'])
+        self.assertTrue(alice.badge_snake_extras in ['deerstalker', 'glasses', 'mortar', 'astronaut', 'bowie', 'dragon'])
+
+    def test_get_company_is_billing_name(self):
+        alice = factories.create_user()
+        create_confirmed_order_for_self(user=alice, rate='corporate')
+        self.client.force_login(alice)
+
+        data = {
+            'name': 'Alice',
+            'email_addr': 'alice@example.com',
+        }
+        self.client.post('/profile/edit/', data, follow=True)
+        alice.refresh_from_db()
+
+        self.assertEqual(alice.badge_company, 'Sirius Cybernetics Corp.')
+
+    def test_corp_cant_change_company_name(self):
+        alice = factories.create_user()
+        create_confirmed_order_for_self(user=alice, rate='corporate')
+        self.client.force_login(alice)
+
+        data = {
+            'name': 'Alice',
+            'email_addr': 'alice@example.com',
+            'badge_company': 'Alice Personal Development Co.'
+        }
+        self.client.post('/profile/edit/', data, follow=True)
+        alice.refresh_from_db()
+
+        self.assertEqual(alice.badge_company, 'Sirius Cybernetics Corp.')
 
 
 class LoginTests(TestCase):
