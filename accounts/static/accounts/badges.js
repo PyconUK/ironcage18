@@ -1,8 +1,8 @@
 $(document).ready(function() {
 	var badgeSvg;
 
-	$(window).bind("load", function() {
-	 	badgeSvg = document.getElementById("badge").contentDocument;
+	function badgeLoad() {
+		badgeSvg = document.getElementById("badge").contentDocument;
 
 	 	if(ticketRate == "corporate") {
 	 		$('#id_badge_company')[0].disabled = true;
@@ -15,6 +15,10 @@ $(document).ready(function() {
 		}
 
 		updateBadge();
+	}
+
+	$(window).bind("load", function() {
+	 	setTimeout(badgeLoad, 500);
 	});
 
 	$("#id_name").on('change', function(e) {
