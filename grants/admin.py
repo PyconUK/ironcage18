@@ -21,9 +21,9 @@ class ApplicationAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
         fields.remove('amount_awarded')
         return fields
 
-    list_display = ('applicant_name', 'requested_ticket_only', 'amount_requested', 'ticket_awarded', 'amount_awarded', 'response_sent')
+    list_display = ('applicant_name', 'requested_ticket_only', 'amount_requested', 'ticket_awarded', 'amount_awarded', 'full_amount_awarded', 'application_declined', 'response_sent')
 
-    list_editable = ['ticket_awarded', 'amount_awarded']
+    list_editable = ['ticket_awarded', 'amount_awarded', 'full_amount_awarded', 'application_declined']
 
     def get_list_filter(self, request):
         if request.user.is_superuser:
