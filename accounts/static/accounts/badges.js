@@ -53,15 +53,15 @@ $(document).ready(function() {
 
 		var extraText = "";
 
-		if(pronoun && pronoun != "None") {
+		if(pronoun && (pronoun != "None" && pronoun != "")) {
 			extraText = pronoun;
 		}
 
-		if(pronoun && pronoun != "None" && twitter && twitter != "None") {
+		if(pronoun && (pronoun != "None" && pronoun != "") && twitter && (twitter != "None" && twitter != "")) {
 			extraText = extraText + ' - '
 		}
 
-		if(twitter && twitter != "None") {
+		if(twitter && (twitter != "None" && twitter != "")) {
 			extraText = extraText + '@' + twitter;
 		}
 

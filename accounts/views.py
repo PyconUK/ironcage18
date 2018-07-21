@@ -34,7 +34,7 @@ def assign_a_snake(user):
 def profile(request):
     user = request.user
 
-    if user.badge_snake_colour is None or user.badge_snake_extras is None:
+    if user.badge_snake_colour in [None, ''] or user.badge_snake_extras in [None, '']:
         assign_a_snake(user)
 
     context = {
@@ -50,7 +50,7 @@ def profile(request):
 def edit_profile(request):
     user_ticket = request.user.get_ticket()
 
-    if request.user.badge_snake_colour is None or request.user.badge_snake_extras is None:
+    if request.user.badge_snake_colour in [None, ''] or request.user.badge_snake_extras in [None, '']:
         assign_a_snake(request.user)
 
     if request.method == 'POST':
