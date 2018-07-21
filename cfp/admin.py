@@ -44,7 +44,7 @@ class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
         return fields
 
-    list_display = ('title', 'subtitle', 'proposer_name', 'session_type', 'state')
+    list_display = ('title', 'subtitle', 'proposer_name', 'session_type', 'state', 'response_sent')
 
     list_editable = ['state']
 
@@ -71,3 +71,6 @@ class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
     def proposer_name(self, obj):
         return obj.proposer.name
+
+    def response_sent(self, obj):
+        return obj.replied_to is not None
