@@ -3,10 +3,10 @@ from .base import *  # flake8: noqa
 ALLOWED_HOSTS = ['staging.hq.pyconuk.org']
 
 # A custom setting for creating full URLs in links in emails
-DOMAIN = f'https://{ALLOWED_HOSTS[0]}'
+DOMAIN = f'http://{ALLOWED_HOSTS[0]}'
 
 # SSL
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Misc. security settings
