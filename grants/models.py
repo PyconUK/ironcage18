@@ -24,6 +24,11 @@ class Application(models.Model):
 
     amount_requested = models.TextField(blank=True)
     cost_breakdown = models.TextField(blank=True)
+    ticket_awarded = models.BooleanField(default=False)
+    amount_awarded = models.DecimalField(null=True, blank=True, max_digits=6, decimal_places=2)
+    full_amount_awarded = models.BooleanField(default=False)
+    application_declined = models.BooleanField(default=False)
+    replied_to = models.DateTimeField(null=True)
 
     sat = models.BooleanField()
     sun = models.BooleanField()

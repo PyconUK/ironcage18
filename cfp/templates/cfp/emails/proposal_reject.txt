@@ -1,0 +1,23 @@
+Dear {{ proposal.proposer.name }},
+
+Thanks for your submission to our call for proposals, {{ proposal.title }} ({{ proposal.get_session_type_display }}),
+and for your patience as we assessed all the proposals.
+
+I’m sorry to inform you that we have not selected this proposal for our programme.
+
+As usual, we have received far more proposals than we can possibly accept, and have
+been obliged to decline many fine submissions. It’s not just a matter of choosing
+the ‘best’ proposals; we’ve also selected proposals to give us a good balance of topics,
+levels of expertise, speaker backgrounds and more.
+
+Selecting proposals for our programme is one of the hardest parts of running PyCon UK,
+and we’ve had to decline many excellent ones with great regret.
+{% if user_proposal_count > 1 %}
+If you have submitted other proposals, you’ll be hearing from us about them in the coming days.
+The same goes for any application you have made for financial assistance.
+{% endif %}
+Thanks once again for taking the time and effort to propose a session for the event.
+
+With best regards,
+
+The PyCon UK 2018 programme selection team.

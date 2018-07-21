@@ -1,12 +1,11 @@
 from django.contrib import admin
 from cfp.models import Proposal
 from ironcage.admin import OurActionsOnlyMixin
-from import_export.admin import ExportMixin
 
 
 @admin.register(Proposal)
-class ProposalAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
-    list_filter = ('session_type', )
+class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
+    list_filter = ('session_type', 'state')
     search_fields = ['proposer__name', 'title', 'description',
                      'description_private', 'outline']
 
@@ -45,7 +44,7 @@ class ProposalAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
 
         return fields
 
-    list_display = ('title', 'subtitle', 'proposer_name', 'session_type', 'state')
+    list_display = ('title', 'subtitle', 'proposer_name', 'session_type', 'state', 'response_sent')
 
     list_editable = ['state']
 
@@ -72,3 +71,6 @@ class ProposalAdmin(OurActionsOnlyMixin, ExportMixin, admin.ModelAdmin):
 
     def proposer_name(self, obj):
         return obj.proposer.name
+
+    def response_sent(self, obj):
+        return obj.replied_to is not None

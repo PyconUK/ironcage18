@@ -26,6 +26,7 @@
 
         {% if orders|length == 0 %}
           {% if ticket_sales_open %}
+            <hr>
             <a href="{% url 'tickets:new_order' %}">Order conference tickets</a>
             <hr>
             <a href="{% url 'tickets:new_educator_order' %}">Order education summit tickets</a>

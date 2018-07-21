@@ -19,6 +19,9 @@
 	<li><a href="/admin/accounts/user/?dietary_reqs=True">Attendees with dietary requirements</a></li>
 	<li><a href="{% url 'admin:accounts_user_changelist' %}">People</a></li>
 	<li><a href="/admin/accounts/user/?is_staff__exact=1">Staff</a></li>
+</ul>
 
+<ul>
+	<li><a href="{% url 'cfp:schedule_csv' %}">Get Scheduler Proposals CSV</a></li>
 </ul>
 {% endblock %}
