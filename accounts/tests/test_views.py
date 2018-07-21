@@ -60,7 +60,7 @@ class ProfileTests(TestCase):
         alice = factories.create_user()
         self.client.force_login(alice)
 
-        rsp = self.client.get('/profile/')
+        self.client.get('/profile/')
 
         alice.refresh_from_db()
 
