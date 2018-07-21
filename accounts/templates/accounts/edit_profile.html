@@ -38,6 +38,37 @@
             <div class="col-8">
               <div class="row">
                 <div class="col-4">
+                  <label>Select Snake</label>
+                </div>
+                <div class="col-8">
+                  <img src="/static/accounts/snakes/bodies/red.svg" class="snake-body snake-option" data-id="red" width="65px" height="65px"/>
+                  <img src="/static/accounts/snakes/bodies/blue.svg" class="snake-body snake-option" data-id="blue" width="65px" height="65px"/>
+                  <img src="/static/accounts/snakes/bodies/yellow.svg" class="snake-body snake-option" data-id="yellow" width="65px" height="65px"/>
+                  <img src="/static/accounts/snakes/bodies/green.svg" class="snake-body snake-option" data-id="green" width="65px" height="65px"/>
+                  <img src="/static/accounts/snakes/bodies/orange.svg" class="snake-body snake-option" data-id="orange" width="65px" height="65px" />
+                  <img src="/static/accounts/snakes/bodies/purple.svg" class="snake-body snake-option" data-id="purple" width="65px" height="65px"/>
+                 <!--  <img src="/static/accounts/snakes/bodies/grey.svg" class="snake-body snake-option" data-id="grey" width="65px" height="65px"/> -->
+                  {% bootstrap_field form.badge_snake_colour %}
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-4">
+                  <label>Select Accessory</label>
+                </div>
+                <div class="col-8">
+                  <img src="/static/accounts/snakes/deerstalker.svg" class="snake-extras snake-option" data-id="deerstalker" width="65px" height="65px"/>
+                  <img src="/static/accounts/snakes/glasses.svg" class="snake-extras snake-option" data-id="glasses" width="65px" height="65px"/>
+                  <img src="/static/accounts/snakes/dragon.svg" class="snake-extras snake-option" data-id="dragon" width="65px" height="65px"/>
+                  <img src="/static/accounts/snakes/bowie.svg" class="snake-extras snake-option" data-id="bowie" width="65px" height="65px"/>
+                  <img src="/static/accounts/snakes/mortar.svg" class="snake-extras snake-option" data-id="mortar" width="65px" height="65px"/>
+                  <img src="/static/accounts/snakes/astronaut.svg" class="snake-extras snake-option" data-id="astronaut" width="65px" height="65px" />
+                  {% bootstrap_field form.badge_snake_extras %}
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-4">
                   <label>Company Name</label>
                 </div>
                 <div class="col-8">
@@ -65,39 +96,14 @@
                   <small class="form-text text-muted">You may choose to display your Twitter username on your badge. This will be prefixed with @. Optional.</small>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <h3>Select Snake</h3>
-                  <img src="/static/accounts/snakes/bodies/red.svg" class="snake-body" data-id="red" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/bodies/blue.svg" class="snake-body" data-id="blue" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/bodies/yellow.svg" class="snake-body" data-id="yellow" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/bodies/green.svg" class="snake-body" data-id="green" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/bodies/orange.svg" class="snake-body" data-id="orange" width="75px" height="75px" />
-                  <img src="/static/accounts/snakes/bodies/purple.svg" class="snake-body" data-id="purple" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/bodies/grey.svg" class="snake-body" data-id="grey" width="75px" height="75px"/>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <h3>Select Extras</h3>
-                  <img src="/static/accounts/snakes/deerstalker.svg" class="snake-extras" data-id="deerstalker" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/glasses.svg" class="snake-extras" data-id="glasses" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/dragon.svg" class="snake-extras" data-id="dragon" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/bowie.svg" class="snake-extras" data-id="bowie" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/mortar.svg" class="snake-extras" data-id="mortar" width="75px" height="75px"/>
-                  <img src="/static/accounts/snakes/astronaut.svg" class="snake-extras" data-id="astronaut" width="75px" height="75px" />
-                </div>
-              </div>
             </div>
             <div class="col-4">
-              <h3>Badge Preview</h3>
-              <object id="badge" data="/static/accounts/website_badge.svg" type="image/svg+xml" width="75%" style="border: 1px solid black;"></object>
+              <label>Badge Preview</label>
+              <object id="badge" data="/static/accounts/website_badge.svg" type="image/svg+xml" width="100%" style="border: 1px solid black; border-radius: 10px"></object>
             </div>
           </div>
         </div>
       </div>
-
-
 
       <div class="card bg-danger text-dark">
         <div class="card-header"><h2>Requirements</h2></div>
@@ -240,7 +246,8 @@
               <input type="text" maxlength="100" class="form-control" placeholder="Please specify" id="id_country_of_residence_free_text" />
             </div>
           </div>
-
+        </div>
+      </div>
       <button type="submit" class="btn btn-primary">Update my profile</button>
     </form>
   </div>
@@ -250,5 +257,11 @@
 {% block json_data %}
 var isContributor = "{{ is_contributor|safe }}" == "True";
 var isOrganiser = "{{ is_organiser|safe }}" == "True";
-var ticketCompany = "{{ ticket_company|safe }}";
+var name = "{{ request.user.name|safe }}";
+var snake = "{{ request.user.badge_snake_colour|safe }}";
+var extras = "{{ request.user.badge_snake_extras|safe }}";
+var company = "{{ request.user.badge_company|safe }}";
+var twitter = "{{ request.user.badge_twitter|safe }}";
+var pronoun = "{{ request.user.badge_pronoun|safe }}";
+var ticketRate = "{{ ticket_rate|safe }}";
 {% endblock %}

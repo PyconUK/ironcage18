@@ -90,6 +90,8 @@ class ProfileForm(forms.ModelForm):
             'badge_company': forms.TextInput(attrs={'placeholder': False}),
             'badge_twitter': forms.TextInput(attrs={'placeholder': False}),
             'badge_pronoun': forms.TextInput(attrs={'placeholder': False}),
+            'badge_snake_colour': forms.HiddenInput(),
+            'badge_snake_extras': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):

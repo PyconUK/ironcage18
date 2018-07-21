@@ -81,11 +81,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    badge_company = models.CharField(max_length=100, blank=True)
-    badge_twitter = models.CharField(max_length=50, blank=True)
-    badge_pronoun = models.CharField(max_length=50, blank=True)
-    badge_snake_colour = models.CharField(max_length=50, blank=True)
-    badge_snake_extras = models.CharField(max_length=200, blank=True)
+    badge_company = models.CharField(max_length=100, blank=True, null=True)
+    badge_twitter = models.CharField(max_length=50, blank=True, null=True)
+    badge_pronoun = models.CharField(max_length=50, blank=True, null=True)
+    badge_snake_colour = models.CharField(max_length=50, blank=True, null=True)
+    badge_snake_extras = models.CharField(max_length=200, blank=True, null=True)
 
     USERNAME_FIELD = 'email_addr'
     EMAIL_FIELD = 'email_addr'

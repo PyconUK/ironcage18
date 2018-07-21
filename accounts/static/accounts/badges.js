@@ -1,18 +1,12 @@
 $(document).ready(function() {
-	var badgeSvg, name, company, twitter, pronoun;
+	var badgeSvg;
+
 	$("#badge").on('load', function() {
 	 	badgeSvg = document.getElementById("badge").contentDocument;
 
-
-		if (ticketCompany != "") {
-			$('#id_badge_company')[0].value = ticketCompany;
-			$('#id_badge_company')[0].disabled = true;
-		}
-
-		name = $('#id_name')[0].value;
-		company = $('#id_badge_company')[0].value;
-		pronoun = $('#id_badge_pronoun')[0].value;
-		twitter = $('#id_badge_twitter')[0].value;
+	 	if(ticketRate == "corporate") {
+	 		$('#id_badge_company')[0].disabled = true;
+	 	}
 
 		if(isOrganiser) {
 			badgeSvg.getElementById("background").className.baseVal = "red";
@@ -21,8 +15,6 @@ $(document).ready(function() {
 		}
 
 		updateBadge();
-
-		// badgeSvg.getElementById("snake-snake").setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', "/static/accounts/snakes/bluesnakewithhat.svg");
 	});
 
 	$("#id_name").on('change', function(e) {
@@ -46,33 +38,47 @@ $(document).ready(function() {
 	});
 
 	$(".snake-body").on('click', function(e) {
-		badgeSvg.getElementById("snake-body").setAttribute('xlink:href', '#solid-snake-body')
-		badgeSvg.getElementById("snake-body").setAttribute('class',  e.target.dataset.id + '-snake snake-body')
+		snake = e.target.dataset.id;
+		$('#id_badge_snake_colour')[0].value = snake;
+		updateBadge();
 	})
 
 	$(".snake-extras").on('click', function(e) {
-		badgeSvg.getElementById("snake-back").setAttribute('xlink:href', '#' + e.target.dataset.id + '-back')
-		badgeSvg.getElementById("snake-front").setAttribute('xlink:href', '#' + e.target.dataset.id + '-front')
+		extras = e.target.dataset.id;
+		$('#id_badge_snake_extras')[0].value = extras;
+		updateBadge();
 	})
 
 	function updateBadge() {
 
 		var extraText = "";
 
-		if(pronoun && pronoun != "") {
+		if(pronoun && pronoun != "None") {
 			extraText = pronoun;
 		}
 
-		if(pronoun && pronoun != "" && twitter && twitter != "") {
+		if(pronoun && pronoun != "None" && twitter && twitter != "None") {
 			extraText = extraText + ' - '
 		}
 
-		if(twitter && twitter != "") {
+		if(twitter && twitter != "None") {
 			extraText = extraText + '@' + twitter;
 		}
 
 		badgeSvg.getElementById("name").innerHTML = name;
 		badgeSvg.getElementById("company").innerHTML = company;
 		badgeSvg.getElementById("extratext").innerHTML = extraText;
+
+		badgeSvg.getElementById("snake-body").setAttribute('xlink:href', '#solid-snake-body')
+		badgeSvg.getElementById("snake-body").setAttribute('class',  snake + '-snake snake-body')
+
+		$('.snake-body.selected').removeClass('selected');
+		$(".snake-body[data-id='" + snake + "']").addClass('selected');
+
+		badgeSvg.getElementById("snake-back").setAttribute('xlink:href', '#' + extras + '-back')
+		badgeSvg.getElementById("snake-front").setAttribute('xlink:href', '#' + extras + '-front')
+
+		$('.snake-extras.selected').removeClass('selected');
+		$(".snake-extras[data-id='" + extras + "']").addClass('selected');
 	}
 });

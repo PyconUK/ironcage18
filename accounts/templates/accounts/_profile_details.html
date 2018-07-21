@@ -1,21 +1,68 @@
-<div class="card bg-danger text-dark">
-  <div class="card-header"><h2>Basic information</h2></div>
-  <div class="card-body">
-    <div class="row">
-      <div class="col-4 field-name">
-        Name
-      </div>
-      <div class="col-8">
-        {{ user.name }}
+<div class="row">
+  <div class="col-8">
+    <div class="card bg-danger text-dark">
+      <div class="card-header"><h2>Basic information</h2></div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <div class="row">
+              <div class="col-4 field-name">
+                Name
+              </div>
+              <div class="col-8">
+                {{ user.name }}
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-4 field-name">
+                Email
+              </div>
+              <div class="col-8">
+                {{ user.email_addr }}
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-4 field-name">
+                Company
+              </div>
+              <div class="col-8">
+                {{ user.badge_company }}
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-4 field-name">
+                Twitter
+              </div>
+              <div class="col-8">
+                {{ user.badge_twitter }}
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-4 field-name">
+                Pronoun
+              </div>
+              <div class="col-8">
+                {{ user.badge_pronoun }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <hr>
-    <div class="row">
-      <div class="col-4 field-name">
-        Email
-      </div>
-      <div class="col-8">
-        {{ user.email_addr }}
+  </div>
+  <div class="col-4">
+    <div class="card bg-danger text-dark">
+      <div class="card-header"><h2>Badge Preview</h2></div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <object id="badge" data="/static/accounts/website_badge.svg" type="image/svg+xml" width="100%" style="border: 1px solid black; border-radius: 10px"></object>
+          </div>
+        </div>
       </div>
     </div>
   </div>
