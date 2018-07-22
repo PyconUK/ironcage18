@@ -5,7 +5,7 @@ from ironcage.admin import OurActionsOnlyMixin
 
 @admin.register(Proposal)
 class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
-    list_filter = ('session_type', 'state')
+    list_filter = ('session_type', 'state', 'replied_to')
     search_fields = ['proposer__name', 'title', 'description',
                      'description_private', 'outline']
 

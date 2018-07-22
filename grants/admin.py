@@ -27,7 +27,7 @@ class ApplicationAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
     def get_list_filter(self, request):
         if request.user.is_superuser:
-            return ['requested_ticket_only']
+            return ['requested_ticket_only', 'replied_to']
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
