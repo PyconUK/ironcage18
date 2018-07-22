@@ -1,0 +1,12 @@
+<svg height="77.963997mm" id="svg8" version="1.1" viewBox="0 0 77.963997 77.963997" width="77.963997mm" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg">
+  <metadata id="metadata5">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path d="m 37.732686,21.853717 c 3.07243,0.0145 6.006661,0.275465 8.588261,0.730987 v 0 c 7.605195,1.340379 8.986491,4.144137 8.986491,9.316007 v 0 6.830273 H 37.334455 v 2.277382 l 0.01754,34.938709 -19.199727,-1.150364 c 0.335561,-6.603447 1.230953,-24.138413 1.230953,-25.830021 v 0 -17.065979 c 0,-4.856418 4.107175,-8.505279 8.986491,-9.316006 v 0 c 2.998538,-0.497849 6.107681,-0.73169 9.099671,-0.73169 v 0 c 0.08792,0 0.175614,2.34e-4 0.263305,7.02e-4 m 13.092029,8.919177 c 0,-1.889205 -1.509207,-3.425776 -3.372448,-3.425776 v 0 c -1.85646,0 -3.372682,1.536571 -3.372682,3.425776 v 0 c 0,1.882189 1.516222,3.404964 3.372682,3.404964 v 0 c 1.863241,0 3.372448,-1.522775 3.372448,-3.404964" id="snake-body" style="fill:#ffcc00;fill-opacity:1;stroke:none;stroke-width:0.23384096"/>
+</svg>

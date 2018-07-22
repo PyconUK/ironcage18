@@ -26,7 +26,12 @@ def create_user_with_full_profile(name='Alice', email_addr=None):
         'childcare_reqs': None,
         'dietary_reqs_yn': True,
         'dietary_reqs': 'Vegan',
-        'is_ukpa_member': True
+        'is_ukpa_member': True,
+        'badge_company': 'MegaCorp',
+        'badge_twitter': '@alice',
+        'badge_pronoun': 'she/her',
+        'badge_snake_colour': 'blue',
+        'badge_snake_extras': 'glasses'
     }
     if email_addr is not None:
         kwargs['email_addr'] = email_addr
