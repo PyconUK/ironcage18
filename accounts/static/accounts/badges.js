@@ -18,7 +18,7 @@ $(document).ready(function() {
 	}
 
 	$(window).bind("load", function() {
-	 	setTimeout(badgeLoad, 500);
+	 	setTimeout(badgeLoad, 250);
 	});
 
 	$("#id_name").on('change', function(e) {
@@ -72,6 +72,17 @@ $(document).ready(function() {
 		badgeSvg.getElementById("name").innerHTML = name;
 		badgeSvg.getElementById("company").innerHTML = company;
 		badgeSvg.getElementById("extratext").innerHTML = extraText;
+
+		// Check length of name
+		badgeSvg.getElementById("name").setAttribute('class',  'large-name')
+		var name_length = badgeSvg.getElementById("name").getComputedTextLength()
+		if(name_length > 95) {
+			badgeSvg.getElementById("name").setAttribute('class',  'small-name')
+			var name_length = badgeSvg.getElementById("name").getComputedTextLength()
+			if(name_length > 95) {
+				badgeSvg.getElementById("name").setAttribute('class',  'name-extras')
+			}
+		}
 
 		badgeSvg.getElementById("snake-body").setAttribute('xlink:href', '#solid-snake-body')
 		badgeSvg.getElementById("snake-body").setAttribute('class',  snake + '-snake snake-body')
