@@ -53,6 +53,9 @@ class Proposal(models.Model):
     confirmed = models.DateTimeField(null=True)
     replied_to = models.DateTimeField(null=True)
 
+    all_rooms_event = models.BooleanField(default=False)
+    conference_event = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -90,7 +93,7 @@ class Proposal(models.Model):
     objects = Manager()
 
     def __str__(self):
-        return self.proposal_id
+        return f'{self.title} ({self.proposal_id})'
 
     @property
     def proposal_id(self):

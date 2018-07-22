@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'cfp',
     'grants',
     'ironcage',
+    'schedule',
 
     'bootstrap4',
     'django_slack',

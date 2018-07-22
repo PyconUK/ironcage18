@@ -42,3 +42,7 @@ div.is-invalid > .invalid-feedback {
 .snake-option.selected {
   border: 3px solid red;
 }
+
+.schedule-table td {
+  border: 1px solid grey;
+}

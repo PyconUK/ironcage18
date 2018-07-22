@@ -18,5 +18,6 @@ urlpatterns = [
     path('grants/', include('grants.urls')),
     path('500/', ironcage.views.error, name='error'),
     path('log/', ironcage.views.log, name='log'),
+    path('schedule/', include('schedule.urls')),
     path('admin/', admin.site.urls),
 ]

@@ -1,0 +1,44 @@
+{% extends 'ironcage/base.html' %}
+{% load schedule_extras %}
+
+{% block content %}
+
+{% for day, days_sessions in sessions.items %}
+
+  <div class="row">
+    <div class="col">
+      <h1>{{ day }}</h1>
+      <table class="table table-striped table-sm table-responsive schedule-table" style="font-size: 0.75em;">
+        <thead>
+          <tr>
+          <td></td>
+          {% for room in days_sessions.keys %}
+            <th scope="col">{{ room.name }}</th>
+          {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for time in times %}
+            <tr>
+              <th scope="row">{{ time|time:"H:i" }}</th>
+              {% for room in days_sessions.keys %}
+                {% ifsession days_sessions room time %}
+                <td {% get_session_rows days_sessions room time %}>
+                  <p>{% get_session_title days_sessions room time %}</p>
+                  <p><small>{% get_session_speaker days_sessions room time %}</small></p>
+                </td>
+                {% long_session %}
+                {% no_session %}
+                  <td style="background-color: #333; color: white;">{{room}} {{time|time:"H:i"}}</td>
+                {% endifsession %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endfor %}
+
+{% endblock %}
