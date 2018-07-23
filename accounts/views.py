@@ -57,9 +57,6 @@ def edit_profile(request):
         form = ProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            if user_ticket and user_ticket.rate == "corporate":
-                request.user.badge_company = user_ticket.order_company_name()
-                request.user.save()
             return redirect('accounts:profile')
     else:
         form = ProfileForm(instance=request.user)

@@ -4,10 +4,6 @@ $(document).ready(function() {
 	function badgeLoad() {
 		badgeSvg = document.getElementById("badge").contentDocument;
 
-	 	if(ticketRate == "corporate") {
-	 		$('#id_badge_company')[0].disabled = true;
-	 	}
-
 		if(isOrganiser) {
 			badgeSvg.getElementById("background").className.baseVal = "red";
 		} else if(isContributor) {
