@@ -49,11 +49,11 @@ def finaid_report(request):
     from django.db.models import Avg, Count, Min, Sum
     fin_aid_accepted_replied = Application.objects.filter(
         replied_to__isnull=False, amount_awarded__gt=0
-    ).aggregate(Sum('amount_awarded'))['amount_awarded__sum']
+    ).aggregate(Sum('amount_awarded'))['amount_awarded__sum'] or 0
 
     fin_aid_awaiting = Application.objects.filter(
         replied_to__isnull=True, amount_awarded__gt=0
-    ).aggregate(Sum('amount_awarded'))['amount_awarded__sum']
+    ).aggregate(Sum('amount_awarded'))['amount_awarded__sum'] or 0
 
     context = {
         'awarded': fin_aid_accepted_replied,
