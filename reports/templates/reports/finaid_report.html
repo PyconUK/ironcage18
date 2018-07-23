@@ -1,0 +1,18 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>FinAid Report</h1>
+<hr />
+
+<h3>FinAid awarded</h3>
+<p>(sent out, the person knows about it, has an email etc)</p>
+<p><b>£{{ awarded }}</b></p>
+
+<h3>FinAid pending</h3>
+<p>(entered on here but email not sent out yet)</p>
+<p><b>£{{ awaiting }}</b></p>
+
+<h3>Total FinAid Spent</h3>
+<p>Excluding the £1000 given to DjangoGirls</p>
+<p><b>£{{ total }}</b></p>
+{% endblock %}

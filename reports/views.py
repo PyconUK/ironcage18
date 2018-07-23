@@ -4,6 +4,7 @@ from django.shortcuts import render
 from accounts.models import User
 from orders.models import Order
 from tickets.models import Ticket
+from grants.models import Application
 
 from .reports import reports
 
@@ -40,3 +41,23 @@ def tickets_ticket(request, ticket_id):
         'ticket': ticket,
     }
     return render(request, 'reports/ticket.html', context)
+
+
+@staff_member_required(login_url='login')
+def finaid_report(request):
+
+    from django.db.models import Avg, Count, Min, Sum
+    fin_aid_accepted_replied = Application.objects.filter(
+        replied_to__isnull=False, amount_awarded__gt=0
+    ).aggregate(Sum('amount_awarded'))['amount_awarded__sum']
+
+    fin_aid_awaiting = Application.objects.filter(
+        replied_to__isnull=True, amount_awarded__gt=0
+    ).aggregate(Sum('amount_awarded'))['amount_awarded__sum']
+
+    context = {
+        'awarded': fin_aid_accepted_replied,
+        'awaiting': fin_aid_awaiting,
+        'total': fin_aid_accepted_replied + fin_aid_awaiting,
+    }
+    return render(request, 'reports/finaid_report.html', context)
