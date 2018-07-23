@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg height="77.963997mm" id="svg8" version="1.1" viewBox="0 0 77.963997 77.963997" width="77.963997mm" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs id="defs7">
+    <circle cx="47.896" cy="75.138" r="1.304" style="fill:#ffffff" id="polka-dot"/>
+  </defs>
+  <metadata id="metadata5">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path d="m 37.732686,21.853717 c 3.07243,0.0145 6.006661,0.275465 8.588261,0.730987 v 0 c 7.605195,1.340379 8.986491,4.144137 8.986491,9.316007 v 0 6.830273 H 37.334455 v 2.277382 l 0.01754,34.938709 -19.199727,-1.150364 c 0.335561,-6.603447 1.230953,-24.138413 1.230953,-25.830021 v 0 -17.065979 c 0,-4.856418 4.107175,-8.505279 8.986491,-9.316006 v 0 c 2.998538,-0.497849 6.107681,-0.73169 9.099671,-0.73169 v 0 c 0.08792,0 0.175614,2.34e-4 0.263305,7.02e-4 m 13.092029,8.919177 c 0,-1.889205 -1.509207,-3.425776 -3.372448,-3.425776 v 0 c -1.85646,0 -3.372682,1.536571 -3.372682,3.425776 v 0 c 0,1.882189 1.516222,3.404964 3.372682,3.404964 v 0 c 1.863241,0 3.372448,-1.522775 3.372448,-3.404964" id="snake-body" style="fill:#aaaaaa;fill-opacity:1;stroke:none;stroke-width:0.23384096"/>
+  <g style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41420996" transform="matrix(0.46945702,0,0,0.46945702,-2.982282,-166.49826)">
+    <g style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41420996" transform="translate(-22.216512,306.87524)">
+      <g style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41420996" transform="matrix(0.75063182,0,0,0.75063182,28.665174,47.951461)">
+        <g id="bow" transform="rotate(4.3047213,83.794214,-43.279304)">
+          <g id="bow-background" transform="matrix(0.0944083,-0.0745225,0.0745225,0.0944083,31.2442,58.5595)">
+            <path d="m 474.631,119.847 c -1.953,-0.344 -4.172,-0.508 -6.594,-0.508 -38.172,0 -131.142,40.532 -180.329,63.282 -9.625,-2.969 -20.359,-4.414 -31.703,-4.414 -10.094,0 -19.719,1.141 -28.485,3.484 -43.36,-23.43 -125.829,-64.375 -172.735,-64.375 -6.578,0 -12.438,0.805 -17.422,2.57 -54.657,19.445 -44.735,264.393 0,272.268 1.969,0.344 4.188,0.5 6.609,0.5 39.641,0 138.422,-43.72 185.829,-65.813 8.157,4.406 16.985,6.938 26.204,6.938 8.421,0 16.515,-2.109 24.078,-5.844 41.938,22.906 128.579,66.751 177.126,66.751 6.578,0 12.453,-0.812 17.422,-2.578 54.656,-19.456 44.75,-264.402 0,-272.261 z" id="path7547" style="fill:#07004f;fill-rule:nonzero"/>
+            <clipPath id="_clip1">
+              <path d="m 474.631,119.847 c -1.953,-0.344 -4.172,-0.508 -6.594,-0.508 -38.172,0 -131.142,40.532 -180.329,63.282 -9.625,-2.969 -20.359,-4.414 -31.703,-4.414 -10.094,0 -19.719,1.141 -28.485,3.484 -43.36,-23.43 -125.829,-64.375 -172.735,-64.375 -6.578,0 -12.438,0.805 -17.422,2.57 -54.657,19.445 -44.735,264.393 0,272.268 1.969,0.344 4.188,0.5 6.609,0.5 39.641,0 138.422,-43.72 185.829,-65.813 8.157,4.406 16.985,6.938 26.204,6.938 8.421,0 16.515,-2.109 24.078,-5.844 41.938,22.906 128.579,66.751 177.126,66.751 6.578,0 12.453,-0.812 17.422,-2.578 54.656,-19.456 44.75,-264.402 0,-272.261 z" id="path7549" style="clip-rule:nonzero"/>
+            </clipPath>
+            <g clip-path="url(#_clip1)" id="g7973">
+              <g id="polka-dots" transform="matrix(10.4089,0.192677,-0.192677,10.4089,-752.326,-688.627)">
+                <use transform="translate(29.1209,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(34.0383,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(39.0496,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(14.1209,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(19.0383,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(24.0496,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(44.1209,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(49.0383,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(54.0496,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(32.1209,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(37.0383,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(42.0496,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(17.1209,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(22.0383,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(27.0496,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(47.1209,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(52.0383,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(57.0496,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(29.1209,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(34.0383,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(39.0496,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(14.1209,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(19.0383,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(24.0496,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(44.1209,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(49.0383,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(54.0496,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(32.1209,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(37.0383,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(42.0496,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(17.1209,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(22.0383,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(27.0496,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(47.1209,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(52.0383,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(57.0496,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(32.1209,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(37.0383,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(42.0496,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(17.1209,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(22.0383,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(27.0496,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(47.1209,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(52.0383,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(57.0496,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(29.1209,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(34.0383,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(39.0496,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(14.1209,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(19.0383,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(24.0496,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(44.1209,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(49.0383,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(54.0496,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(32.1209,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(37.0383,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(42.0496,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(17.1209,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(22.0383,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(27.0496,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(47.1209,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(52.0383,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(57.0496,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(59.1209,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(64.0383,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(69.0496,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(62.1209,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(67.0383,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(72.0496,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(59.1209,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(64.0383,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(69.0496,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(62.1209,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(67.0383,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(72.0496,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(62.1209,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(67.0383,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(72.0496,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(59.1209,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(64.0383,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(69.0496,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(62.1209,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(67.0383,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(72.0496,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(74.1209,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(79.0383,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(84.0496,13.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(77.1209,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(82.0383,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(87.0496,9.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(74.1209,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(79.0383,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(84.0496,5.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(77.1209,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(82.0383,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(87.0496,1.46932)" xlink:href="#polka-dot" />
+                <use transform="translate(77.1209,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(82.0383,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(87.0496,17.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(74.1209,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(79.0383,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(84.0496,21.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(77.1209,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(82.0383,25.4693)" xlink:href="#polka-dot" />
+                <use transform="translate(87.0496,25.4693)" xlink:href="#polka-dot" />
+              </g>
+            </g>
+          </g>
+          <g id="bow-outline">
+            <path d="m 72.016,54.36 3.182,-0.582 c 1.881,0.065 3.669,0.923 5.161,2.813 0.127,0.161 0.251,0.328 0.37,0.5 l 1.239,2.291 c 0.845,2.056 1.199,4.398 0.93,6.523 0,0 -0.626,2.717 -0.773,2.742 -0.436,0.916 -1.043,1.718 -1.838,2.346 -0.87,0.687 -3.128,1.251 -3.128,1.251 l -2.699,0.038 c 0,0 -2.382,-0.486 -3.463,-0.971 l -2.394,-1.38 c -0.72,-0.517 -1.375,-1.102 -1.941,-1.737 L 65.224,66.06 c -0.35,-0.751 -0.547,-1.503 -0.608,-2.247 l 0.321,-2.268 1.351,-2.58 c 0,0 1.453,-1.907 2.406,-2.659 1.071,-0.846 2.192,-1.509 3.322,-1.946 z" id="path7976" style="fill:none;stroke:#070035;stroke-width:1px;stroke-opacity:0.90980398"/>
+            <g transform="matrix(0.0944083,-0.0745225,0.0745225,0.0944083,31.2442,58.5595)">
+              <path d="m 474.631,119.847 c -1.953,-0.344 -4.172,-0.508 -6.594,-0.508 -38.172,0 -131.142,40.532 -180.329,63.282 -9.625,-2.969 -20.359,-4.414 -31.703,-4.414 -10.094,0 -19.719,1.141 -28.485,3.484 -43.36,-23.43 -125.829,-64.375 -172.735,-64.375 -6.578,0 -12.438,0.805 -17.422,2.57 -54.657,19.445 -44.735,264.393 0,272.268 1.969,0.344 4.188,0.5 6.609,0.5 39.641,0 138.422,-43.72 185.829,-65.813 8.157,4.406 16.985,6.938 26.204,6.938 8.421,0 16.515,-2.109 24.078,-5.844 41.938,22.906 128.579,66.751 177.126,66.751 6.578,0 12.453,-0.812 17.422,-2.578 54.656,-19.456 44.75,-264.402 0,-272.261 z" id="path7978" style="fill:none;stroke:#070035;stroke-width:8.31000042px;stroke-opacity:0.90980398"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
