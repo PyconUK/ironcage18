@@ -11,10 +11,10 @@ from .forms import ProfileForm, RegisterForm
 def assign_a_snake(user):
     STANDARD_SNAKES = [
         ('blue', 'deerstalker'),
-        ('purple', 'bowie'),
+        ('yellow', 'crown'),
         ('red', 'glasses'),
         ('green', 'dragon'),
-        ('yellow', 'mortar'),
+        ('purple', 'mortar'),
         ('orange', 'astronaut'),
     ]
 
