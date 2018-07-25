@@ -22,13 +22,13 @@
               <th scope="row">{{ time|time:"H:i" }}</th>
               {% for session in days_sessions.matrix|index:forloop.counter0 %}
                   {% if session is None %}
-                    <td style="background-color: #333; color: white;">{{ session.stream.room.name }} {{time|time:"H:i"}}</td>
-                  {% elif session.long_session %}
+                    <td style="background-color: #333; color: white;"></td>
+                  {% elif session.spanned %}
                   {% else %}
-                    <td {% if session.activity.break_event %}class="break"{% endif %}>
-                      <p>{{ session.activity.title }}</p>
-                      {% if not session.activity.conference_event %}
-                      <p><small>{{ session.activity.proposer.name }}</small></p>
+                    <td {% if session.break_event %}class="break"{% endif %} colspan="{{ session.colspan }}" rowspan="{{ session.rowspan }}">
+                      <p>{{ session.title }}</p>
+                      {% if not session.conference_event %}
+                      <p><small>{{ session.name }}</small></p>
                       {% endif %}
                     </td>
                   {% endif %}
