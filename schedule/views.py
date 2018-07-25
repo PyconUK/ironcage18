@@ -21,7 +21,9 @@ def schedule(request):
 
     for day in days:
 
-        streams_for_day = Stream.objects.filter(day=day).order_by('room__order', 'room__name').all()
+        streams_for_day = Stream.objects.filter(
+            day=day, visible=True
+        ).order_by('room__order', 'room__name').all()
 
         sessions_for_day = Session.objects.filter(
             stream__in=streams_for_day
@@ -65,12 +67,30 @@ def schedule(request):
 
             matrix.append(sessions)
 
-        all_sessions[day] = {
-            'times': times_for_day,
-            'streams': streams_for_day,
-            'sessions': sessions_for_day,
-            'matrix': matrix
-        }
+
+
+        for i, time in enumerate(times_for_day):
+            for j, session in enumerate(matrix[i]):
+                if session is not None:
+                    # Temporary
+                    if session.activity.session_type == 'talk':
+                        length = timedelta(minutes=30)
+                    elif session.activity.session_type == 'workshop':
+                        length = timedelta(minutes=120)
+                    else:
+                        length = timedelta(minutes=60)
+                    # End Temporary
+
+                    # See if it's a long session
+                    session_end_time = (datetime.combine(date(2018, 1, 1), session.time) + length).time()
+                    for k, later_time in enumerate(times_for_day[i + 1:]):
+                        if session_end_time > later_time:
+                            print(session, session.activity.session_type, session_end_time, later_time, i+k)
+                            matrix[i + k + 1][j] = session
+
+
+
+
 
         # # Fill in sessions
         # for time in times_for_day:
@@ -81,29 +101,14 @@ def schedule(request):
 
         # for session in sessions_for_day:
         #     all_sessions[day]['matrix'][session.time][session.stream] =
-        #     # Temporary
-        #     if session.activity.session_type == 'talk':
-        #         length = timedelta(minutes=30)
-        #     elif session.activity.session_type == 'workshop':
-        #         length = timedelta(minutes=120)
-        #     else:
-        #         length = timedelta(minutes=60)
-        #     # End Temporary
+        #
 
         #     if session.activity.all_rooms_event:
         #         for stream in streams_for_day:
         #             if all_sessions[day]['matrix'][session.time][stream] is None:
         #                 all_sessions[day]['matrix'][session.time][stream] = all_sessions[day]['matrix'][session.time][session.stream]
 
-        #     # See if it's a long session
-        #     session_end_time = (datetime.combine(date(2018, 1, 1), session.time) + length).time()
-        #     session_gaps = 1
-        #     for time in times_for_day[times_for_day.index(session.time) + 1:]:
-        #         if session_end_time > time:
-        #             session_gaps += 1
-        #             all_sessions[day]['matrix'][time][session.stream] = {'long_session': True}
-
-        #     all_sessions[day]['matrix'][session.time][session.stream]['rows'] = session_gaps
+        #
 
         # for time in all_sessions[day]['matrix']:
         #     for session in all_sessions[day]['matrix'][time]:
@@ -196,6 +201,15 @@ def schedule(request):
 
 
     # # # print(all_sessions)
+
+        all_sessions[day] = {
+            'times': times_for_day,
+            'streams': streams_for_day,
+            'sessions': sessions_for_day,
+            'matrix': matrix
+        }
+
+
 
     context = {
         # 'streams': streams_for_day,

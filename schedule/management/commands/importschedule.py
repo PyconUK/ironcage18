@@ -27,13 +27,17 @@ class Command(BaseCommand):
                 room = ' '.join(room)
 
                 try:
-                    activity = Proposal.objects.get(pk=event)
+                    activity = Proposal.objects.get(title=event)
                 except:
+                    print(event)
                     continue
 
                 room = Room.objects.get(name=room)
 
-                stream = Stream.objects.get(room=room, day=date, stream_type='day')
+                try:
+                    stream = Stream.objects.get(room=room, day=date, stream_type='day')
+                except:
+                    print(room, date)
 
                 session = Session.objects.get_or_create(
                     activity=activity,

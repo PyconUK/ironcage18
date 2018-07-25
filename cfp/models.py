@@ -53,7 +53,7 @@ class Proposal(models.Model):
     confirmed = models.DateTimeField(null=True)
     replied_to = models.DateTimeField(null=True)
 
-    all_rooms_event = models.BooleanField(default=False)
+    break_event = models.BooleanField(default=False)
     conference_event = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)

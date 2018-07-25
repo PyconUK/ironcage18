@@ -46,3 +46,17 @@ div.is-invalid > .invalid-feedback {
 .schedule-table td {
   border: 1px solid grey;
 }
+
+.schedule-table tr {
+  height: 8em;
+}
+
+.schedule-table tr td p:last-child {
+  margin-bottom: 0;
+}
+
+.schedule-table .break {
+  background-color: pink;
+  vertical-align: middle;
+  text-align: center;
+}
