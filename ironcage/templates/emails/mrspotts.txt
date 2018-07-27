@@ -1,0 +1,19 @@
+Dear {{ user.name }},
+
+We've been able to reserve a block of rooms and beds at the Mrs Potts hostel in Cardiff, exclusively for PyCon UK attendees http://mrspottsbackpackers.co.uk. The hostel is in the centre of Cardiff and very convenient for the conference.
+
+You are being offered the first chance to secure this accommodation.
+
+The accommodation is in four-bed and six-bed dormitories. The dormitories are secure, clean and comfortable. Last year, 62 of our attendees stayed at the Mrs Potts hostel, and we had extremely good reports.
+
+Rates are £25 for Friday and Saturday nights, and £15 for all other nights - you won't find a better deal for your conference accommodation.
+
+You'll be able to specify your preferences for a male/female dormitory when you book, or you can book an entire room for a group of friends.
+
+To book, please email Mrs Potts <info@mrspottsbackpackers.co.uk>, and mention that you are attending PyCon UK. Lucy and Jess are our friendly contacts at the hostel, and they will be able to help you.
+
+You will need to do this as soon as possible - in a few days we will make this information public on the website, and we expect all the available places to go very quickly.
+
+With regards,
+
+The PyCon UK 2018 team
