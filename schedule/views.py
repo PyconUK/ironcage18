@@ -82,9 +82,11 @@ def schedule(request):
                             'name': session.activity.proposer.name,
                             'length': length,
                             'time': session.time,
+                            'end_time': (datetime.combine(date(2018, 1, 1), session.time) + length).time(),
                             'rowspan': 1,
                             'colspan': 1,
                             'spanned': False,
+                            'room': session.stream.room.name,
                         }
             matrix.append(sessions)
 
@@ -92,10 +94,9 @@ def schedule(request):
             for j, session in enumerate(matrix[i]):
                 if session is not None:
                     # See if it's a long session
-                    session_end_time = (datetime.combine(date(2018, 1, 1), session['time']) + session['length']).time()
                     session_rowspan = 1
                     for k, later_time in enumerate(times_for_day[i + 1:]):
-                        if session_end_time > later_time:
+                        if session['end_time'] > later_time:
                             session_rowspan += 1
                             matrix[i + k + 1][j] = copy(session)
                             matrix[i + k + 1][j]['spanned'] = True
@@ -106,7 +107,7 @@ def schedule(request):
                     # See if it's a wide session
                     colspan = 1
                     for k, later_session in enumerate(matrix[i][j + 1:]):
-                        if session == later_session:
+                        if session and later_session and session['name'] == later_session['name']:
                             colspan += 1
                             matrix[i][j + k + 1]['spanned'] = True
                         else:
@@ -122,5 +123,6 @@ def schedule(request):
 
     context = {
         'sessions': all_sessions,
+        'wide': True
     }
     return render(request, 'schedule/schedule.html', context)

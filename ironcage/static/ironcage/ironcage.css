@@ -43,20 +43,88 @@ div.is-invalid > .invalid-feedback {
   border: 3px solid red;
 }
 
+.schedule-table {
+  font-family: Futura;
+  font-size: 0.75em;
+}
+
 .schedule-table td {
   border: 1px solid grey;
+  font-family: Futura;
 }
 
 .schedule-table tr {
   height: 8em;
 }
 
-.schedule-table tr td p:last-child {
+.schedule-table tr td p:last-of-type {
   margin-bottom: 0;
 }
 
 .schedule-table .break {
-  background-color: pink;
+  background-color: #1073b9;
+  color: white;
   vertical-align: middle;
   text-align: center;
+  font-size: 1.25em;
+}
+
+.schedule-table .no-session {
+  background-color: #333;
+  border: none;
+}
+
+.schedule-table tr td:last-child.no-session {
+  border-right: 1px solid grey;
+}
+
+.schedule-table thead th, .schedule-table th {
+  border: 1px solid grey;
+  text-align: center;
+  font-family: Futura-Bold;
+}
+
+.schedule-table thead th {
+  vertical-align: middle;
+}
+
+.schedule-table thead tr {
+  height: 4em;
+}
+
+.schedule-table .presenter-name {
+  color: #999;
+  font-size: 0.9em;
+}
+
+.schedule-table .collapsed-table {
+  display: none;
+}
+
+@media screen and (max-width: 800px) {
+  .schedule-table td, .schedule-table th, .schedule-table tr {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .schedule-table .no-session, .schedule-table thead, .schedule-table .time {
+    display: none;
+  }
+
+  .schedule-table tr {
+    margin-bottom: 1em;
+  }
+
+  .schedule-table .collapsed-table {
+    display: block;
+  }
+
+  .schedule-table .room {
+    font-family: Futura-Bold;
+  }
+
+  .schedule-table .end-time {
+    color: #999;
+  }
 }
