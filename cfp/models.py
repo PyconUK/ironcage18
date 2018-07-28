@@ -56,6 +56,8 @@ class Proposal(models.Model):
     break_event = models.BooleanField(default=False)
     conference_event = models.BooleanField(default=False)
 
+    length_override = models.DurationField(blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -112,7 +114,9 @@ class Proposal(models.Model):
 
     @property
     def length(self):
-        if self.session_type in ['talk', 'teacherstalk']:
+        if self.length_override:
+            return self.length_override
+        elif self.session_type in ['talk', 'teacherstalk']:
             return timedelta(minutes=30)
         elif self.session_type == 'workshop':
             return timedelta(minutes=180)

@@ -1,18 +1,9 @@
-import csv
-
-from datetime import datetime, timezone, date, timedelta
-
-from django_slack import slack_message
-
-from django.conf import settings
-from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib import messages
-from django.http import StreamingHttpResponse
-from django.shortcuts import redirect, render
-
-from .models import Session, Room, Stream
-
 from copy import copy
+from datetime import date
+
+from django.shortcuts import render
+
+from schedule.models import Session, Stream
 
 
 def schedule(request):
@@ -25,7 +16,7 @@ def schedule(request):
 
         streams_for_day = Stream.objects.filter(
             day=day, visible=True
-        ).order_by('room__order', 'room__name').all()
+        ).order_by('order', 'room__name').all()
 
         sessions_for_day = Session.objects.filter(
             stream__in=streams_for_day
@@ -55,7 +46,7 @@ def schedule(request):
                 stream__day=day,
                 time=time,
             ).order_by(
-                'stream__room__order',
+                'stream__order',
                 'stream__room__name'
             ).all()
 
@@ -66,23 +57,14 @@ def schedule(request):
                 for session in sessions_for_time:
                     if session.stream == stream:
 
-                        # Temporary
-                        if session.activity.session_type == 'talk':
-                            length = timedelta(minutes=30)
-                        elif session.activity.session_type == 'workshop':
-                            length = timedelta(minutes=120)
-                        else:
-                            length = timedelta(minutes=60)
-                        # End Temporary
-
                         sessions[i] = {
                             'break_event': session.activity.break_event,
                             'title': session.activity.title,
                             'conference_event': session.activity.conference_event,
                             'name': session.activity.proposer.name,
-                            'length': length,
+                            'length': session.activity.length,
                             'time': session.time,
-                            'end_time': (datetime.combine(date(2018, 1, 1), session.time) + length).time(),
+                            'end_time': session.end_time,
                             'rowspan': 1,
                             'colspan': 1,
                             'spanned': False,

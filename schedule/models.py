@@ -1,16 +1,15 @@
+from datetime import datetime, date
+
 from django.conf import settings
 from django.db import models
 
 from cfp.models import Proposal
-from tickets.constants import DAYS
 
 
 class Room(models.Model):
     name = models.CharField(max_length=100)
 
     capacity = models.PositiveIntegerField()
-
-    order = models.PositiveIntegerField()
 
     has_sttr = models.BooleanField()
     has_projector = models.BooleanField()
@@ -41,6 +40,8 @@ class Stream(models.Model):
     day = models.DateField()
     room = models.ForeignKey(Room, related_name='streams', on_delete=models.CASCADE)
 
+    order = models.PositiveIntegerField()
+
     visible = models.BooleanField(default=False)
 
     stream_type = models.CharField(max_length=3, choices=STREAM_TYPE_CHOICES)
@@ -64,3 +65,6 @@ class Session(models.Model):
     def __str__(self):
         return f'{self.activity.title} ({self.time})'
 
+    @property
+    def end_time(self):
+        return (datetime.combine(date(2018, 1, 1), self.time) + self.length).time()
