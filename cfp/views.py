@@ -144,7 +144,7 @@ def proposal_confirm(request, proposal_id):
 
 @permission_required('cfp.can_review_proposals', raise_exception=True)
 def get_schedule_generate_csv(request):
-    proposals = Proposal.objects.filter(state='accept').all()
+    proposals = Proposal.objects.filter(state__in=['accept', 'confirm']).all()
 
     rows = [(
         'name', 'email_address', 'session_type', 'title',
