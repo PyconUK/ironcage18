@@ -158,10 +158,10 @@ def get_schedule_generate_csv(request):
                 proposal.proposer.email_addr,
                 proposal.session_type,
                 proposal.title,
-                30,  # description
+                proposal.length.total_seconds() / 60,
                 '',  # tag eg pydata
-                proposal.subtitle,
-                proposal.description,
+                '',
+                '',
                 0  # demand
             )
         )

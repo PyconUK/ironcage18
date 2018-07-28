@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -104,3 +106,14 @@ class Proposal(models.Model):
             return f'{self.title}: {self.subtitle}'
         else:
             return self.title
+
+    @property
+    def length(self):
+        if self.session_type in ['talk', 'teacherstalk']:
+            return timedelta(minutes=30)
+        elif self.session_type == 'workshop':
+            return timedelta(minutes=180)
+        elif self.session_type in ['kidsworkshop', 'teachersworkshop']:
+            return timedelta(minutes=60)
+        else:
+            return timedelta(minutes=0)
