@@ -1,10 +1,8 @@
 import re
 from datetime import datetime
 
-from django.conf import settings
 from django.core.management import BaseCommand
 from django.template.loader import get_template
-from django.urls import reverse
 from django.db.models import Q
 
 from accounts.models import Application

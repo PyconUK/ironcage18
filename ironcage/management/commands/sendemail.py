@@ -1,11 +1,8 @@
-import json
 import re
 
-from django.conf import settings
 from django.core.management import BaseCommand
 from django.db.models import Q
 from django.template.loader import get_template
-from django.urls import reverse
 
 from accounts.models import User
 from cfp.models import Proposal

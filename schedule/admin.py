@@ -5,6 +5,7 @@ from import_export.admin import ImportMixin, ImportExportMixin
 
 admin.site.register(Session)
 
+
 @admin.register(Room)
 class RoomAdmin(OurActionsOnlyMixin, ImportExportMixin, admin.ModelAdmin):
     pass

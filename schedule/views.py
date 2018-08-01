@@ -131,7 +131,7 @@ def import_schedule(f, request):
 
         try:
             activity = Proposal.objects.get(title=event)
-        except:
+        except Proposal.DoesNotExist:
             messages.add_message(request, messages.ERROR, f"Couldn't find {event}")
             continue
 
@@ -139,10 +139,10 @@ def import_schedule(f, request):
 
         try:
             stream = Stream.objects.get(room=room, day=date, stream_type='day')
-        except:
+        except Stream.DoesNotExist:
             messages.add_message(request, messages.ERROR, f"Couldn't find {room} on {date}")
 
-        session = Session.objects.get_or_create(
+        Session.objects.get_or_create(
             activity=activity,
             stream=stream,
             time=time,

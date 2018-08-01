@@ -1,10 +1,11 @@
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Sum
 from django.shortcuts import render
 
 from accounts.models import User
+from grants.models import Application
 from orders.models import Order
 from tickets.models import Ticket
-from grants.models import Application
 
 from .reports import reports
 
@@ -46,7 +47,6 @@ def tickets_ticket(request, ticket_id):
 @staff_member_required(login_url='login')
 def finaid_report(request):
 
-    from django.db.models import Avg, Count, Min, Sum
     fin_aid_accepted_replied = Application.objects.filter(
         replied_to__isnull=False, amount_awarded__gt=0
     ).aggregate(Sum('amount_awarded'))['amount_awarded__sum'] or 0
