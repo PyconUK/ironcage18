@@ -1,11 +1,20 @@
+import csv
+import codecs
 from copy import copy
 from datetime import date
 
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from schedule.models import Session, Stream
+from cfp.models import Proposal
+from schedule.models import Room, Session, Stream
+
+from .forms import UploadFileForm
 
 
+@staff_member_required(login_url='login')
 def schedule(request):
 
     days = [date(2018, 9, 15), date(2018, 9, 16), date(2018, 9, 17), date(2018, 9, 18), date(2018, 9, 19)]
@@ -108,3 +117,46 @@ def schedule(request):
         'wide': True
     }
     return render(request, 'schedule/schedule.html', context)
+
+
+def import_schedule(f, request):
+    Session.objects.all().delete()
+
+    reader = csv.reader(codecs.iterdecode(f, 'utf-8'))
+    for i, (event_index, event, slot_index, slot) in enumerate(reader):
+        if i == 0:
+            continue
+        date, time, *room = slot.split(' ')
+        room = ' '.join(room)
+
+        try:
+            activity = Proposal.objects.get(title=event)
+        except:
+            messages.add_message(request, messages.ERROR, f"Couldn't find {event}")
+            continue
+
+        room = Room.objects.get(name=room)
+
+        try:
+            stream = Stream.objects.get(room=room, day=date, stream_type='day')
+        except:
+            messages.add_message(request, messages.ERROR, f"Couldn't find {room} on {date}")
+
+        session = Session.objects.get_or_create(
+            activity=activity,
+            stream=stream,
+            time=time,
+            length=activity.length
+        )
+
+
+@staff_member_required(login_url='login')
+def upload_schedule(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            import_schedule(request.FILES['file'], request)
+            return HttpResponseRedirect('/schedule/')
+    else:
+        form = UploadFileForm()
+    return render(request, 'schedule/upload.html', {'form': form})
