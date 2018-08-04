@@ -4,6 +4,7 @@ from django.core import mail
 from django.test import TestCase
 
 from tickets.tests import factories
+from extras.tests import factories as extras_factories
 
 from orders.mailer import send_order_confirmation_mail
 
@@ -26,6 +27,7 @@ class MailerTests(TestCase):
         self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
         self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.order_id})')
         self.assertTrue(re.search(r'You have purchased 1 ticket for PyCon UK 2018', email.body))
+        self.assertTrue(re.search('3-day individual-rate ticket x 1', email.body))
         self.assertTrue(re.search(fr'http://testserver/orders/{order.order_id}/receipt/', email.body))
         self.assertFalse(re.search('Ticket invitations have been sent to the following', email.body))
         self.assertTrue(re.search('We look forward to seeing you in Cardiff', email.body))
@@ -43,6 +45,7 @@ class MailerTests(TestCase):
         self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
         self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.order_id})')
         self.assertTrue(re.search(r'You have purchased 2 tickets for PyCon UK 2018', email.body))
+        self.assertTrue(re.search('2-day individual-rate ticket x 2', email.body))
         self.assertTrue(re.search(fr'http://testserver/orders/{order.order_id}/receipt/', email.body))
         self.assertTrue(re.search('Ticket invitations have been sent to the following', email.body))
         self.assertTrue(re.search('bob@example.com', email.body))
@@ -62,8 +65,28 @@ class MailerTests(TestCase):
         self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
         self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.order_id})')
         self.assertTrue(re.search(r'You have purchased 3 tickets for PyCon UK 2018', email.body))
+        self.assertTrue(re.search('2-day individual-rate ticket x 2', email.body))
+        self.assertTrue(re.search('3-day individual-rate ticket x 1', email.body))
         self.assertTrue(re.search(fr'http://testserver/orders/{order.order_id}/receipt/', email.body))
         self.assertTrue(re.search('Ticket invitations have been sent to the following', email.body))
         self.assertTrue(re.search('bob@example.com', email.body))
         self.assertTrue(re.search('carol@example.com', email.body))
         self.assertTrue(re.search('We look forward to seeing you in Cardiff', email.body))
+
+    def test_send_order_confirmation_mail_for_children_ticket_order(self):
+        order = extras_factories.create_confirmed_children_ticket_order(self.alice)
+
+        mail.outbox = []
+
+        send_order_confirmation_mail(order)
+
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, ['alice@example.com'])
+        self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
+        self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.order_id})')
+        self.assertTrue(re.search(r'You have purchased 1 item for PyCon UK 2018', email.body))
+        self.assertTrue(re.search("Children's day ticket x 1", email.body))
+        self.assertTrue(re.search(fr'http://testserver/orders/{order.order_id}/receipt/', email.body))
+        self.assertFalse(re.search('Ticket invitations have been sent to the following', email.body))
+        self.assertTrue(re.search('Best wishes', email.body))

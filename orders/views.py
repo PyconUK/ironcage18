@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, render
@@ -14,14 +15,17 @@ from .models import Order, Refund
 def order(request, order_id):
     order = Order.objects.get_by_order_id_or_404(order_id)
 
+    ticket_content_type = ContentType.objects.get(app_label="tickets", model="ticket")
+
     if request.user != order.purchaser:
         messages.warning(request, 'Only the purchaser of an order can view the order')
         return redirect('index')
 
     if order.payment_required():
-        if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
-            messages.warning(request, 'You already have a ticket.  Please amend your order.')
-            return redirect('tickets:order_edit', order.order_id)
+        if order.content_type == ticket_content_type:
+            if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
+                messages.warning(request, 'You already have a ticket.  Please amend your order.')
+                return redirect('tickets:order_edit', order.order_id)
 
     if order.status == 'failed':
         messages.error(request, f'Payment for this order failed ({order.stripe_charge_failure_reason})')
@@ -47,6 +51,7 @@ def order(request, order_id):
 @require_POST
 def order_payment(request, order_id):
     order = Order.objects.get_by_order_id_or_404(order_id)
+    ticket_content_type = ContentType.objects.get(app_label="tickets", model="ticket")
 
     if request.user != order.purchaser:
         messages.warning(request, 'Only the purchaser of an order can pay for the order')
@@ -56,9 +61,10 @@ def order_payment(request, order_id):
         messages.error(request, 'This order has already been paid')
         return redirect(order)
 
-    if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
-        messages.warning(request, 'You already have a ticket.  Please amend your order.  Your card has not been charged.')
-        return redirect('tickets:order_edit', order.order_id)
+    if order.content_type == ticket_content_type:
+        if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
+            messages.warning(request, 'You already have a ticket.  Please amend your order.  Your card has not been charged.')
+            return redirect('tickets:order_edit', order.order_id)
 
     token = request.POST['stripeToken']
     actions.process_stripe_charge(order, token)

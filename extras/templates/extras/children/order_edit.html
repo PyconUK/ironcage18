@@ -1,0 +1,15 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col">
+    {% include './_ticket_info.html' %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    {% include 'extras/children/_order_form.html' %}
+  </div>
+</div>
+{% endblock %}
