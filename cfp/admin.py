@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
+
 from cfp.models import Proposal
 from ironcage.admin import OurActionsOnlyMixin
 
@@ -15,18 +18,27 @@ class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
         if (request.user.is_superuser
                 or 'cfp.review_education_proposal' in users_permissions   # noqa: W503
                 or 'cfp.review_proposal' in users_permissions):  # noqa: W503
-            return ['id', 'proposer_name', 'session_type', 'title', 'subtitle',
+            return ['id', 'link_to_proposer', 'session_type', 'title', 'subtitle',
                     'copresenter_names', 'description', 'description_private',
                     'outline', 'aimed_at_new_programmers', 'aimed_at_teachers',
                     'aimed_at_data_scientists', 'would_like_mentor',
-                    'would_like_longer_slot', 'state', 'track',
-                    'special_reply_required', 'scheduled_room',
-                    'scheduled_time']
+                    'would_like_longer_slot', 'state', 'track', 'break_event',
+                    'conference_event', 'length_override', 'special_reply_required']
 
         return ['id', 'session_type', 'title', 'subtitle', 'description']
 
     def get_readonly_fields(self, request, obj=None):
         fields = self.get_fields(request, obj)
+
+        if request.user.is_superuser:
+            fields.remove('title')
+            fields.remove('subtitle')
+            fields.remove('copresenter_names')
+            fields.remove('description')
+            fields.remove('track')
+            fields.remove('break_event')
+            fields.remove('conference_event')
+            fields.remove('length_override')
 
         users_permissions = request.user.get_all_permissions()
         if ('cfp.review_proposal' in users_permissions
@@ -44,9 +56,7 @@ class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
         return fields
 
-    list_display = ('title', 'subtitle', 'proposer_name', 'session_type', 'state', 'response_sent')
-
-    list_editable = ['state']
+    list_display = ('title', 'subtitle', 'proposer_name', 'session_type', 'state')
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
@@ -71,6 +81,12 @@ class ProposalAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
     def proposer_name(self, obj):
         return obj.proposer.name
+
+    def link_to_proposer(self, obj):
+        url = reverse('admin:accounts_user_change', args=[obj.proposer.id])
+        return format_html("<a href='{}'>{}</a>", url, obj.proposer.name)
+    link_to_proposer.admin_order_field = 'proposer__name'
+    link_to_proposer.short_description = 'proposer'
 
     def response_sent(self, obj):
         return obj.replied_to is not None

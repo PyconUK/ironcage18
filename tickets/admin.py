@@ -12,7 +12,7 @@ class TicketAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
     view_on_site = False
     fields = readonly_fields = ('ticket_id', 'link_to_owner', 'link_to_order',
-                                'sat', 'sun', 'mon', 'tue', 'wed')
+                                'sat', 'sun', 'mon', 'tue', 'wed', 'free_reason')
     list_display = ('ticket_id', 'link_to_owner', 'link_to_order',
                     'order_status', 'sat', 'sun', 'mon', 'tue', 'wed')
     list_filter = ('order_rows__order__status', 'sat', 'sun', 'mon', 'tue', 'wed')

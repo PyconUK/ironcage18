@@ -56,3 +56,9 @@ class Application(models.Model):
 
     def days(self):
         return [DAYS[day] for day in DAYS if getattr(self, day)]
+
+    def __str__(self):
+        if (self.ticket_awarded or self.amount_awarded) and not self.application_declined:
+            return f'Accepted application: {self.applicant.name}'
+        return f'Declined application: {self.applicant.name}'
+

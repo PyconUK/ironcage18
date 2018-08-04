@@ -1,11 +1,12 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
 
 from accounts.models import User
+from cfp.models import Proposal
+from grants.models import Application
+from ironcage.admin import OurActionsOnlyMixin, RequirementsListFilter
 from tickets.models import Ticket
-from ironcage.admin import (
-    OurActionsOnlyMixin,
-    RequirementsListFilter
-)
 
 
 class AccessibilityListFilter(RequirementsListFilter):
@@ -28,8 +29,42 @@ class DietaryListFilter(RequirementsListFilter):
 
 class TicketInline(OurActionsOnlyMixin, admin.TabularInline):
     model = Ticket
+    view_on_site = False
 
-    fields = readonly_fields = ('ticket_id', 'rate', 'sat', 'sun', 'mon', 'tue', 'wed')
+    def link_to_ticket(self, obj):
+        url = reverse('admin:tickets_ticket_change', args=[obj.id])
+        return format_html("<a href='{}'>{}</a>", url, obj.ticket_id)
+    link_to_ticket.admin_order_field = 'ticket_id'
+    link_to_ticket.short_description = 'ticket'
+
+    fields = readonly_fields = ('link_to_ticket', 'rate', 'sat', 'sun', 'mon', 'tue', 'wed')
+
+
+class ProposalInline(OurActionsOnlyMixin, admin.TabularInline):
+    model = Proposal
+    view_on_site = False
+
+    def link_to_proposal(self, obj):
+        url = reverse('admin:cfp_proposal_change', args=[obj.id])
+        return format_html("<a href='{}'>{}</a>", url, obj.proposal_id)
+    link_to_proposal.admin_order_field = 'proposal_id'
+    link_to_proposal.short_description = 'proposal'
+
+    fields = readonly_fields = ('link_to_proposal', 'title', 'state')
+
+
+class ApplicationInline(OurActionsOnlyMixin, admin.TabularInline):
+    model = Application
+    view_on_site = False
+
+    def link_to_application(self, obj):
+        url = reverse('admin:grants_application_change', args=[obj.id])
+        return format_html("<a href='{}'>{}</a>", url, obj.application_id)
+    link_to_application.admin_order_field = 'application_id'
+    link_to_application.short_description = 'application'
+
+    fields = readonly_fields = ('link_to_application', 'ticket_awarded', 'amount_awarded', 'application_declined')
+
 
 
 @admin.register(User)
@@ -37,6 +72,8 @@ class UserAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
     inlines = [
         TicketInline,
+        ProposalInline,
+        ApplicationInline
     ]
 
     search_fields = ['name', 'email_addr']

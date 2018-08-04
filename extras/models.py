@@ -96,3 +96,6 @@ class ChildrenTicket(models.Model):
     age = models.PositiveIntegerField(null=True, blank=True)
 
     cost_excl_vat = 5
+
+    def __str__(self):
+        return f'{self.name} ({self.age}) with {self.adult_name}'
