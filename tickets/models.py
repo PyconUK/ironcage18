@@ -12,7 +12,9 @@ from . import prices
 
 CHANGEABLE_REASONS = [
     'Django Girls',
-    'Financial Assistance'
+    'Financial Assistance',
+    'Conference Guest',
+    'John Pinner Award 2017',
 ]
 
 
