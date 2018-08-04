@@ -347,10 +347,17 @@ class OrderRow(models.Model):
 
     def save(self):
         if self.item is not None:
+            # This is needed for extraitems...
+            if hasattr(self.item, 'item'):
+                sub_item = self.item.item
+                sub_item.save()
+                self.item.item = sub_item
+
             # I have no idea why this dance is needed, but it is
             item = self.item
             item.save()
             self.item = item
+
         super().save()
 
     @property
