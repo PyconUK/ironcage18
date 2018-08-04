@@ -180,7 +180,7 @@ class EditProfileTests(TestCase):
 
         self.assertEqual(alice.name, 'Alice Wonderland')
         self.assertTrue(alice.badge_snake_colour in ['red', 'blue', 'orange', 'yellow', 'green', 'purple'])
-        self.assertTrue(alice.badge_snake_extras in ['deerstalker', 'glasses', 'mortar', 'astronaut', 'bowie', 'dragon'])
+        self.assertTrue(alice.badge_snake_extras in ['deerstalker', 'glasses', 'mortar', 'astronaut', 'crown', 'dragon'])
 
     def test_get_company_is_billing_name(self):
         alice = factories.create_user()
