@@ -1,0 +1,12 @@
+Dear {{ application.applicant.name }},
+
+Our financial assistance grants will be paid as soon as possible after the conference.
+
+Please keep relevant receipts, and send us a message including the receipts, and stating your name, the amount agreed, and your bank details.
+
+In exceptional circumstances we may be able to disburse funds in advance of the event. In case you require funds in order to make your plans, please write to us as soon as possible.
+
+Thanks for your understanding.
+
+--
+PyCon UK 2018 Committee
