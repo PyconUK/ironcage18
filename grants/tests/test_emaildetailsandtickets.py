@@ -76,7 +76,6 @@ class TestEmailDetailsAndTickets(TestCase):
         self.assertTrue(re.search(r'Our financial assistance grants will be paid as soon as possible after the conference.', email.body))
         self.assertFalse(re.search(r'You have been assigned a ticket for PyCon UK 2018.', email.body))
 
-
         # Ticket and full amount of money awarded
         email = mail.outbox[2]
         invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
