@@ -51,7 +51,7 @@ class ExtraItem(models.Model):
 
     @property
     def descr_for_order(self):
-        return "Children's day ticket"
+        return "Young Coders' day ticket"
 
     @property
     def descr_extra_for_order(self):

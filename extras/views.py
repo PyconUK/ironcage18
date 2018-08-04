@@ -141,7 +141,7 @@ def children_ticket(request):
     ).all()
 
     if not len(tickets):
-        messages.error(request, "You do not have any Children's Day tickets")
+        messages.error(request, "You do not have any Young Coders' Day tickets")
         return redirect('index')
 
     if not request.user.profile_complete():

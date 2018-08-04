@@ -64,13 +64,13 @@
       <div class="card-body">
         {% if childrensday|length == 0 %}
           {% if ticket_sales_open %}
-            <a href="{% url 'extras:new_children_order' %}">Order children's day tickets</a>
+            <a href="{% url 'extras:new_children_order' %}">Order Young Coders' day tickets</a>
           {% endif %}
         {% else %}
-          <a href="{% url 'extras:children_ticket' %}">View your children's day ticket{{ childrensday|pluralize }}</a>
+          <a href="{% url 'extras:children_ticket' %}">View your Young Coders' day ticket{{ childrensday|pluralize }}</a>
           <hr>
           {% if ticket_sales_open %}
-            <a href="{% url 'extras:new_children_order' %}">Order more children's day tickets</a>
+            <a href="{% url 'extras:new_children_order' %}">Order more Young Coders' day tickets</a>
           {% endif %}
         {% endif %}
 

@@ -60,7 +60,7 @@ class UpdatePendingOrderTests(TestCase):
         [row] = order.all_order_rows()
 
         self.assertEqual(row.cost_excl_vat, 5)
-        self.assertEqual(row.item_descr, "Children's day ticket")
+        self.assertEqual(row.item_descr, "Young Coders' day ticket")
         self.assertEqual(row.item_descr_extra, '')
 
         ticket = row.item
