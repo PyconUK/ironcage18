@@ -132,7 +132,9 @@ class Ticket(models.Model):
 
     @property
     def cost_excl_vat(self):
-        if self.is_saved:
+        if self.free_reason:
+            return 0
+        elif self.is_saved:
             return self.order_row.cost_excl_vat
         else:
             return prices.cost_excl_vat(self.rate, self.num_days())
