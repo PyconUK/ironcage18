@@ -152,19 +152,23 @@ def get_schedule_generate_csv(request):
     )]
 
     for proposal in proposals:
-        rows.append(
-            (
-                proposal.proposer.name,
-                proposal.proposer.email_addr,
-                proposal.session_type,
-                proposal.title,
-                int(proposal.length.total_seconds() / 60),
-                '',  # tag eg pydata
-                '',
-                '',
-                0  # demand
-            )
-        )
+        row = [
+            proposal.proposer.name,
+            proposal.proposer.email_addr,
+            proposal.session_type,
+            proposal.title,
+            int(proposal.length.total_seconds() / 60),
+            '',  # tag eg pydata
+            '',
+            '',
+            0  # demand
+        ]
+
+        if proposal.session_type == 'workshop':
+            row[4] = row[4] / 2
+            rows.append(row)
+
+        rows.append(row)
 
     pseudo_buffer = Echo()
     writer = csv.writer(pseudo_buffer)
