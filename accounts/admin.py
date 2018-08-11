@@ -66,7 +66,6 @@ class ApplicationInline(OurActionsOnlyMixin, admin.TabularInline):
     fields = readonly_fields = ('link_to_application', 'ticket_awarded', 'amount_awarded', 'application_declined')
 
 
-
 @admin.register(User)
 class UserAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 

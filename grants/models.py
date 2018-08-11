@@ -61,4 +61,3 @@ class Application(models.Model):
         if (self.ticket_awarded or self.amount_awarded) and not self.application_declined:
             return f'Accepted application: {self.applicant.name}'
         return f'Declined application: {self.applicant.name}'
-

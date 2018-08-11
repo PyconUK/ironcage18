@@ -8,5 +8,5 @@ from ironcage.admin import OurActionsOnlyMixin
 class ChildrenTicketAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
 
     readonly_fields = fields = ['adult_name', 'adult_email_addr',
-                                 'adult_phone_number', 'accessibility_reqs',
-                                 'dietary_reqs', 'name', 'age']
+                                'adult_phone_number', 'accessibility_reqs',
+                                'dietary_reqs', 'name', 'age']
