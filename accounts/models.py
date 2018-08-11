@@ -6,10 +6,13 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 from django.shortcuts import get_object_or_404
+from django.contrib.postgres.fields import JSONField
 
 from ironcage.utils import Scrambler
 from grants.models import Application
 from tickets.models import Ticket
+
+from django.utils.crypto import get_random_string
 
 from .managers import UserManager
 
@@ -86,6 +89,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     badge_pronoun = models.CharField(max_length=50, blank=True, null=True)
     badge_snake_colour = models.CharField(max_length=50, blank=True, null=True)
     badge_snake_extras = models.CharField(max_length=200, blank=True, null=True)
+
+    ical_token = models.CharField(max_length=24, default=get_random_string(length=24))
+    items_of_interest = JSONField(default=[])
 
     USERNAME_FIELD = 'email_addr'
     EMAIL_FIELD = 'email_addr'

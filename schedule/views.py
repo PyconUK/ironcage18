@@ -2,7 +2,7 @@ from copy import copy
 from datetime import date
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 
 from schedule.models import Slot, SlotEvent
@@ -67,6 +67,9 @@ def schedule(request):
                 for session in slot_events_for_time:
                     if session.slot.room == room:
 
+                        ical_id = ('%s-%s' % (session.activity.proposal_id, session.slot.date.strftime('%a'))
+                                   if session.activity.conference_event else session.activity.proposal_id).lower()
+
                         sessions[i] = {
                             'break_event': session.activity.break_event,
                             'title': session.activity.title,
@@ -76,6 +79,7 @@ def schedule(request):
                             'time': session.slot.time,
                             'end_time': session.end_time,
                             'id': session.activity.proposal_id,
+                            'ical_id': ical_id,
                             'rowspan': 1,
                             'colspan': 1,
                             'spanned': False,
@@ -114,8 +118,14 @@ def schedule(request):
             'matrix': matrix
         }
 
+    users_sessions = []
+    if not request.user.is_anonymous:
+        users_sessions = request.user.items_of_interest
+
     context = {
         'sessions': all_sessions,
+        'users_sessions': users_sessions,
+        'anonymous_user': request.user.is_anonymous,
         'wide': True,
         'js_paths': ['schedule/schedule.js'],
     }
@@ -144,3 +154,18 @@ def upload_timetable(request):
     else:
         form = UploadTimetableForm()
     return render(request, 'schedule/upload_timetable.html', {'form': form})
+
+
+def interest(request):
+    if request.method == 'POST':
+        proposal_id = request.GET['id']
+        if proposal_id not in request.user.items_of_interest:
+            request.user.items_of_interest.append(proposal_id)
+    elif request.method == 'DELETE':
+        proposal_id = request.GET['id']
+        if proposal_id in request.user.items_of_interest:
+            request.user.items_of_interest.remove(proposal_id)
+
+    request.user.save()
+
+    return HttpResponse()

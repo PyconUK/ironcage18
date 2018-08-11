@@ -24,7 +24,7 @@
                     <td class='no-session'></td>
                   {% elif session.spanned %}
                   {% else %}
-                    <td class="schedule {% if session.break_event %}break{% endif %}" data-proposal="{{ session.id|lower }}-{{ day|date:"D"|lower }}" colspan="{{ session.colspan }}" rowspan="{{ session.rowspan }}">
+                    <td class="{% if session.break_event %}break{% else %}selectable-schedule{% endif %} {% if session.ical_id in users_sessions %}selected{% endif %}" data-proposal="{{ session.ical_id }}" colspan="{{ session.colspan }}" rowspan="{{ session.rowspan }}">
                       <p>{{ session.title }}</p>
                       {% if not session.conference_event %}
                       <p class="presenter-name">{{ session.name }}</small></p>
@@ -43,3 +43,10 @@
 {% endfor %}
 
 {% endblock %}
+
+{% block json_data %}
+{% if not anonymous_user %}
+var csrfToken = "{{ csrf_token }}"
+{% endif %}
+{% endblock %}
+

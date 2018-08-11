@@ -101,6 +101,10 @@ div.is-invalid > .invalid-feedback {
   display: none;
 }
 
+.selectable-schedule.selected {
+  background-color: rgba(254, 203, 47, 0.5);
+}
+
 @media screen and (max-width: 800px) {
   .schedule-table td, .schedule-table th, .schedule-table tr {
     display: flex;
