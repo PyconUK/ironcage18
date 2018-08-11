@@ -1,9 +1,18 @@
-from datetime import datetime, date
+from datetime import datetime
 
 from django.conf import settings
 from django.db import models
 
 from cfp.models import Proposal
+
+
+# This now uses the same naming convention as the PyCon UK Scheduler.
+# Events come from proposals
+# Slot is a room/time
+# Session is a continuous set of slots (eg 'mid-morning')
+#
+# We are using our own room list to store extra metadata about rooms
+# SlotEvent is the join table
 
 
 class Room(models.Model):
@@ -29,42 +38,43 @@ class Room(models.Model):
         return self.name
 
 
-class Stream(models.Model):
+class Slot(models.Model):
 
-    STREAM_TYPE_CHOICES = (
-        ('day', 'Daytime'),
-        ('eve', 'Evening')
+    EVENT_TYPE_CHOICES = (
+        ('pre-allocated', 'Pre-allocated'),
+        ('talk', 'Talk'),
+        ('workshop', 'Workshop'),
+        ('kidsworkshop', 'Kids Workshop'),
+        ('teachersworkshop', 'Teachers Workshop'),
+        ('teacherstalk', 'Teachers Talk')
     )
 
-    name = models.CharField(max_length=100)
-    day = models.DateField()
     room = models.ForeignKey(Room, related_name='streams', on_delete=models.CASCADE)
+    date = models.DateField()
+    session_name = models.CharField(max_length=30, blank=True, null=True)
+    time = models.TimeField()
+    duration = models.DurationField()
+    event_type = models.CharField(max_length=30, choices=EVENT_TYPE_CHOICES)
 
-    order = models.PositiveIntegerField()
-
-    visible = models.BooleanField(default=False)
-
-    stream_type = models.CharField(max_length=3, choices=STREAM_TYPE_CHOICES)
+    visible = models.BooleanField()
+    scheduler_linked = models.BooleanField()
 
     def __str__(self):
-        return self.name
+        return f'{self.room} {self.date} {self.time} {self.event_type}'
 
 
-class Session(models.Model):
+class SlotEvent(models.Model):
     activity = models.ForeignKey(Proposal, related_name='session', on_delete=models.CASCADE)
 
-    stream = models.ForeignKey(Stream, related_name='sessions', on_delete=models.CASCADE, blank=True, null=True)
+    slot = models.ForeignKey(Slot, related_name='slots', on_delete=models.CASCADE, blank=True, null=True)
 
-    chair = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chaired_sessions',
+    chair = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chaired_slots',
                               on_delete=models.CASCADE, blank=True, null=True)
     additional_people = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
 
-    time = models.TimeField(blank=True, null=True)
-    length = models.DurationField(blank=True, null=True)
-
     def __str__(self):
-        return f'{self.activity.title} ({self.time})'
+        return f'{self.activity.title} ({self.slot.time})'
 
     @property
     def end_time(self):
-        return (datetime.combine(date(2018, 1, 1), self.time) + self.length).time()
+        return (datetime.combine(self.slot.date, self.slot.time) + self.slot.duration).time()

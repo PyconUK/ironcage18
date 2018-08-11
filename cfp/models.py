@@ -26,7 +26,8 @@ class Proposal(models.Model):
         ('cancel', 'Cancelled'),
         ('accept', 'Accepted'),
         ('reject', 'Plan to Reject'),
-        ('withdrawn', 'Withdrawn')
+        ('withdrawn', 'Withdrawn'),
+        ('placeholder', 'Schedule Placeholder'),
     )
 
     proposer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='proposals', on_delete=models.CASCADE)
@@ -124,3 +125,9 @@ class Proposal(models.Model):
             return timedelta(minutes=60)
         else:
             return timedelta(minutes=0)
+
+    @property
+    def all_presenter_names(self):
+        if self.copresenter_names:
+            return f'{self.proposer.name}, {self.copresenter_names}'
+        return self.proposer.name

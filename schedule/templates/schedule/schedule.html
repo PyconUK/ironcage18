@@ -2,7 +2,6 @@
 {% load schedule_extras %}
 
 {% block content %}
-
 {% for day, days_sessions in sessions.items %}
   <div class="row">
     <div class="col">
@@ -11,8 +10,8 @@
         <thead>
           <tr>
             <th scope="col" style="width: 5%"></th>
-            {% for stream in days_sessions.streams %}
-              <th scope="col" style="width: {{ days_sessions.streams|width }}%">{{ stream.room.name }}</th>
+            {% for room in days_sessions.rooms %}
+              <th scope="col" style="width: {{ days_sessions.rooms|width }}%">{{ room.name }}</th>
             {% endfor %}
           </tr>
         </thead>
@@ -25,7 +24,7 @@
                     <td class='no-session'></td>
                   {% elif session.spanned %}
                   {% else %}
-                    <td {% if session.break_event %}class="break"{% endif %} colspan="{{ session.colspan }}" rowspan="{{ session.rowspan }}">
+                    <td class="schedule {% if session.break_event %}break{% endif %}" data-proposal="{{ session.id|lower }}-{{ day|date:"D"|lower }}" colspan="{{ session.colspan }}" rowspan="{{ session.rowspan }}">
                       <p>{{ session.title }}</p>
                       {% if not session.conference_event %}
                       <p class="presenter-name">{{ session.name }}</small></p>

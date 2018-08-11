@@ -1,17 +1,14 @@
-import csv
-import codecs
 from copy import copy
 from datetime import date
 
-from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from cfp.models import Proposal
-from schedule.models import Room, Session, Stream
+from schedule.models import Slot, SlotEvent
 
-from .forms import UploadFileForm
+from .actions import import_schedule, import_timetable
+from .forms import UploadScheduleForm, UploadTimetableForm
 
 
 @staff_member_required(login_url='login')
@@ -23,16 +20,20 @@ def schedule(request):
 
     for day in days:
 
-        streams_for_day = Stream.objects.filter(
-            day=day, visible=True
-        ).order_by('order', 'room__name').all()
+        slots_for_day = Slot.objects.filter(
+            date=day, visible=True
+        ).order_by('room__name').all()
 
-        sessions_for_day = Session.objects.filter(
-            stream__in=streams_for_day
-        ).all()
+        rooms_for_day_query = Slot.objects.filter(
+            date=day
+        ).distinct(
+            'room'
+        )
 
-        times_for_day_query = Session.objects.filter(
-            stream__day=day
+        rooms_for_day = [x.room for x in rooms_for_day_query]
+
+        times_for_day_query = Slot.objects.filter(
+            date=day
         ).distinct(
             'time'
         ).values(
@@ -42,8 +43,8 @@ def schedule(request):
 
         all_sessions[day] = {
             'times': times_for_day,
-            'streams': streams_for_day,
-            'sessions': sessions_for_day,
+            'slots': slots_for_day,
+            'rooms': rooms_for_day,
         }
 
         # lists of sessions, one list per time
@@ -51,33 +52,34 @@ def schedule(request):
 
         # Make blank matrix
         for time in times_for_day:
-            sessions_for_time = Session.objects.filter(
-                stream__day=day,
-                time=time,
+            slot_events_for_time = SlotEvent.objects.filter(
+                slot__date=day,
+                slot__time=time
             ).order_by(
-                'stream__order',
-                'stream__room__name'
+                'slot__room__name'
             ).all()
 
             sessions = []
 
-            for i, stream in enumerate(streams_for_day):
+            for i, room in enumerate(rooms_for_day):
                 sessions.append(None)
-                for session in sessions_for_time:
-                    if session.stream == stream:
+
+                for session in slot_events_for_time:
+                    if session.slot.room == room:
 
                         sessions[i] = {
                             'break_event': session.activity.break_event,
                             'title': session.activity.title,
                             'conference_event': session.activity.conference_event,
-                            'name': session.activity.proposer.name,
-                            'length': session.activity.length,
-                            'time': session.time,
+                            'name': session.activity.all_presenter_names,
+                            'length': session.slot.duration,
+                            'time': session.slot.time,
                             'end_time': session.end_time,
+                            'id': session.activity.proposal_id,
                             'rowspan': 1,
                             'colspan': 1,
                             'spanned': False,
-                            'room': session.stream.room.name,
+                            'room': session.slot.room.name,
                         }
             matrix.append(sessions)
 
@@ -107,56 +109,45 @@ def schedule(request):
 
         all_sessions[day] = {
             'times': times_for_day,
-            'streams': streams_for_day,
-            'sessions': sessions_for_day,
+            'rooms': rooms_for_day,
+            'slots': slots_for_day,
             'matrix': matrix
         }
 
     context = {
         'sessions': all_sessions,
-        'wide': True
+        'wide': True,
+        'js_paths': ['schedule/schedule.js'],
     }
     return render(request, 'schedule/schedule.html', context)
-
-
-def import_schedule(f, request):
-    Session.objects.all().delete()
-
-    reader = csv.reader(codecs.iterdecode(f, 'utf-8'))
-    for i, (event_index, event, slot_index, slot) in enumerate(reader):
-        if i == 0:
-            continue
-        date, time, *room = slot.split(' ')
-        room = ' '.join(room)
-
-        try:
-            activity = Proposal.objects.get(title=event)
-        except Proposal.DoesNotExist:
-            messages.add_message(request, messages.ERROR, f"Couldn't find {event}")
-            continue
-
-        room = Room.objects.get(name=room)
-
-        try:
-            stream = Stream.objects.get(room=room, day=date, stream_type='day')
-        except Stream.DoesNotExist:
-            messages.add_message(request, messages.ERROR, f"Couldn't find {room} on {date}")
-
-        Session.objects.get_or_create(
-            activity=activity,
-            stream=stream,
-            time=time,
-            length=activity.length
-        )
 
 
 @staff_member_required(login_url='login')
 def upload_schedule(request):
     if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
+        form = UploadScheduleForm(request.POST, request.FILES)
         if form.is_valid():
-            import_schedule(request.FILES['file'], request)
+            import_schedule(request.FILES['schedule'], request)
             return HttpResponseRedirect('/schedule/')
     else:
-        form = UploadFileForm()
-    return render(request, 'schedule/upload.html', {'form': form})
+        form = UploadScheduleForm()
+    return render(request, 'schedule/upload_schedule.html', {'form': form})
+
+
+@staff_member_required(login_url='login')
+def upload_timetable(request):
+    if request.method == 'POST':
+        form = UploadTimetableForm(request.POST, request.FILES)
+        if form.is_valid():
+            import_timetable(request.FILES['timetable'], request.FILES['unbounded'], request)
+            return HttpResponseRedirect('/schedule/upload/')
+    else:
+        form = UploadTimetableForm()
+    return render(request, 'schedule/upload_timetable.html', {'form': form})
+
+
+
+
+
+
+
