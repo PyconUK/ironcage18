@@ -144,10 +144,3 @@ def upload_timetable(request):
     else:
         form = UploadTimetableForm()
     return render(request, 'schedule/upload_timetable.html', {'form': form})
-
-
-
-
-
-
-
