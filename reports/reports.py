@@ -67,10 +67,14 @@ class AttendanceByDayReport(ReportView):
 
         for day in DAYS:
             num_tickets = {rate: 0 for rate in PRICES_EXCL_VAT}
+            num_tickets['free'] = 0
 
             for ticket in tickets:
                 if getattr(ticket, day):
-                    num_tickets[ticket.rate] += 1
+                    if ticket.rate == '':
+                        num_tickets['free'] += 1
+                    else:
+                        num_tickets[ticket.rate] += 1
 
             rows.append([
                 DAYS[day],
@@ -119,10 +123,14 @@ class TicketSalesReport(ReportView):
             unwaged_rate = cost_excl_vat('unwaged', num_days)
 
             num_tickets = {rate: 0 for rate in PRICES_EXCL_VAT}
+            num_tickets['free'] = 0
 
             for ticket in tickets:
                 if sum(getattr(ticket, day) for day in DAYS) == num_days:
-                    num_tickets[ticket.rate] += 1
+                    if ticket.rate == '':
+                        num_tickets['free'] += 1
+                    else:
+                        num_tickets[ticket.rate] += 1
 
             num_tickets_rows.append([
                 num_days,
