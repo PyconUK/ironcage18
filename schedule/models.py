@@ -81,5 +81,5 @@ class SlotEvent(models.Model):
 
 
 class Cache(models.Model):
-    key = models.CharField(max_length=24)
+    key = models.CharField(max_length=24, unique=True)
     value = models.TextField(null=True)

@@ -1,13 +1,14 @@
 import codecs
 import csv
-from datetime import time, timedelta
+from copy import copy
+from datetime import date, time, timedelta
 from math import floor
 
 import yaml
 from django.contrib import messages
 
 from cfp.models import Proposal
-from schedule.models import Room, Slot, SlotEvent
+from schedule.models import Cache, Room, Slot, SlotEvent
 
 
 def get_time(seconds):
@@ -43,6 +44,8 @@ def import_schedule(f, request):
             )
         except Slot.DoesNotExist:
             messages.add_message(request, messages.ERROR, f"Couldn't find {room} on {date} at {time}")
+
+    Cache.objects.get(key='schedule').delete()
 
 
 def import_timetable(timetable_f, unbounded_f, request):
@@ -85,3 +88,119 @@ def import_timetable(timetable_f, unbounded_f, request):
                     )
 
                     slot.save()
+
+
+def generate_schedule_page_data():
+
+    days = [date(2018, 9, 15), date(2018, 9, 16), date(2018, 9, 17), date(2018, 9, 18), date(2018, 9, 19)]
+
+    all_sessions = {}
+
+    for day in days:
+
+        slots_for_day = Slot.objects.filter(
+            date=day, visible=True
+        ).order_by('room__name').all()
+
+        rooms_for_day_query = Slot.objects.filter(
+            date=day
+        ).distinct(
+            'room'
+        )
+
+        rooms_for_day = [x.room for x in rooms_for_day_query]
+        room_names_for_day = [x.name for x in rooms_for_day]
+
+        times_for_day_query = Slot.objects.filter(
+            date=day
+        ).distinct(
+            'time'
+        ).values(
+            'time'
+        )
+        times_for_day = [x['time'] for x in times_for_day_query]
+
+        all_sessions[day] = {
+            'times': times_for_day,
+            'slots': slots_for_day,
+            'rooms': rooms_for_day,
+        }
+
+        # lists of sessions, one list per time
+        matrix = []
+
+        # Make blank matrix
+        for time in times_for_day:
+            slot_events_for_time = SlotEvent.objects.filter(
+                slot__date=day,
+                slot__time=time
+            ).order_by(
+                'slot__room__name'
+            ).all()
+
+            sessions = []
+
+            for i, room in enumerate(rooms_for_day):
+                sessions.append(None)
+
+                for session in slot_events_for_time:
+                    if session.slot.room == room:
+
+                        ical_id = ('%s-%s' % (session.activity.proposal_id, session.slot.date.strftime('%a'))
+                                   if session.activity.conference_event else session.activity.proposal_id).lower()
+
+                        sessions[i] = {
+                            'break_event': session.activity.break_event,
+                            'title': session.activity.title,
+                            'conference_event': session.activity.conference_event,
+                            'name': session.activity.all_presenter_names,
+                            'time': session.slot.time,
+                            'end_time': session.end_time,
+                            'id': session.activity.proposal_id,
+                            'ical_id': ical_id,
+                            'rowspan': 1,
+                            'colspan': 1,
+                            'spanned': False,
+                            'room': session.slot.room.name,
+                        }
+            matrix.append(sessions)
+
+        for i, time in enumerate(times_for_day):
+            for j, session in enumerate(matrix[i]):
+                if session is not None:
+                    # See if it's a long session
+                    session_rowspan = 1
+                    for k, later_time in enumerate(times_for_day[i + 1:]):
+                        if session['end_time'] > later_time:
+                            session_rowspan += 1
+                            matrix[i + k + 1][j] = copy(session)
+                            matrix[i + k + 1][j]['spanned'] = True
+                        else:
+                            break
+                    matrix[i][j]['rowspan'] = session_rowspan
+
+                    # See if it's a wide session
+                    colspan = 1
+                    for k, later_session in enumerate(matrix[i][j + 1:]):
+                        if session and later_session and session['name'] == later_session['name']:
+                            colspan += 1
+                            matrix[i][j + k + 1]['spanned'] = True
+                        else:
+                            break
+                    matrix[i][j]['colspan'] = colspan
+
+        all_sessions[day] = {
+            'times': times_for_day,
+            'rooms': room_names_for_day,
+            'matrix': matrix
+        }
+
+    try:
+        Cache.objects.get(key='schedule').delete()
+    except Cache.DoesNotExist:
+        pass
+
+    schedule_cache = Cache(key='schedule', value=yaml.dump(all_sessions))
+    schedule_cache.save()
+
+    return all_sessions
