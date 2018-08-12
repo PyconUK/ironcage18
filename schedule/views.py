@@ -2,6 +2,7 @@ import yaml
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
+from django.db.models import Q
 
 from schedule.models import Cache, SlotEvent
 
@@ -88,7 +89,9 @@ def ical(request, token):
                 if len(user.items_of_interest) == 0:
                     slots = SlotEvent.objects.all()
                 else:
-                    slots = SlotEvent.objects.filter(ical_id__in=user.items_of_interest)
+                    slots = SlotEvent.objects.filter(
+                        Q(ical_id__in=user.items_of_interest) | Q(activity__break_event=True)
+                    )
             except User.DoesNotExist:
                 return Http404
 
