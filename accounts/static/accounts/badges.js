@@ -14,7 +14,7 @@ $(document).ready(function() {
 	}
 
 	$(window).bind("load", function() {
-	 	setTimeout(badgeLoad, 250);
+	 	setTimeout(badgeLoad, 500);
 	});
 
 	$("#id_name").on('change', function(e) {
