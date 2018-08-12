@@ -72,6 +72,8 @@ class SlotEvent(models.Model):
                               on_delete=models.CASCADE, blank=True, null=True)
     additional_people = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
 
+    ical_id = models.CharField(max_length=8, null=False, blank=False)
+
     def __str__(self):
         return f'{self.activity.title} ({self.slot.time})'
 

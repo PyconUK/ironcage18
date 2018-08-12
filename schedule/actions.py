@@ -1,11 +1,14 @@
 import codecs
 import csv
 from copy import copy
-from datetime import date, time, timedelta
+from datetime import date, datetime, time, timedelta
 from math import floor
 
 import yaml
 from django.contrib import messages
+from django.utils.text import slugify
+from icalendar import Calendar, Event, vCalAddress, vText
+from pytz import timezone
 
 from cfp.models import Proposal
 from schedule.models import Cache, Room, Slot, SlotEvent
@@ -22,10 +25,10 @@ def import_schedule(f, request):
     SlotEvent.objects.all().delete()
 
     reader = csv.reader(codecs.iterdecode(f, 'utf-8'))
-    for i, (event_index, event, slot_index, slot) in enumerate(reader):
+    for i, (event_index, event, slot_index, slot_text) in enumerate(reader):
         if i == 0:
             continue
-        date, time, *room = slot.split(' ')
+        date, time, *room = slot_text.split(' ')
         room = ' '.join(room)
 
         try:
@@ -38,9 +41,12 @@ def import_schedule(f, request):
 
         try:
             slot = Slot.objects.get(room=room, date=date, time=time)
+            ical_id = ('%s-%s' % (activity.proposal_id, slot.date.strftime('%a'))
+                       if activity.conference_event else activity.proposal_id).lower()
             SlotEvent.objects.get_or_create(
                 activity=activity,
-                slot=slot
+                slot=slot,
+                ical_id=ical_id
             )
         except Slot.DoesNotExist:
             messages.add_message(request, messages.ERROR, f"Couldn't find {room} on {date} at {time}")
@@ -146,9 +152,6 @@ def generate_schedule_page_data():
                 for session in slot_events_for_time:
                     if session.slot.room == room:
 
-                        ical_id = ('%s-%s' % (session.activity.proposal_id, session.slot.date.strftime('%a'))
-                                   if session.activity.conference_event else session.activity.proposal_id).lower()
-
                         sessions[i] = {
                             'break_event': session.activity.break_event,
                             'title': session.activity.title,
@@ -157,7 +160,7 @@ def generate_schedule_page_data():
                             'time': session.slot.time,
                             'end_time': session.end_time,
                             'id': session.activity.proposal_id,
-                            'ical_id': ical_id,
+                            'ical_id': session.ical_id,
                             'rowspan': 1,
                             'colspan': 1,
                             'spanned': False,
@@ -204,3 +207,48 @@ def generate_schedule_page_data():
     schedule_cache.save()
 
     return all_sessions
+
+
+def generate_ical(slot_events, token):
+    london_time = timezone('Europe/London')
+    cal = Calendar()
+    cal['X-WR-CALNAME'] = vText('PyCon UK 2018')
+
+    for slot_event in slot_events:
+        if (not slot_event.activity.break_event or
+                (slot_event.activity.break_event and slot_event.slot.room.name == 'Assembly Room')):
+
+            event = Event()
+
+            event.add('summary', slot_event.activity.title)
+            event.add('dtstart', datetime.combine(slot_event.slot.date, slot_event.slot.time, tzinfo=london_time))
+            event.add('duration', slot_event.slot.duration)
+            event.add('dtstamp', datetime.now())
+
+            if slot_event.activity.break_event:
+                event.add('uid', f'{slot_event.ical_id}-{slot_event.slot.time.hour}')
+            else:
+                event.add('uid', f'{slot_event.ical_id}')
+                event.add('location', slot_event.slot.room.name)
+
+            if not slot_event.activity.conference_event:
+                event.add('description', slot_event.activity.description)
+                for speaker in slot_event.activity.all_presenter_names.split(', '):
+                    attendee = vCalAddress(f'http://example.com/{slugify(speaker)}')
+                    attendee.params['cn'] = vText(speaker)
+                    attendee.params['role'] = vText('REQ-PARTICIPANT')
+                    event.add('attendee', attendee, encode=0)
+
+            cal.add_component(event)
+
+    try:
+        Cache.objects.get(key=token).delete()
+    except Cache.DoesNotExist:
+        pass
+
+    ical = cal.to_ical().decode('utf-8')
+
+    ical_cache = Cache(key=token, value=ical)
+    ical_cache.save()
+
+    return ical

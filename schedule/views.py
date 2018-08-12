@@ -1,12 +1,14 @@
 import yaml
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 
-from schedule.models import Cache
+from schedule.models import Cache, SlotEvent
 
-from .actions import (generate_schedule_page_data, import_schedule,
-                      import_timetable)
+from accounts.models import User
+
+from .actions import (generate_ical, generate_schedule_page_data,
+                      import_schedule, import_timetable)
 from .forms import UploadScheduleForm, UploadTimetableForm
 
 
@@ -68,5 +70,28 @@ def interest(request):
             request.user.items_of_interest.remove(proposal_id)
 
     request.user.save()
+    Cache.objects.get(key=request.user.ical_token).delete()
 
     return HttpResponse()
+
+
+@staff_member_required(login_url='login')
+def ical(request, token):
+    try:
+        ical = Cache.objects.get(key=token).value
+    except Cache.DoesNotExist:
+        if token == 'full':
+            slots = SlotEvent.objects.all()
+        else:
+            try:
+                user = User.objects.get(ical_token=token)
+                if len(user.items_of_interest) == 0:
+                    slots = SlotEvent.objects.all()
+                else:
+                    slots = SlotEvent.objects.filter(ical_id__in=user.items_of_interest)
+            except User.DoesNotExist:
+                return Http404
+
+        ical = generate_ical(slots, token)
+
+    return HttpResponse(ical, content_type="text/calendar")

@@ -1,14 +1,16 @@
 coverage
 dj-database-url
 django
+django_slack
 django-bootstrap4
 django-dotenv
-django_slack
+django-import-export
 flake8
 gunicorn
+icalendar
 pip-tools
 psycopg2-binary
+pyyaml
 stripe
 structlog[dev]  # the [dev] is for coloured output
 whitenoise
-django-import-export

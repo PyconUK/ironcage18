@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^upload/$', views.upload_schedule, name='schedule_upload'),
     url(r'^timetable/upload/$', views.upload_timetable, name='timetable_upload'),
     url(r'^interest/$', views.interest, name='interest'),
+    url(r'^ical/(?P<token>\w+)/$', views.ical, name='ical'),
     url(r'^yaml/$', views.import_timetable, name='yaml'),
 ]
