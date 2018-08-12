@@ -318,7 +318,7 @@ def ticket_invitation(request, token):
         return redirect(reverse('register') + f'?next={invitation.get_absolute_url()}')
 
     if request.user.get_ticket() is not None:
-        messages.error(request, 'You already have a ticket!  Please contact pyconuk-enquiries@python.org to arrange transfer of this invitaiton to somebody else.')
+        messages.error(request, 'You already have a ticket!  Please contact pyconuk@uk.python.org to arrange transfer of this invitaiton to somebody else.')
         return redirect('index')
 
     ticket = invitation.ticket

@@ -556,7 +556,7 @@ class TicketInvitationTests(TestCase):
         self.client.force_login(self.bob)
         rsp = self.client.get(self.url, follow=True)
         self.assertRedirects(rsp, '/')
-        self.assertContains(rsp, '<div class="alert alert-danger" role="alert">You already have a ticket!  Please contact pyconuk-enquiries@python.org to arrange transfer of this invitaiton to somebody else.</div>', html=True)
+        self.assertContains(rsp, '<div class="alert alert-danger" role="alert">You already have a ticket!  Please contact pyconuk@uk.python.org to arrange transfer of this invitaiton to somebody else.</div>', html=True)
 
     def test_when_not_authenticated(self):
         rsp = self.client.get(self.url, follow=True)
