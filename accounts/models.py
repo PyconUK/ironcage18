@@ -30,6 +30,10 @@ with open(os.path.join(settings.BASE_DIR, 'accounts', 'data', 'ethnicities.json'
     ETHNICITIES = json.load(f)
 
 
+def get_ical_token():
+    return get_random_string(length=24)
+
+
 class Manager(UserManager):
     def get_by_user_id_or_404(self, user_id):
         id = self.model.id_scrambler.backward(user_id)
@@ -90,7 +94,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     badge_snake_colour = models.CharField(max_length=50, blank=True, null=True)
     badge_snake_extras = models.CharField(max_length=200, blank=True, null=True)
 
-    ical_token = models.CharField(max_length=24, default=get_random_string(length=24))
+    ical_token = models.CharField(max_length=24, default=get_ical_token)
     items_of_interest = JSONField(default=[])
 
     USERNAME_FIELD = 'email_addr'

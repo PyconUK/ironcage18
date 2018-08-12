@@ -78,3 +78,8 @@ class SlotEvent(models.Model):
     @property
     def end_time(self):
         return (datetime.combine(self.slot.date, self.slot.time) + self.slot.duration).time()
+
+
+class Cache(models.Model):
+    key = models.CharField(max_length=24)
+    value = models.TextField(null=True)

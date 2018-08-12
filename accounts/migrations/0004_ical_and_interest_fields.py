@@ -2,9 +2,18 @@
 
 import django.contrib.postgres.fields.jsonb
 from django.db import migrations, models
+from django.utils.crypto import get_random_string
+
+from accounts.models import get_ical_token
 
 
 class Migration(migrations.Migration):
+
+    def set_default_ical_token(apps, schema_editor):
+        User = apps.get_model('accounts', 'User')
+        for user in User.objects.all().iterator():
+            user.ical_token = get_ical_token()
+            user.save()
 
     dependencies = [
         ('accounts', '0003_make_badge_fields_nullable'),
@@ -14,7 +23,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='ical_token',
-            field=models.CharField(default='u6O3MdCU62WQDEOp7qwIeqgk', max_length=24),
+            field=models.CharField(null=True, max_length=24),
+        ),
+        migrations.RunPython(set_default_ical_token),
+        migrations.AlterField(
+            model_name='user',
+            name='ical_token',
+            field=models.CharField(default=get_ical_token, max_length=24),
         ),
         migrations.AddField(
             model_name='user',
