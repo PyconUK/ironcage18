@@ -1,19 +1,19 @@
 import yaml
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from cfp.models import Proposal
 from django.db.models import Q
-
-from schedule.models import Cache, SlotEvent
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 
 from accounts.models import User
+from schedule.models import Cache, SlotEvent
 
 from .actions import (generate_ical, generate_schedule_page_data,
                       import_schedule, import_timetable)
 from .forms import UploadScheduleForm, UploadTimetableForm
 
 
-@staff_member_required(login_url='login')
 def schedule(request):
 
     try:
@@ -60,6 +60,7 @@ def upload_timetable(request):
     return render(request, 'schedule/upload_timetable.html', {'form': form})
 
 
+@login_required
 def interest(request):
     if request.method == 'POST':
         proposal_id = request.GET['id']
@@ -79,7 +80,6 @@ def interest(request):
     return HttpResponse()
 
 
-@staff_member_required(login_url='login')
 def ical(request, token):
     try:
         ical = Cache.objects.get(key=token).value
@@ -101,3 +101,14 @@ def ical(request, token):
         ical = generate_ical(slots, token)
 
     return HttpResponse(ical, content_type="text/calendar")
+
+
+def view_proposal(request, proposal_id):
+    proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
+    slots = SlotEvent.objects.filter(activity=proposal).all()
+
+    context = {
+        'proposal': proposal,
+        'slots': slots,
+    }
+    return render(request, 'schedule/view_proposal.html', context)

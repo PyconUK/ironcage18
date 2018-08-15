@@ -8,11 +8,11 @@ $(document).ready(function() {
             }
         });
 
-        $('.selectable-schedule').click(function (e) {
+        $('.selectable-interest').click(function (e) {
             var proposalId = e.currentTarget.dataset.proposal;
             var method = 'POST';
 
-            if ($(e.currentTarget).hasClass('selected')) {
+            if ($(".selectable-schedule[data-proposal='" + proposalId + "']").hasClass('selected')) {
                 method = 'DELETE';
             }
 
@@ -20,7 +20,9 @@ $(document).ready(function() {
                 url: '/schedule/interest/?id=' + proposalId,
                 type: method,
                 success: function (result) {
-                    $(e.currentTarget).toggleClass('selected');
+                    $(".selectable-schedule[data-proposal='" + proposalId + "']").toggleClass('selected');
+                    $(e.currentTarget).toggleClass('fa-calendar-minus-o')
+                    $(e.currentTarget).toggleClass('fa-calendar-plus-o')
                 }
             });
         })

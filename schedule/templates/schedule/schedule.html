@@ -11,18 +11,19 @@
       <div class="card-body">
         <p>Our schedule is subject to change, however things should only move within the same day.</p>
         <p>
-          You can help us by clicking on the items you wish to see, which will highlight them in yellow.<br>
+          You can help us by clicking on the calendar icon on the items you wish to see, which will highlight them in yellow.<br>
           This will allow us to gauge which talk needs which size room.
         </p>
       </div>
     </div>
+    {% if not request.user.is_anonymous %}
     <div class="card bg-danger text-dark">
       <div class="card-header">
         <h2>Schedule via iCal</h2>
       </div>
       <div class="card-body">
         <p>You can get our full or your personalised schedule in iCal format to import into your favourite calendar app.</p>
-        <p>To personalise - just click on items you wish to attend and they will be highlighted. They will then appear in the personalised iCal link.</p>
+        <p>To personalise - just click on the calendar icon on the items you wish to attend and they will be highlighted. They will then appear in the personalised iCal link.</p>
         <p>You can use these URLs to subscribe to the calendars and it will automatically update when the schedule changes.</p>
         <ul>
           <li>
@@ -34,6 +35,7 @@
         </ul>
       </div>
     </div>
+    {% endif %}
     <p>
       <strong>Jump to day:</strong>
       <a href="#sat">Saturday 15th</a> &bull;
@@ -69,9 +71,20 @@
                   {% elif session.spanned %}
                   {% else %}
                     <td class="{% if session.break_event %}break{% else %}selectable-schedule{% endif %} {% if session.ical_id in users_sessions %}selected{% endif %}" data-proposal="{{ session.ical_id }}" colspan="{{ session.colspan }}" rowspan="{{ session.rowspan }}">
-                      <p>{{ session.title }}</p>
+                      <p>
+                        {% if not session.break_event %}<a href="{% url 'schedule:view_proposal' proposal_id=session.id %}">{% endif %}
+                          {{ session.title }}
+                        {% if not session.break_event %}</a>{% endif %}
+                      </p>
                       {% if not session.conference_event %}
-                      <p class="presenter-name">{{ session.name }}</small></p>
+                        <p class="presenter-name"><a href="{% url 'schedule:view_proposal' proposal_id=session.id %}">{{ session.name }}</a></p>
+                      {% endif %}
+                      {% if not request.user.is_anonymous and not session.break_event %}
+                        {% if session.ical_id in users_sessions %}
+                          <i class="fa fa-calendar-minus-o fa-lg selectable-interest" data-proposal="{{ session.ical_id }}" aria-hidden="true"></i>
+                        {% else %}
+                          <i class="fa fa-calendar-plus-o fa-lg selectable-interest" data-proposal="{{ session.ical_id }}" aria-hidden="true"></i>
+                        {% endif %}
                       {% endif %}
                       <div class="collapsed-table">{% if not session.break_event %}<span class="room">{{ session.room }}</span>{% endif %}<span class="end-time">{% if session.rowspan > 1 %} Ends: {{ session.end_time|time:"H:i" }}{% endif %}</span></div>
                     </td>

@@ -92,9 +92,25 @@ div.is-invalid > .invalid-feedback {
   height: 4em;
 }
 
-.schedule-table .presenter-name {
+.schedule-table .presenter-name,
+.schedule-table .presenter-name a,
+.proposal-type {
   color: #999;
   font-size: 0.9em;
+}
+
+.schedule-table td {
+  position: relative;
+}
+
+.schedule-table td .fa {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+}
+
+.schedule-table td a {
+  color: #000;
 }
 
 .schedule-table .collapsed-table {
@@ -131,4 +147,19 @@ div.is-invalid > .invalid-feedback {
   .schedule-table .end-time {
     color: #999;
   }
+}
+
+.proposal-names {
+  font-family: Futura;
+}
+
+p.proposal-slots {
+  font-family: Futura;
+  color: #999;
+  font-size: 0.75em;
+}
+
+.proposal-subtitle {
+  color: #999;
+  margin-top: 0;
 }

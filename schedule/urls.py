@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^interest/$', views.interest, name='interest'),
     url(r'^ical/(?P<token>\w+)/$', views.ical, name='ical'),
     url(r'^yaml/$', views.import_timetable, name='yaml'),
+    url(r'^item/(?P<proposal_id>[\w\d]{4})/$', views.view_proposal, name='view_proposal'),
 ]

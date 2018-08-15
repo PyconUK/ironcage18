@@ -1,0 +1,39 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>{{ proposal.title }}</h1>
+{% if proposal.subtitle %}
+<h2 class="proposal-subtitle">{{ proposal.subtitle }}</h2>
+{% endif %}
+{% if not proposal.conference_event %}
+<p class="proposal-names">{{ proposal.all_presenter_names }}</p>
+{% endif %}
+<p class="proposal-slots">
+    {% for slot_event in slots %}
+        {{ slot_event.slot.date|date:"l dS" }}, {{ slot_event.slot.time|time:"H:i" }}<br>
+    {% endfor %}
+</p>
+
+{% if not proposal.session_type == 'other' %}
+<hr>
+<div class="proposal-type">{{ proposal.get_session_type_display }}</div>
+{% endif %}
+
+<hr>
+<div>{{ proposal.description|linebreaks }}</div>
+{% if proposal.aimed_at_new_programmers or proposal.aimed_at_teachers or proposal.aimed_at_data_scientists %}
+<hr>
+<ul>
+    {% if proposal.aimed_at_new_programmers %}
+    <li>The speaker suggested this session is suitable for new programmers.</li>
+    {% endif %}
+    {% if proposal.aimed_at_teachers %}
+    <li>The speaker suggested this session is suitable for teachers.</li>
+    {% endif %}
+    {% if proposal.aimed_at_data_scientists %}
+    <li>The speaker suggested this session is suitable for data scientists.</li>
+    {% endif %}
+</ul>
+{% endif %}
+<p><a href="{% url 'schedule:schedule' %}">Back to schedule</a></p>
+{% endblock %}
