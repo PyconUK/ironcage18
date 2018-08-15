@@ -107,6 +107,7 @@ div.is-invalid > .invalid-feedback {
   position: absolute;
   bottom: 12px;
   right: 12px;
+  cursor: pointer;
 }
 
 .schedule-table td a {
