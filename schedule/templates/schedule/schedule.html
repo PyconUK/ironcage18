@@ -64,7 +64,7 @@
         <tbody>
           {% for time in days_sessions.times %}
             <tr>
-              <th scope="row"><div class="collapsed-table">{{ day|date:"l" }} {{ time|time:"H:i" }}</div><div class="time">{{ time|time:"H:i" }}</div></th>
+              <th scope="row"><div class="collapsed-table">{{ day|date:"l" }} {{ time }}</div><div class="time">{{ time }}</div></th>
               {% for session in days_sessions.matrix|index:forloop.counter0 %}
                   {% if session is None %}
                     <td class='no-session'></td>
@@ -86,7 +86,7 @@
                           <i class="fa fa-calendar-plus-o fa-lg selectable-interest" data-proposal="{{ session.ical_id }}" aria-hidden="true"></i>
                         {% endif %}
                       {% endif %}
-                      <div class="collapsed-table">{% if not session.break_event %}<span class="room">{{ session.room }}</span>{% endif %}<span class="end-time">{% if session.rowspan > 1 %} Ends: {{ session.end_time|time:"H:i" }}{% endif %}</span></div>
+                      <div class="collapsed-table">{% if not session.break_event %}<span class="room">{{ session.room }}</span>{% endif %}<span class="end-time">{% if session.rowspan > 1 %} Ends: {{ session.end_time }}{% endif %}</span></div>
                     </td>
                   {% endif %}
               {% endfor %}

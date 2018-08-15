@@ -18,7 +18,7 @@ def schedule(request):
 
     try:
         schedule_cache = Cache.objects.get(key='schedule')
-        all_sessions = yaml.load(schedule_cache.value)
+        all_sessions = yaml.safe_load(schedule_cache.value)
     except Cache.DoesNotExist:
         all_sessions = generate_schedule_page_data()
 

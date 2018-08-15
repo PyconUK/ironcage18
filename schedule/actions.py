@@ -170,7 +170,7 @@ def generate_schedule_page_data():
                             'title': session.activity.title,
                             'conference_event': session.activity.conference_event,
                             'name': session.activity.all_presenter_names,
-                            'time': session.slot.time,
+                            'time': session.slot.time.strftime('%H:%M'),
                             'end_time': session.end_time,
                             'id': session.activity.proposal_id,
                             'ical_id': session.ical_id,
@@ -204,6 +204,11 @@ def generate_schedule_page_data():
                         else:
                             break
                     matrix[i][j]['colspan'] = colspan
+
+                    # Make the YAML more bearable
+                    matrix[i][j]['end_time'] = matrix[i][j]['end_time'].strftime('%H:%M')
+
+        times_for_day = [x.strftime('%H:%M') for x in times_for_day]
 
         all_sessions[day] = {
             'times': times_for_day,
