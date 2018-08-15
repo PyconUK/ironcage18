@@ -51,7 +51,7 @@
 {% for day, days_sessions in sessions.items %}
   <div class="row">
     <div class="col">
-      <h1 id="{{ day|back_to_date|date:" D "|lower }}">{{ day|back_to_date|date:"l dS" }}</h1>
+      <h1 id="{{ day|back_to_date|date:"D"|lower }}">{{ day|back_to_date|date:"l dS" }}</h1>
       <table class="table table-striped schedule-table">
         <thead>
           <tr>
