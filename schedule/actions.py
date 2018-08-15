@@ -28,7 +28,7 @@ def import_schedule(f, request):
     for i, (event_index, event, slot_index, slot_text) in enumerate(reader):
         if i == 0:
             continue
-        date, time, *room = slot_text.split(' ')
+        slot_date, slot_time, *room = slot_text.split(' ')
         room = ' '.join(room)
 
         try:
@@ -40,7 +40,7 @@ def import_schedule(f, request):
         room = Room.objects.get(name=room)
 
         try:
-            slot = Slot.objects.get(room=room, date=date, time=time)
+            slot = Slot.objects.get(room=room, date=slot_date, time=slot_time)
             ical_id = ('%s-%s' % (activity.proposal_id, slot.date.strftime('%a'))
                        if activity.conference_event else activity.proposal_id).lower()
             SlotEvent.objects.get_or_create(
@@ -48,10 +48,23 @@ def import_schedule(f, request):
                 slot=slot,
                 ical_id=ical_id
             )
-        except Slot.DoesNotExist:
-            messages.add_message(request, messages.ERROR, f"Couldn't find {room} on {date} at {time}")
 
-    Cache.objects.get(key='schedule').delete()
+            if activity.session_type == 'workshop':
+                slot_time_plus_91_mins = datetime.strptime(slot_time, '%H:%M:%S') + timedelta(minutes=91)
+                slot = Slot.objects.filter(room=room, date=slot_date, time__gt=slot_time_plus_91_mins).first()
+                SlotEvent.objects.get_or_create(
+                    activity=activity,
+                    slot=slot,
+                    ical_id=ical_id
+                )
+
+        except Slot.DoesNotExist:
+            messages.add_message(request, messages.ERROR, f"Couldn't find {room} on {slot_date} at {slot_time}")
+
+    try:
+        Cache.objects.get(key='schedule').delete()
+    except Cache.DoesNotExist:
+        pass
 
 
 def import_timetable(timetable_f, unbounded_f, request):
