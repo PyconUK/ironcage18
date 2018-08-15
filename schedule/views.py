@@ -1,4 +1,4 @@
-import yaml
+import json
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from cfp.models import Proposal
@@ -18,7 +18,7 @@ def schedule(request):
 
     try:
         schedule_cache = Cache.objects.get(key='schedule')
-        all_sessions = yaml.safe_load(schedule_cache.value)
+        all_sessions = json.loads(schedule_cache.value)
     except Cache.DoesNotExist:
         all_sessions = generate_schedule_page_data()
 

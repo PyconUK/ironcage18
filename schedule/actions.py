@@ -4,7 +4,7 @@ from copy import copy
 from datetime import date, datetime, time, timedelta
 from math import floor
 
-import yaml
+import json
 from django.contrib import messages
 from django.utils.text import slugify
 from icalendar import Calendar, Event, vCalAddress, vText
@@ -139,12 +139,6 @@ def generate_schedule_page_data():
         )
         times_for_day = [x['time'] for x in times_for_day_query]
 
-        all_sessions[day] = {
-            'times': times_for_day,
-            'slots': slots_for_day,
-            'rooms': rooms_for_day,
-        }
-
         # lists of sessions, one list per time
         matrix = []
 
@@ -210,18 +204,22 @@ def generate_schedule_page_data():
 
         times_for_day = [x.strftime('%H:%M') for x in times_for_day]
 
-        all_sessions[day] = {
+
+
+        all_sessions[day.strftime('%Y-%m-%d')] = {
             'times': times_for_day,
             'rooms': room_names_for_day,
             'matrix': matrix
         }
+
+        print(all_sessions)
 
     try:
         Cache.objects.get(key='schedule').delete()
     except Cache.DoesNotExist:
         pass
 
-    schedule_cache = Cache(key='schedule', value=yaml.dump(all_sessions))
+    schedule_cache = Cache(key='schedule', value=json.dumps(all_sessions))
     schedule_cache.save()
 
     return all_sessions

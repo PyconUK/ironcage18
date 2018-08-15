@@ -51,7 +51,7 @@
 {% for day, days_sessions in sessions.items %}
   <div class="row">
     <div class="col">
-      <h1 id="{{ day|date:"D"|lower }}">{{ day|date:"l dS" }}</h1>
+      <h1 id="{{ day|back_to_date|date:" D "|lower }}">{{ day|back_to_date|date:"l dS" }}</h1>
       <table class="table table-striped schedule-table">
         <thead>
           <tr>
@@ -64,7 +64,10 @@
         <tbody>
           {% for time in days_sessions.times %}
             <tr>
-              <th scope="row"><div class="collapsed-table">{{ day|date:"l" }} {{ time }}</div><div class="time">{{ time }}</div></th>
+              <th scope="row">
+                <div class="collapsed-table">{{ day|back_to_date|date:"l" }} {{ time }}</div>
+                <div class="time">{{ time }}</div>
+              </th>
               {% for session in days_sessions.matrix|index:forloop.counter0 %}
                   {% if session is None %}
                     <td class='no-session'></td>
