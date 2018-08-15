@@ -71,7 +71,10 @@ def interest(request):
             request.user.items_of_interest.remove(proposal_id)
 
     request.user.save()
-    Cache.objects.get(key=request.user.ical_token).delete()
+    try:
+        Cache.objects.get(key=request.user.ical_token).delete()
+    except Cache.DoesNotExist:
+        pass
 
     return HttpResponse()
 
