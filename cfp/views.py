@@ -168,9 +168,6 @@ def get_schedule_generate_csv(request):
             if proposal.length.total_seconds() > (90 * 60):
                 row[4] = 90
 
-            for i in range(1, int(proposal.length.total_seconds() / (90 * 60))):
-                rows.append(row)
-
         rows.append(row)
 
     pseudo_buffer = Echo()
