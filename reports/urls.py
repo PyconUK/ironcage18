@@ -14,5 +14,6 @@ urlpatterns.extend([
     url(r'^tickets/orders/(?P<order_id>\w+)/$', views.tickets_order, name='tickets_order'),
     url(r'^tickets/tickets/(?P<ticket_id>\w+)/$', views.tickets_ticket, name='tickets_ticket'),
     url(r'^finaid/$', views.finaid_report, name='finaid_report'),
+    url(r'^speakerswithouttickets/$', views.speakers_without_tickets, name='speakers_without_tickets'),
     url('^$', views.index, name='index'),
 ])

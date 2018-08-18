@@ -1,0 +1,9 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<ul>
+    {% for speaker in without_tickets %}
+        <li>{{ speaker.name }} ({{ speaker.email_addr }})</li>
+    {% endfor %}
+</ul>
+{% endblock %}

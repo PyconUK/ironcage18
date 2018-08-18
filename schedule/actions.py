@@ -5,6 +5,7 @@ from datetime import date, datetime, time, timedelta
 from math import floor
 
 import json
+import yaml
 from django.contrib import messages
 from django.utils.text import slugify
 from icalendar import Calendar, Event, vCalAddress, vText

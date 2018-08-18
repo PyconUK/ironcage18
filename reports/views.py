@@ -3,6 +3,7 @@ from django.db.models import Sum
 from django.shortcuts import render
 
 from accounts.models import User
+from cfp.models import Proposal
 from grants.models import Application
 from orders.models import Order
 from tickets.models import Ticket
@@ -61,3 +62,23 @@ def finaid_report(request):
         'total': fin_aid_accepted_replied + fin_aid_awaiting,
     }
     return render(request, 'reports/finaid_report.html', context)
+
+
+@staff_member_required(login_url='login')
+def speakers_without_tickets(request):
+
+    accepted_proposals = Proposal.objects.filter(
+        state__in=['accept', 'confirm']
+    ).all()
+
+    without_tickets = []
+
+    for proposal in accepted_proposals:
+        print(proposal.proposer, proposal)
+        if proposal.proposer.get_ticket() is None:
+            without_tickets.append(proposal.proposer)
+
+    context = {
+        'without_tickets': without_tickets,
+    }
+    return render(request, 'reports/speakers_without_tickets.html', context)
