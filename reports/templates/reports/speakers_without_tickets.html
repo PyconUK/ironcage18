@@ -1,9 +1,16 @@
 {% extends 'ironcage/base.html' %}
 
 {% block content %}
+<h2>Confirmed without tickets</h2>
 <ul>
-    {% for speaker in without_tickets %}
+    {% for speaker in confirmed_without_tickets %}
         <li>{{ speaker.name }} ({{ speaker.email_addr }})</li>
+    {% endfor %}
+</ul>
+<h2>Accepted without tickets</h2>
+<ul>
+    {% for speaker in accepted_without_tickets %}
+    <li>{{ speaker.name }} ({{ speaker.email_addr }})</li>
     {% endfor %}
 </ul>
 {% endblock %}

@@ -68,16 +68,26 @@ def finaid_report(request):
 def speakers_without_tickets(request):
 
     accepted_proposals = Proposal.objects.filter(
-        state__in=['accept', 'confirm']
+        state='accept'
     ).all()
 
-    without_tickets = []
+    confirmed_proposals = Proposal.objects.filter(
+        state='confirm'
+    ).all()
+
+    accepted_without_tickets = []
+    confirmed_without_tickets = []
 
     for proposal in accepted_proposals:
         if proposal.proposer.get_ticket() is None:
-            without_tickets.append(proposal.proposer)
+            accepted_without_tickets.append(proposal.proposer)
+
+    for proposal in confirmed_proposals:
+        if proposal.proposer.get_ticket() is None:
+            confirmed_without_tickets.append(proposal.proposer)
 
     context = {
-        'without_tickets': set(without_tickets),
+        'confirmed_without_tickets': set(confirmed_without_tickets),
+        'accepted_without_tickets': set(accepted_without_tickets),
     }
     return render(request, 'reports/speakers_without_tickets.html', context)
