@@ -74,7 +74,6 @@ def speakers_without_tickets(request):
     without_tickets = []
 
     for proposal in accepted_proposals:
-        print(proposal.proposer, proposal)
         if proposal.proposer.get_ticket() is None:
             without_tickets.append(proposal.proposer)
 
