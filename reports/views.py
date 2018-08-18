@@ -78,6 +78,6 @@ def speakers_without_tickets(request):
             without_tickets.append(proposal.proposer)
 
     context = {
-        'without_tickets': without_tickets,
+        'without_tickets': set(without_tickets),
     }
     return render(request, 'reports/speakers_without_tickets.html', context)
