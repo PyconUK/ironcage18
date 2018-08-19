@@ -1,0 +1,32 @@
+Dear {{ proposal.proposer.name }},
+
+We noticed that we had accepted your proposal {{ proposal.title }} ({{ proposal.get_session_type_display }})
+for PyCon UK 2018, {% if proposal.state == 'confirm' %}and you have confirmed that you will present it {% endif %}but you do not appear to have a ticket.
+
+This is fine, we just want to check that you are still expecting to present your session, and that you are
+aware that all attendees to PyCon UK need to have a ticket regardless of whether they are contributors or not.
+
+You can check the schedule to find out which date you are presenting here: https://2018.hq.pyconuk.org/schedule/.
+Please be aware that sessions will remain on the same day, but may move time and room.
+
+{% if proposal.proposer.grant_application and proposal.proposer.grant_application.ticket_awarded %}
+As you applied for financial assistance, you should have received a ticket invitation by email.
+If you have misplaced this email or are having trouble with your invitation, please reply and let us know.
+{% endif %}
+
+It's possible you have two accounts - we think we've found and resolved all these cases, but please reply and
+let us know if you think this is the case.
+
+If you're not available on the date your proposal is currently scheduled, please let us know and we will try
+and resolve the situation.
+
+Lastly, if you've decided not to present at PyCon UK 2018, we would appreciate if you could let us know so
+that we can finalise our schedule.
+
+We look forward to seeing you in Cardiff!
+
+PyCon UK 2018 Committee
+
+--
+PyCon UK Society Ltd. Company Number: 10073469. Registered in England and Wales.
+Registered office: c/o Acconomy, Arena Business Centre, Holyrood Close, Poole BH17 7FJ, United Kingdom
