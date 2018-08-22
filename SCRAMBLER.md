@@ -8,5 +8,5 @@ Starting IDs for Scrambler, and the model they apply to.
 | 4000        | Grant Application |
 | 5000        | Refund            |
 | 6000        | Extra Item        |
-| 7000        |                   |
+| 7000        | Badge             |
 | 8000        | User              |
