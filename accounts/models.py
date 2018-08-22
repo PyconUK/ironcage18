@@ -155,3 +155,17 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.grant_application
         except Application.DoesNotExist:
             return None
+
+
+class Badge(models.Model):
+
+    ticket = models.ForeignKey(Ticket, related_name='badge', on_delete=models.CASCADE, null=True)
+    collected = models.DateTimeField(null=True)
+
+    id_scrambler = Scrambler(7000)
+
+    @property
+    def badge_id(self):
+        if self.id is None:
+            return None
+        return self.id_scrambler.forward(self.id)
