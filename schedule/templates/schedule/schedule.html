@@ -77,7 +77,8 @@
                         {% if not session.break_event %}</a>{% endif %}
                       </p>
                       {% if not session.conference_event %}
-                        <p class="presenter-name"><a href="{% url 'schedule:view_proposal' proposal_id=session.id %}">{{ session.name }}</a></p>
+                      <p class="presenter-name"><a href="{% url 'schedule:view_proposal' proposal_id=session.id %}">{{ session.name }}</a></p>
+                      <p class="track-name">{{ session.track }}</p>
                       {% endif %}
                       {% if not request.user.is_anonymous and not session.break_event %}
                         {% if session.ical_id in users_sessions %}

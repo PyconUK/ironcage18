@@ -173,6 +173,7 @@ def generate_schedule_page_data():
                             'colspan': 1,
                             'spanned': False,
                             'room': session.slot.room.name,
+                            'track': session.activity.track,
                         }
             matrix.append(sessions)
 

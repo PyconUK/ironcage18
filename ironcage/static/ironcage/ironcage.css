@@ -99,6 +99,10 @@ div.is-invalid > .invalid-feedback {
   font-size: 0.9em;
 }
 
+.schedule-table .track-name, {
+  font-size: 0.9em;
+}
+
 .schedule-table td {
   position: relative;
 }
