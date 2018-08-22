@@ -54,7 +54,7 @@
           <tr>
             <th scope="col" style="width: 5%"></th>
             {% for room in days_sessions.rooms %}
-              <th scope="col" style="width: {{ days_sessions.rooms|width }}%">{# {{ room }} #}</th>
+              <th scope="col" style="width: {{ days_sessions.rooms|width }}%">{{ room }}</th>
             {% endfor %}
           </tr>
         </thead>
