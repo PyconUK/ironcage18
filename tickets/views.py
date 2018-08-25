@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 
+import pyqrcode
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
@@ -289,8 +291,12 @@ def ticket(request, ticket_id):
             mark_safe('Your profile is incomplete. <a href="{}">Update your profile</a>'.format(reverse('accounts:edit_profile')))
         )
 
+        code = pyqrcode.create(ticket.ticket_id)
+        png_base64 = code.png_as_base64_str(scale=5)
+
     context = {
         'ticket': ticket,
+        'qr_code_base64': png_base64
     }
 
     if request.method == 'POST':
