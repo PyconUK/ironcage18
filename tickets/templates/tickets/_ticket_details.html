@@ -1,5 +1,9 @@
 <table class="table">
   <tr>
+    <th>Registration code</th>
+    <td><img src="data:image/png;base64,{{ qr_code_base64 }}" alt="QR Code encoding {{ ticket.ticket_id }}"></td>
+  </tr>
+  <tr>
     <th>Ticket holder</th>
     <td>{{ ticket.owner.name }}</td>
   </tr>

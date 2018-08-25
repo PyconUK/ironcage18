@@ -10,6 +10,8 @@ gunicorn
 icalendar
 pip-tools
 psycopg2-binary
+pypng
+pyqrcode
 pyyaml
 stripe
 structlog[dev]  # the [dev] is for coloured output
