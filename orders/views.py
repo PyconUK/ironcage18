@@ -32,7 +32,7 @@ def order(request, order_id):
     elif order.status == 'errored':
         messages.error(
             request,
-            mark_safe('There was an error creating your order. Your card may have been charged, but if so the charge will have been refunded. Please contact us at <a href="mailto:pyconuk-committee@uk.python.org">pyconuk-committee@uk.python.org</a> and we will be able to resolve the problem.')
+            mark_safe('There was an error creating your order. Your card may have been charged, but if so the charge will have been refunded. Please contact us at <a href="mailto:pyconuk@uk.python.org">pyconuk@uk.python.org</a> and we will be able to resolve the problem.')
         )
 
     ticket = request.user.get_ticket()
