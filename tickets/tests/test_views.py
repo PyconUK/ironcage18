@@ -560,8 +560,8 @@ class TicketInvitationTests(TestCase):
 
     def test_when_not_authenticated(self):
         rsp = self.client.get(self.url, follow=True)
-        self.assertContains(rsp, '<div class="alert alert-info" role="alert">You need to create an account to claim your invitation</div>', html=True)
-        self.assertRedirects(rsp, f'/accounts/register/?next={self.url}')
+        self.assertContains(rsp, '<div class="alert alert-info" role="alert">You need an account to claim your invitation</div>', html=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next={self.url}')
 
 
 class NewTicketTests(TestCase):

@@ -237,7 +237,7 @@ ADMINS = [['-', email_addr] for email_addr in os.environ.get('ADMINS', '').split
 DEFAULT_FROM_EMAIL = 'PyCon UK 2018 <noreply@pyconuk.org>'
 SERVER_EMAIL = 'PyCon UK 2018 <noreply@pyconuk.org>'
 EMAIL_FROM_ADDR = 'PyCon UK 2018 <noreply@pyconuk.org>'
-EMAIL_REPLY_TO_ADDR = 'PyCon UK 2018 <pyconuk-committee@uk.python.org>'
+EMAIL_REPLY_TO_ADDR = 'PyCon UK 2018 <pyconuk@uk.python.org>'
 
 
 # Last orders...
