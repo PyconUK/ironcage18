@@ -194,21 +194,14 @@ class Order(models.Model, SalesRecord):
                     )
                     rows.append(self.order_rows.build_for_item(ticket))
 
-        elif self.content_type == ContentType.objects.get(app_label="extras", model="childrenticket"):
-
-            children_ticket_content_type = ContentType.objects.get(
-                app_label="extras", model="childrenticket"
-            )
-
+        else:
             ticket = ExtraItem.objects.build(
-                content_type=children_ticket_content_type,
+                content_type=self.content_type,
                 owner=self.purchaser,
                 details=self.unconfirmed_details,
             )
             row = self.order_rows.build_for_item(ticket)
             rows.append(row)
-        else:
-            assert False
 
         return rows
 

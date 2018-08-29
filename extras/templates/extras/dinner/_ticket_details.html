@@ -1,0 +1,22 @@
+<table class="table">
+  <tr>
+    <th>Event</th>
+    <td>{{ ticket.item.get_dinner_display }}</td>
+  </tr>
+  <tr>
+    <th>Starter</th>
+    <td>{{ ticket.item.get_starter_display }}</td>
+  </tr>
+  <tr>
+    <th>Main Course</th>
+    <td>{{ ticket.item.get_main_display }}</td>
+  </tr>
+  <tr>
+    <th>Dessert</th>
+    <td>{{ ticket.item.get_dessert_display }}</td>
+  </tr>
+  <tr>
+    <th>Cost (incl. VAT)</th>
+    <td>&pound;{{ ticket.cost_incl_vat }}</td>
+  </tr>
+</table>
