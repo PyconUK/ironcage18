@@ -20,7 +20,23 @@
 {% endif %}
 
 <hr>
-<div>{{ proposal.description|linebreaks }}</div>
+
+{% comment %}
+AWLC: Most of the proposal descriptions come directly from speakers, and
+we don't want people to submit descriptions are arbitrary HTML!
+
+On a couple of the conference-run sessions (e.g. lightning talks), it's
+useful to have some extra formatting.  A proper Markdown formatter or similar
+would be nice, but for now this is a hacky fix to expose raw HTML on these
+specially approved sessions -- which can only be edited by a handful of people.
+{% endcomment %}
+{% if proposal.id == "0B96" %}
+  <div>{{ proposal.description|safe }}
+{% else %}
+  <div>{{ proposal.description|linebreaks }}</div>
+{% endif %}
+
+
 {% if proposal.aimed_at_new_programmers or proposal.aimed_at_teachers or proposal.aimed_at_data_scientists %}
 <hr>
 <ul>
