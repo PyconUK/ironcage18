@@ -158,26 +158,32 @@ DINNERS = {
     'CD': {
         'location': 'CH',
         'date': '2018-09-15',
+        'capacity': 200,
     },
     'CLSA': {
         'location': 'CL',
         'date': '2018-09-15',
+        'capacity': 45,
     },
     'CLSU': {
         'location': 'CL',
         'date': '2018-09-16',
+        'capacity': 45,
     },
     'CLMO': {
         'location': 'CL',
         'date': '2018-09-17',
+        'capacity': 45,
     },
     'CLTU': {
         'location': 'CL',
         'date': '2018-09-18',
+        'capacity': 45,
     },
     'CLWE': {
         'location': 'CL',
         'date': '2018-09-19',
+        'capacity': 45,
     },
 }
 

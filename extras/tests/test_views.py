@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from django.test import TestCase, override_settings
 
 from . import factories
+from extras.models import DINNERS
 
 
 class NewChildrenTicketOrderTests(TestCase):
@@ -247,6 +248,56 @@ class NewDinnerTicketOrderTests(TestCase):
         rsp = self.client.post(self.url, follow=True)
         self.assertRedirects(rsp, '/accounts/login/')
 
+    def test_post_when_sold_out(self):
+        # Arrange
+        DINNERS['CLSA']['capacity'] = 5
+        for i in range(5):
+            factories.create_clink_dinner_ticket()
+
+        self.client.force_login(self.alice)
+
+        form_data = {
+            'dinner': 'CLSA',
+            'starter': 'ESB',
+            'main': 'EBS',
+            'dessert': 'SBSS',
+            'billing_name': 'Puff Dragon',
+            'billing_addr': 'By The Sea, Honalee',
+        }
+
+        # Act
+        rsp = self.client.post(self.url, form_data, follow=True)
+
+        # Assert
+        self.assertContains(rsp, 'Dinner tickets are not available for the selected dinner')
+        self.assertNotContains(rsp, 'You are ordering 1 item')
+
+        DINNERS['CLSU']['capacity'] = 45
+
+    def test_post_when_after_date(self):
+        # Arrange
+        DINNERS['CLSA']['date'] = (datetime.now(timezone.utc) - timedelta(days=1)).strftime('%Y-%m-%d')
+
+        self.client.force_login(self.alice)
+
+        form_data = {
+            'dinner': 'CLSA',
+            'starter': 'ESB',
+            'main': 'EBS',
+            'dessert': 'SBSS',
+            'billing_name': 'Puff Dragon',
+            'billing_addr': 'By The Sea, Honalee',
+        }
+
+        # Act
+        rsp = self.client.post(self.url, form_data, follow=True)
+
+        # Assert
+        self.assertContains(rsp, 'Dinner tickets are not available for the selected dinner')
+        self.assertNotContains(rsp, 'You are ordering 1 item')
+
+        DINNERS['CLSU']['date'] = '2018-09-16'
+
 
 class DinnerTicketOrderEditTests(TestCase):
     @classmethod
@@ -314,6 +365,38 @@ class DinnerTicketOrderEditTests(TestCase):
         rsp = self.client.get(self.url, follow=True)
         self.assertRedirects(rsp, f'/orders/{self.order.order_id}/')
         self.assertContains(rsp, 'This order has already been paid')
+
+    def test_post_when_sold_out(self):
+        DINNERS['CLSU']['capacity'] = 0
+        self.client.force_login(self.order.purchaser)
+        form_data = {
+            'dinner': 'CLSU',
+            'starter': 'ESB',
+            'main': 'EBS',
+            'dessert': 'SBSS',
+            'billing_name': 'Puff Dragon',
+            'billing_addr': 'By The Sea, Honalee',
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'Dinner tickets are not available for the selected dinner')
+        self.assertNotContains(rsp, 'You are ordering 1 item')
+        DINNERS['CLSU']['capacity'] = 45
+
+    def test_post_when_after_date(self):
+        DINNERS['CLSU']['date'] = (datetime.now(timezone.utc) - timedelta(days=1)).strftime('%Y-%m-%d')
+        self.client.force_login(self.order.purchaser)
+        form_data = {
+            'dinner': 'CLSU',
+            'starter': 'ESB',
+            'main': 'EBS',
+            'dessert': 'SBSS',
+            'billing_name': 'Puff Dragon',
+            'billing_addr': 'By The Sea, Honalee',
+        }
+        rsp = self.client.post(self.url, form_data, follow=True)
+        self.assertContains(rsp, 'Dinner tickets are not available for the selected dinner')
+        self.assertNotContains(rsp, 'You are ordering 1 item')
+        DINNERS['CLSU']['date'] = '2018-09-16'
 
 
 class DinnerTicketTests(TestCase):
@@ -441,3 +524,51 @@ class DinnerTicketEditTests(TestCase):
         rsp = self.client.post(self.url, follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can update the order')
+
+    def test_post_when_sold_out(self):
+        # Arrange
+        DINNERS['CLSU']['capacity'] = 0
+
+        self.client.force_login(self.clink_ticket.order.purchaser)
+
+        form_data = {
+            'dinner': 'CLSU',
+            'starter': 'ESB',
+            'main': 'EBS',
+            'dessert': 'SBSS',
+            'billing_name': 'Puff Dragon',
+            'billing_addr': 'By The Sea, Honalee',
+        }
+
+        # Act
+        rsp = self.client.post(self.clink_url, form_data, follow=True)
+
+        # Assert
+        self.assertContains(rsp, 'Dinner tickets are not available for the selected dinner')
+        self.assertNotContains(rsp, 'Your dinner ticket has been updated.')
+
+        DINNERS['CLSU']['capacity'] = 45
+
+    def test_post_when_after_date(self):
+        # Arrange
+        DINNERS['CLSU']['date'] = (datetime.now(timezone.utc) - timedelta(days=1)).strftime('%Y-%m-%d')
+
+        self.client.force_login(self.clink_ticket.order.purchaser)
+
+        form_data = {
+            'dinner': 'CLSU',
+            'starter': 'ESB',
+            'main': 'EBS',
+            'dessert': 'SBSS',
+            'billing_name': 'Puff Dragon',
+            'billing_addr': 'By The Sea, Honalee',
+        }
+
+        # Act
+        rsp = self.client.post(self.clink_url, form_data, follow=True)
+
+        # Assert
+        self.assertContains(rsp, 'Dinner tickets are not available for the selected dinner')
+        self.assertNotContains(rsp, 'Your dinner ticket has been updated.')
+
+        DINNERS['CLSU']['date'] = '2018-09-16'

@@ -173,31 +173,32 @@ def new_dinner_order(request, location_id):
             return redirect(settings.LOGIN_URL)
 
         if form.is_valid():
-
             valid = billing_details_form.is_valid()
             if valid:
-                billing_details = {
-                    'name': billing_details_form.cleaned_data['billing_name'],
-                    'addr': billing_details_form.cleaned_data['billing_addr'],
-                }
+                available_dinners = actions.check_available_dinners(location_id)
 
-            if valid:
+                if form.cleaned_data['dinner'] not in available_dinners:
+                    messages.error(request, 'Dinner tickets are not available for the selected dinner')
+                else:
+                    billing_details = {
+                        'name': billing_details_form.cleaned_data['billing_name'],
+                        'addr': billing_details_form.cleaned_data['billing_addr'],
+                    }
 
-                unconfirmed_details = {
-                    'dinner': form.cleaned_data['dinner'],
-                    'starter': form.cleaned_data['starter'],
-                    'main': form.cleaned_data['main'],
-                    'dessert': form.cleaned_data['dessert'],
-                }
+                    unconfirmed_details = {
+                        'dinner': form.cleaned_data['dinner'],
+                        'starter': form.cleaned_data['starter'],
+                        'main': form.cleaned_data['main'],
+                        'dessert': form.cleaned_data['dessert'],
+                    }
 
-                order = actions.create_pending_dinner_ticket_order(
-                    purchaser=request.user,
-                    billing_details=billing_details,
-                    unconfirmed_details=unconfirmed_details
-                )
+                    order = actions.create_pending_dinner_ticket_order(
+                        purchaser=request.user,
+                        billing_details=billing_details,
+                        unconfirmed_details=unconfirmed_details
+                    )
 
-                return redirect(order)
-
+                    return redirect(order)
     else:
         if datetime.now(timezone.utc) > settings.TICKET_SALES_CLOSE_AT:
             if request.GET.get('deadline-bypass-token', '') != settings.TICKET_DEADLINE_BYPASS_TOKEN:
@@ -245,29 +246,32 @@ def dinner_order_edit(request, order_id):
         billing_details_form = BillingDetailsForm(request.POST)
 
         if form.is_valid():
-
             valid = billing_details_form.is_valid()
             if valid:
-                billing_details = {
-                    'name': billing_details_form.cleaned_data['billing_name'],
-                    'addr': billing_details_form.cleaned_data['billing_addr'],
-                }
+                available_dinners = actions.check_available_dinners(DINNERS[request.POST['dinner']]['location'])
 
-            if valid:
-                unconfirmed_details = {
-                    'dinner': form.cleaned_data['dinner'],
-                    'starter': form.cleaned_data['starter'],
-                    'main': form.cleaned_data['main'],
-                    'dessert': form.cleaned_data['dessert'],
-                }
+                if form.cleaned_data['dinner'] not in available_dinners:
+                    messages.error(request, 'Dinner tickets are not available for the selected dinner')
+                else:
+                    billing_details = {
+                        'name': billing_details_form.cleaned_data['billing_name'],
+                        'addr': billing_details_form.cleaned_data['billing_addr'],
+                    }
 
-                actions.update_pending_dinner_ticket_order(
-                    order=order,
-                    billing_details=billing_details,
-                    unconfirmed_details=unconfirmed_details
-                )
+                    unconfirmed_details = {
+                        'dinner': form.cleaned_data['dinner'],
+                        'starter': form.cleaned_data['starter'],
+                        'main': form.cleaned_data['main'],
+                        'dessert': form.cleaned_data['dessert'],
+                    }
 
-                return redirect(order)
+                    actions.update_pending_dinner_ticket_order(
+                        order=order,
+                        billing_details=billing_details,
+                        unconfirmed_details=unconfirmed_details
+                    )
+
+                    return redirect(order)
 
     else:
         form = DinnerTicketForm.from_pending_order(order)
@@ -308,19 +312,24 @@ def dinner_ticket_edit(request, item_id):
                 form = CityHallDinnerTicketForm(request.POST)
 
             if form.is_valid():
-                details = {
-                    'dinner': form.cleaned_data['dinner'],
-                    'starter': form.cleaned_data['starter'],
-                    'main': form.cleaned_data['main'],
-                    'dessert': form.cleaned_data['dessert'],
-                }
+                available_dinners = actions.check_available_dinners(DINNERS[request.POST['dinner']]['location'])
 
-                actions.update_existing_dinner_ticket_order(
-                    item=item.item,
-                    details=details,
-                )
+                if form.cleaned_data['dinner'] not in available_dinners:
+                    messages.error(request, 'Dinner tickets are not available for the selected dinner')
+                else:
+                    details = {
+                        'dinner': form.cleaned_data['dinner'],
+                        'starter': form.cleaned_data['starter'],
+                        'main': form.cleaned_data['main'],
+                        'dessert': form.cleaned_data['dessert'],
+                    }
 
-                messages.success(request, "Your dinner ticket has been updated.")
+                    actions.update_existing_dinner_ticket_order(
+                        item=item.item,
+                        details=details,
+                    )
+
+                    messages.success(request, "Your dinner ticket has been updated.")
             else:
                 messages.error(request, "There was an error updating your dinner ticket.")
 
