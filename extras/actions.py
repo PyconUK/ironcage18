@@ -49,3 +49,13 @@ def update_pending_dinner_ticket_order(order, billing_details, unconfirmed_detai
     logger.info('update_pending_dinner_ticket_order', order=order.order_id)
     with transaction.atomic():
         order.update(billing_details, unconfirmed_details)
+
+
+def update_existing_dinner_ticket_order(item, details):
+    logger.info('update_existing_dinner_ticket_order', order=item.id)
+    with transaction.atomic():
+        item.dinner = details['dinner']
+        item.starter = details['starter']
+        item.main = details['main']
+        item.dessert = details['dessert']
+        item.save()

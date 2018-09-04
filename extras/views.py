@@ -14,7 +14,7 @@ from tickets.forms import BillingDetailsForm
 from . import actions
 from .forms import (ChildrenTicketForm, CityHallDinnerTicketForm,
                     ClinkDinnerTicketForm, DinnerTicketForm)
-from .models import DINNER_LOCATIONS, ExtraItem
+from .models import DINNER_LOCATIONS, ExtraItem, DINNERS
 
 
 def new_children_order(request):
@@ -223,8 +223,6 @@ def new_dinner_order(request, location_id):
 def dinner_order_edit(request, order_id):
     order = Order.objects.get_by_order_id_or_404(order_id)
 
-    ticket_cost = int(DINNER_LOCATIONS[location_id]['price'] * 1.2)
-
     if request.user != order.purchaser:
         messages.warning(request, 'Only the purchaser of an order can update the order')
         return redirect('index')
@@ -234,6 +232,9 @@ def dinner_order_edit(request, order_id):
         return redirect(order)
 
     if request.method == 'POST':
+        location_id = DINNERS[request.POST['dinner']]['location']
+        ticket_cost = int(DINNER_LOCATIONS[location_id]['price'] * 1.2)
+
         if not request.user.is_authenticated:
             return redirect(settings.LOGIN_URL)
 
@@ -270,6 +271,8 @@ def dinner_order_edit(request, order_id):
 
     else:
         form = DinnerTicketForm.from_pending_order(order)
+        location_id = DINNERS[order.unconfirmed_details['dinner']]['location']
+        ticket_cost = int(DINNER_LOCATIONS[location_id]['price'] * 1.2)
         billing_details_form = BillingDetailsForm({
             'billing_name': order.billing_name,
             'billing_addr': order.billing_addr,
@@ -296,33 +299,32 @@ def dinner_ticket_edit(request, item_id):
         if not request.user.is_authenticated:
             return redirect(settings.LOGIN_URL)
 
-        if location_id == 'CL':
-            form = ClinkDinnerTicketForm(request.POST)
+        if DINNERS[request.POST['dinner']]['location'] != DINNERS[item.item.dinner]['location']:
+            messages.error(request, "You cannot change location on your dinner ticket")
         else:
-            form = CityHallDinnerTicketForm(request.POST)
+            if DINNERS[request.POST['dinner']]['location'] == 'CL':
+                form = ClinkDinnerTicketForm(request.POST)
+            else:
+                form = CityHallDinnerTicketForm(request.POST)
 
-        if form.is_valid():
+            if form.is_valid():
+                details = {
+                    'dinner': form.cleaned_data['dinner'],
+                    'starter': form.cleaned_data['starter'],
+                    'main': form.cleaned_data['main'],
+                    'dessert': form.cleaned_data['dessert'],
+                }
 
-            if valid:
+                actions.update_existing_dinner_ticket_order(
+                    item=item.item,
+                    details=details,
+                )
 
-                print(ticket.item)
+                messages.success(request, "Your dinner ticket has been updated.")
+            else:
+                messages.error(request, "There was an error updating your dinner ticket.")
 
-                # unconfirmed_details = {
-                #     'dinner': form.cleaned_data['dinner'],
-                #     'starter': form.cleaned_data['starter'],
-                #     'main': form.cleaned_data['main'],
-                #     'dessert': form.cleaned_data['dessert'],
-                # }
-
-                # actions.update_pending_dinner_ticket_order(
-                #     order=order,
-                #     billing_details=billing_details,
-                #     unconfirmed_details=unconfirmed_details
-                # )
-
-
-
-                return redirect(order)
+        return redirect('extras:dinner_ticket')
 
     else:
         form = DinnerTicketForm.from_item(item)
@@ -334,7 +336,6 @@ def dinner_ticket_edit(request, item_id):
     return render(request, 'extras/dinner/ticket_edit.html', context)
 
 
-
 @login_required
 def dinner_ticket(request):
     dinner_ticket_content_type = ContentType.objects.get(app_label="extras", model="dinnerticket")
@@ -344,7 +345,7 @@ def dinner_ticket(request):
     ).all()
 
     if not len(tickets):
-        messages.error(request, "You do not have any Young Coders' Day tickets")
+        messages.error(request, "You do not have any dinner tickets")
         return redirect('index')
 
     if not request.user.profile_complete():
