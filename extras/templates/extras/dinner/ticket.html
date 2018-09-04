@@ -11,7 +11,10 @@
     </div>
 
     {% if ticket.item.is_editable %}
-      <a class="btn btn-primary" href="{% url 'extras:dinner_ticket_edit' ticket.item_id %}" role="button">Edit</a>
+      <a class="btn btn-primary" href="{% url 'extras:dinner_ticket_edit' ticket.item_id %}" role="button">Update your ticket</a>
+    {% endif %}
+    {% if not forloop.last %}
+      <hr>
     {% endif %}
 {% endfor %}
 {% endblock %}

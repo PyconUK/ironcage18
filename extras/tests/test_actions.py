@@ -1,8 +1,9 @@
 from django.test import TestCase
-
+from datetime import datetime
 from . import factories
 
 from extras import actions
+from orders import actions as order_actions
 
 
 class CreatePendingChildrenTicketOrderTests(TestCase):
@@ -123,7 +124,7 @@ class UpdatePendingDinnerOrderTests(TestCase):
         [row] = order.all_order_rows()
 
         self.assertEqual(row.cost_excl_vat, 30)
-        self.assertEqual(row.item_descr, "Dinner ticket")
+        self.assertEqual(row.item_descr, "Conference Dinner at City Hall on Saturday 15th September dinner ticket")
         self.assertEqual(row.item_descr_extra, '')
 
         ticket = row.item
@@ -132,3 +133,37 @@ class UpdatePendingDinnerOrderTests(TestCase):
         self.assertEqual(ticket.item.starter, 'SSSE')
         self.assertEqual(ticket.item.main, 'SSSS')
         self.assertEqual(ticket.item.dessert, 'ENB')
+
+
+class UpdateExistingDinnerTicketTests(TestCase):
+    def test_existing_dinner_ticket_can_be_edited(self):
+        order = factories.create_pending_dinner_ticket_order()
+        order_actions.confirm_order(order, 'id', 12345678)
+        [row] = order.all_order_rows()
+        ticket = row.item.item
+
+        actions.update_existing_dinner_ticket_order(
+            ticket,
+            details={
+                'dinner': 'CD',
+                'starter': 'SSSE',
+                'main': 'SSSS',
+                'dessert': 'ENB',
+            }
+        )
+
+        ticket.refresh_from_db()
+
+        self.assertEqual(order.status, 'successful')
+        self.assertEqual(order.invoice_number, 1)
+        self.assertEqual(order.billing_name, 'Sirius Cybernetics Corp.')
+        self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
+
+        self.assertEqual(row.cost_excl_vat, 30)
+        self.assertEqual(row.item_descr, "Conference Dinner at City Hall on Saturday 15th September dinner ticket")
+        self.assertEqual(row.item_descr_extra, '')
+
+        self.assertEqual(ticket.dinner, 'CD')
+        self.assertEqual(ticket.starter, 'SSSE')
+        self.assertEqual(ticket.main, 'SSSS')
+        self.assertEqual(ticket.dessert, 'ENB')
