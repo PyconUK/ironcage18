@@ -118,10 +118,6 @@ def generate_schedule_page_data():
 
     for day in days:
 
-        slots_for_day = Slot.objects.filter(
-            date=day, visible=True
-        ).order_by('room__name').all()
-
         rooms_for_day_query = Slot.objects.filter(
             date=day
         ).distinct(
@@ -144,10 +140,10 @@ def generate_schedule_page_data():
         matrix = []
 
         # Make blank matrix
-        for time in times_for_day:
+        for time_ in times_for_day:
             slot_events_for_time = SlotEvent.objects.filter(
                 slot__date=day,
-                slot__time=time
+                slot__time=time_
             ).order_by(
                 'slot__room__name'
             ).all()
@@ -177,7 +173,7 @@ def generate_schedule_page_data():
                         }
             matrix.append(sessions)
 
-        for i, time in enumerate(times_for_day):
+        for i, time_ in enumerate(times_for_day):
             for j, session in enumerate(matrix[i]):
                 if session is not None:
                     # See if it's a long session
@@ -206,15 +202,11 @@ def generate_schedule_page_data():
 
         times_for_day = [x.strftime('%H:%M') for x in times_for_day]
 
-
-
         all_sessions[day.strftime('%Y-%m-%d')] = {
             'times': times_for_day,
             'rooms': room_names_for_day,
             'matrix': matrix
         }
-
-        print(all_sessions)
 
     try:
         Cache.objects.get(key='schedule').delete()
