@@ -112,6 +112,7 @@ class DinnerTicketForm(forms.ModelForm):
 
 
 class ClinkDinnerTicketForm(DinnerTicketForm):
+
     dinner = forms.ChoiceField(label='Event', choices=CLINK_DINNERS)
     starter = forms.ChoiceField(choices=CLINK_STARTERS)
     main = forms.ChoiceField(label='Main Course', help_text='gf: Gluten Free, v: vegetarian, vg: vegan', choices=CLINK_MAINS)

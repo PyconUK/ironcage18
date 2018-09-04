@@ -1,7 +1,11 @@
+from datetime import datetime
+
 import structlog
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from django.db.models import Count
 
+from extras.models import DINNER_LOCATIONS, DINNERS, DinnerTicket
 from orders.models import Order
 
 logger = structlog.get_logger()
@@ -59,3 +63,19 @@ def update_existing_dinner_ticket_order(item, details):
         item.main = details['main']
         item.dessert = details['dessert']
         item.save()
+
+
+def check_available_dinners(location_id):
+    dinners = DinnerTicket.objects.values('dinner').annotate(num_dinners=Count('dinner'))
+
+    dinner_counts = {x['dinner']: x['num_dinners'] for x in dinners}
+
+    ret_val = []
+    # Ugh this is nasty but time is too tight to rearchitect
+    for dinner in DINNERS:
+        if DINNERS[dinner]['location'] == location_id:
+            if (dinner_counts.get(dinner, 0) < DINNERS[dinner]['capacity'] and
+                    datetime.now() < datetime.strptime('%s 20:00:00' % DINNERS[dinner]['date'], '%Y-%m-%d %H:%M:%S')):
+                ret_val.append(dinner)
+
+    return ret_val
