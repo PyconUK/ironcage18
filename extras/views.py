@@ -168,6 +168,7 @@ def new_dinner_order(request, location_id):
         else:
             form = CityHallDinnerTicketForm(request.POST)
         billing_details_form = BillingDetailsForm(request.POST)
+        available_dinners = actions.check_available_dinners(location_id)
 
         if not request.user.is_authenticated:
             return redirect(settings.LOGIN_URL)
@@ -175,8 +176,6 @@ def new_dinner_order(request, location_id):
         if form.is_valid():
             valid = billing_details_form.is_valid()
             if valid:
-                available_dinners = actions.check_available_dinners(location_id)
-
                 if form.cleaned_data['dinner'] not in available_dinners:
                     messages.error(request, 'Dinner tickets are not available for the selected dinner')
                 else:
@@ -210,11 +209,18 @@ def new_dinner_order(request, location_id):
         else:
             form = CityHallDinnerTicketForm()
         billing_details_form = BillingDetailsForm()
+        available_dinners = actions.check_available_dinners(location_id)
+
+    acceptable_choices = []
+    for choice in form.fields['dinner'].choices:
+        if choice[0] in available_dinners:
+            acceptable_choices.append(choice)
+    form.fields['dinner'].choices = acceptable_choices
 
     context = {
         'form': form,
         'billing_details_form': billing_details_form,
-        'ticket_cost': ticket_cost
+        'ticket_cost': ticket_cost,
     }
 
     return render(request, 'extras/dinner/new_order.html', context)
@@ -244,12 +250,11 @@ def dinner_order_edit(request, order_id):
         else:
             form = CityHallDinnerTicketForm(request.POST)
         billing_details_form = BillingDetailsForm(request.POST)
+        available_dinners = actions.check_available_dinners(DINNERS[request.POST['dinner']]['location'])
 
         if form.is_valid():
             valid = billing_details_form.is_valid()
             if valid:
-                available_dinners = actions.check_available_dinners(DINNERS[request.POST['dinner']]['location'])
-
                 if form.cleaned_data['dinner'] not in available_dinners:
                     messages.error(request, 'Dinner tickets are not available for the selected dinner')
                 else:
@@ -281,11 +286,18 @@ def dinner_order_edit(request, order_id):
             'billing_name': order.billing_name,
             'billing_addr': order.billing_addr,
         })
+        available_dinners = actions.check_available_dinners(location_id)
+
+    acceptable_choices = []
+    for choice in form.fields['dinner'].choices:
+        if choice[0] in available_dinners:
+            acceptable_choices.append(choice)
+    form.fields['dinner'].choices = acceptable_choices
 
     context = {
         'form': form,
         'billing_details_form': billing_details_form,
-        'ticket_cost': ticket_cost
+        'ticket_cost': ticket_cost,
     }
 
     return render(request, 'extras/dinner/order_edit.html', context)
@@ -310,10 +322,9 @@ def dinner_ticket_edit(request, item_id):
                 form = ClinkDinnerTicketForm(request.POST)
             else:
                 form = CityHallDinnerTicketForm(request.POST)
+            available_dinners = actions.check_available_dinners(DINNERS[request.POST['dinner']]['location'])
 
             if form.is_valid():
-                available_dinners = actions.check_available_dinners(DINNERS[request.POST['dinner']]['location'])
-
                 if form.cleaned_data['dinner'] not in available_dinners:
                     messages.error(request, 'Dinner tickets are not available for the selected dinner')
                 else:
@@ -337,6 +348,13 @@ def dinner_ticket_edit(request, item_id):
 
     else:
         form = DinnerTicketForm.from_item(item)
+        available_dinners = actions.check_available_dinners(DINNERS[item.item.dinner]['location'])
+
+    acceptable_choices = []
+    for choice in form.fields['dinner'].choices:
+        if choice[0] in available_dinners or choice[0] == item.item.dinner:
+            acceptable_choices.append(choice)
+    form.fields['dinner'].choices = acceptable_choices
 
     context = {
         'form': form,
