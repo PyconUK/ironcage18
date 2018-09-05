@@ -1,0 +1,33 @@
+Dear {{ user.name }},
+
+PyCon UK is but a week away, and we hope you're as excited as we are! We just
+wanted to cover some administrative items before the conference. Later in the
+week we’ll let you know about our dinner and evening social events.
+
+Firstly - please bring your ticket! You will need the QR code shown on the
+tickets page (click "View your conference ticket" at https://2018.hq.pyconuk.org/)
+or attached to this email to collect your badge. You can bring this either
+electronically or on paper.
+
+Secondly, please can we invite you to update your profile on our site. Aside
+from helping us understand the demographics of the conference and design your
+highly sought after badge, it's the only way to let us know of accessibility and
+dietary requirements and book a space in the crèche.
+You can update your profile at https://2018.hq.pyconuk.org/profile/edit/
+
+If you've not seen our schedule, then please take a look! You can also download
+either full or personalised iCal files to keep the schedule on your device. You
+can find it at https://2018.hq.pyconuk.org/schedule/.
+
+A quick note on travel arrangements - parking is not available at the venue
+except for a limited number of disabled spaces. If you need one of these, please
+reply to this email letting us know your registration number so we can pass it
+to Cardiff City Hall security.
+
+We look forward to seeing you in Cardiff on the 15th!
+
+~ The PyCon UK 2018 Committee
+
+--
+PyCon UK Society Ltd. Company Number: 10073469. Registered in England and Wales.
+Registered office: c/o Acconomy, Arena Business Centre, Holyrood Close, Poole BH17 7FJ, United Kingdom
