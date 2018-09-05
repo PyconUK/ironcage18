@@ -1,6 +1,6 @@
 Dear {{ proposal.proposer.name }},
 
-We're looking forward to seeing you in Cardiff next month!
+We're looking forward to seeing you in Cardiff later this month!
 
 There's a full schedule for the conference on our website: https://2018.hq.pyconuk.org/schedule/
 
