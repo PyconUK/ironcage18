@@ -82,13 +82,14 @@ class UserAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
             return ['name', 'email_addr', 'last_login', 'is_contributor',
                     'is_organiser', 'is_staff', 'is_active', 'is_superuser',
                     'groups', 'user_permissions', 'accessibility_reqs',
-                    'childcare_reqs', 'dietary_reqs']
+                    'childcare_reqs', 'dietary_reqs', 'badge_pronoun', 'badge_company',
+                    'badge_snake_colour', 'badge_snake_extras', 'badge_twitter']
         else:
             return ['name', 'is_contributor', 'is_organiser']
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
-            return ['last_login', 'email_addr', 'name', 'accessibility_reqs',
+            return ['last_login', 'email_addr', 'accessibility_reqs',
                     'childcare_reqs', 'dietary_reqs']
         else:
             return self.get_fields(request, obj)
