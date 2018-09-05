@@ -291,8 +291,8 @@ def ticket(request, ticket_id):
             mark_safe('Your profile is incomplete. <a href="{}">Update your profile</a>'.format(reverse('accounts:edit_profile')))
         )
 
-        code = pyqrcode.create(ticket.ticket_id)
-        png_base64 = code.png_as_base64_str(scale=5)
+    code = pyqrcode.create(ticket.ticket_id)
+    png_base64 = code.png_as_base64_str(scale=5)
 
     context = {
         'ticket': ticket,
