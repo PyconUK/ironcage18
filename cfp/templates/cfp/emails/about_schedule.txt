@@ -1,0 +1,24 @@
+Dear {{ proposal.proposer.name }},
+
+We're looking forward to seeing you in Cardiff next month!
+
+There's a full schedule for the conference on our website: https://2018.hq.pyconuk.org/schedule/
+
+This is based on availability information people have sent us. If you can't make
+your assigned slot, please tell us immediately, and we can try to find an
+alternative time. If you're no longer able to give your session, please tell us.
+
+If you're presenting with additional speakers, please make sure they have their
+own ticket. Everybody who attends the conference needs a ticket, including
+organisers and speakers. Please also check their names are spelt correctly in the
+schedule – email us if you need a correction.
+
+We'll provide more information about rooms, chairs, and A/V closer to the conference.
+
+All the best,
+
+~ The PyCon UK Committee
+
+--
+PyCon UK Society Ltd. Company Number: 10073469. Registered in England and Wales.
+Registered office: c/o Acconomy, Arena Business Centre, Holyrood Close, Poole BH17 7FJ, United Kingdom
