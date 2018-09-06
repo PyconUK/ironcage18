@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib import messages
@@ -14,7 +15,7 @@ from tickets.forms import BillingDetailsForm
 from . import actions
 from .forms import (ChildrenTicketForm, CityHallDinnerTicketForm,
                     ClinkDinnerTicketForm, DinnerTicketForm)
-from .models import DINNER_LOCATIONS, ExtraItem, DINNERS
+from .models import DINNER_LOCATIONS, DINNERS, ExtraItem
 
 
 def new_children_order(request):
@@ -159,8 +160,7 @@ def children_ticket(request):
 
 
 def new_dinner_order(request, location_id):
-
-    ticket_cost = int(DINNER_LOCATIONS[location_id]['price'] * 1.2)
+    ticket_cost = Decimal(DINNER_LOCATIONS[location_id]['price']) * Decimal('1.2')
 
     if request.method == 'POST':
         if location_id == 'CL':
@@ -240,7 +240,7 @@ def dinner_order_edit(request, order_id):
 
     if request.method == 'POST':
         location_id = DINNERS[request.POST['dinner']]['location']
-        ticket_cost = int(DINNER_LOCATIONS[location_id]['price'] * 1.2)
+        ticket_cost = Decimal(DINNER_LOCATIONS[location_id]['price']) * Decimal('1.2')
 
         if not request.user.is_authenticated:
             return redirect(settings.LOGIN_URL)
@@ -281,7 +281,7 @@ def dinner_order_edit(request, order_id):
     else:
         form = DinnerTicketForm.from_pending_order(order)
         location_id = DINNERS[order.unconfirmed_details['dinner']]['location']
-        ticket_cost = int(DINNER_LOCATIONS[location_id]['price'] * 1.2)
+        ticket_cost = Decimal(DINNER_LOCATIONS[location_id]['price']) * Decimal('1.2')
         billing_details_form = BillingDetailsForm({
             'billing_name': order.billing_name,
             'billing_addr': order.billing_addr,

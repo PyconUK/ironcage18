@@ -17,6 +17,6 @@
   </tr>
   <tr>
     <th>Cost (incl. VAT)</th>
-    <td>&pound;{{ ticket.cost_incl_vat }}</td>
+    <td>&pound;{{ ticket.cost_incl_vat|floatformat:2 }}</td>
   </tr>
 </table>
