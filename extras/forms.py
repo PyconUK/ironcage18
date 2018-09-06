@@ -114,13 +114,13 @@ class DinnerTicketForm(forms.ModelForm):
 class ClinkDinnerTicketForm(DinnerTicketForm):
 
     dinner = forms.ChoiceField(label='Event', choices=CLINK_DINNERS)
-    starter = forms.ChoiceField(choices=CLINK_STARTERS)
-    main = forms.ChoiceField(label='Main Course', help_text='gf: Gluten Free, v: vegetarian, vg: vegan', choices=CLINK_MAINS)
-    dessert = forms.ChoiceField(choices=CLINK_DESSERTS)
+    starter = forms.ChoiceField(help_text='v: vegetarian, vg: vegan', choices=CLINK_STARTERS)
+    main = forms.ChoiceField(label='Main Course', help_text='vg: vegan', choices=CLINK_MAINS)
+    dessert = forms.ChoiceField(help_text='vg: vegan', choices=CLINK_DESSERTS)
 
 
 class CityHallDinnerTicketForm(DinnerTicketForm):
     dinner = forms.ChoiceField(label='Event', choices=CITY_HALL_DINNERS)
-    starter = forms.ChoiceField(choices=CITY_HALL_STARTERS)
-    main = forms.ChoiceField(label='Main Course', help_text='gf: Gluten Free, v: vegetarian, vg: vegan', choices=CITY_HALL_MAINS)
-    dessert = forms.ChoiceField(choices=CITY_HALL_DESSERTS)
+    starter = forms.ChoiceField(help_text='gf: Gluten Free, vg: vegan', choices=CITY_HALL_STARTERS)
+    main = forms.ChoiceField(label='Main Course', help_text='vg: vegan', choices=CITY_HALL_MAINS)
+    dessert = forms.ChoiceField(help_text='gf: Gluten Free, vg: vegan', choices=CITY_HALL_DESSERTS)
