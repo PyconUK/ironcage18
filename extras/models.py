@@ -210,6 +210,7 @@ class DinnerTicket(models.Model):
     starter = models.CharField(max_length=4, blank=False, choices=CLINK_STARTERS + CITY_HALL_STARTERS)
     main = models.CharField(max_length=4, blank=False, choices=CLINK_MAINS + CITY_HALL_MAINS)
     dessert = models.CharField(max_length=4, blank=False, choices=CLINK_DESSERTS + CITY_HALL_DESSERTS)
+    extra_item = GenericRelation('extras.ExtraItem')
 
     def __str__(self):
         return f'{self.get_dinner_display()}'
