@@ -199,7 +199,7 @@ class NewDinnerTicketOrderTests(TestCase):
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'to buy a ticket')
         self.assertContains(rsp, 'Place my order')
-        self.assertNotContains(rsp, 'Claim my free ticket')
+        self.assertNotContains(rsp, 'Claim my complimentary ticket')
 
     def test_get_when_contributor_with_no_tickets(self):
         self.client.force_login(self.alice)
@@ -210,7 +210,7 @@ class NewDinnerTicketOrderTests(TestCase):
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'to buy a ticket')
         self.assertNotContains(rsp, 'Place my order')
-        self.assertContains(rsp, 'Claim my free ticket')
+        self.assertContains(rsp, 'Claim my complimentary ticket')
 
     def test_get_when_contributor_with_one_ticket(self):
         self.client.force_login(self.alice)
@@ -223,7 +223,7 @@ class NewDinnerTicketOrderTests(TestCase):
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'to buy a ticket')
         self.assertContains(rsp, 'Place my order')
-        self.assertNotContains(rsp, 'Claim my free ticket')
+        self.assertNotContains(rsp, 'Claim my complimentary ticket')
 
     @override_settings(TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
     def test_get_when_ticket_sales_have_closed(self):
