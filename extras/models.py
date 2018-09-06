@@ -110,41 +110,44 @@ class ChildrenTicket(models.Model):
 
 
 CLINK_STARTERS = (
-    ('ENB', 'Egg and bacon'),
-    ('ESB', 'Egg, sausage and bacon'),
+    ('SOTD', 'Soup of the Day, sour dough bread (vg)'),
+    ('STRC', 'Smoked trout rillette coated in a citrus crumb, trio of beetroot, with radicchio salad'),
+    ('BCBB', 'Blue cheese bon bons, banana puree roast walnuts, balsamic reduction, frisee salad (v)'),
 )
 
 CLINK_MAINS = (
-    ('ENS', 'Egg and Spam'),
-    ('EBS', 'Egg, bacon and Spam'),
+    ('PSST', 'Pan seared sea trout, sea bass and plaice fillet, shellfish broth, spring onion, saffron aioli'),
+    ('RPFC', 'Roast pork fillet with crispy belly, sage mash, apple puree, charred baby carrots'),
+    ('FMP', 'Forest mushroom parcel, wilted greens, tarragon broth (vg)'),
 )
 
 CLINK_DESSERTS = (
-    ('EBSS', 'Egg, bacon, sausage and Spam'),
-    ('SBSS', 'Spam, bacon, sausage and Spam'),
+    ('ICP', 'Iced caramel parfait, sable biscuit, crisp meringue and autumn berries'),
+    ('RPPP', 'Rice pudding, pistachio praline, damson compote (vg)'),
 )
 
 CITY_HALL_STARTERS = (
-    ('SESS', 'Spam, egg, Spam, Spam, bacon and Spam'),
-    ('SSSE', 'Spam, Spam, Spam, egg and Spam'),
+    ('RORS', 'Rillette of oak roast scottish salmon with ogen melon & gooseberry cream'),
+    ('HTRP', 'Heritage tomato and roasted pepper soup with sippets (vg/gf on request at the table)'),
 )
 
 CITY_HALL_MAINS = (
-    ('SSSS', 'Spam, Spam, Spam, Spam, Spam, Spam, baked beans, Spam, Spam, Spam and Spam'),
-    ('LTAC', 'Lobster Thermidor aux crevettes with a Mornay sauce, garnished with truffle pâté, brandy and a fried egg on top, and Spam.'),
+    ('RGBR', 'Rosemary and garlic braised rump of Welsh lamb in a rich red wine jus served with champ mash'),
+    ('RSBL', 'Roast sea bass served with a laverbread and orange butter sauce & cockles'),
+    ('RVTT', 'Roasted vegetable tian with sunblushed tomato sauce (vg)'),
 )
 
 CITY_HALL_DESSERTS = (
-    ('ENB', 'Egg and bacon'),
-    ('ESB', 'Egg, sausage and bacon'),
+    ('TLT', 'Tangy lemon tart with orange and ginger syrup and lavender ice cream'),
+    ('APS', 'Apple pie served with elderflower sorbet (vg, gf)'),
 )
 
 DINNER_LOCATIONS = {
     'CH': {
         'name': 'Conference Dinner at City Hall',
         'location': 'Lower Hall, Cardiff City Hall, Cathays Park, Cardiff',
-        'capacity': 200,
-        'price': 30,
+        'capacity': 300,
+        'price': 34,
     },
     'CL': {
         'name': 'The Clink',

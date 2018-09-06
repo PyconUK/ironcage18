@@ -86,9 +86,9 @@ class CreatePendingDinnerTicketOrderTests(TestCase):
             billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
             unconfirmed_details={
                 'dinner': 'CD',
-                'starter': 'SESS',
-                'main': 'LTAC',
-                'dessert': 'ESB',
+                'starter': 'HTRP',
+                'main': 'RVTT',
+                'dessert': 'APS',
             }
         )
 
@@ -110,9 +110,9 @@ class UpdatePendingDinnerOrderTests(TestCase):
             billing_details={'name': 'Alice Apple', 'addr': 'Eadrax, Sirius Tau'},
             unconfirmed_details={
                 'dinner': 'CD',
-                'starter': 'SSSE',
-                'main': 'SSSS',
-                'dessert': 'ENB',
+                'starter': 'RORS',
+                'main': 'RSBL',
+                'dessert': 'TLT',
             }
         )
 
@@ -123,16 +123,16 @@ class UpdatePendingDinnerOrderTests(TestCase):
 
         [row] = order.all_order_rows()
 
-        self.assertEqual(row.cost_excl_vat, 30)
+        self.assertEqual(row.cost_excl_vat, 34)
         self.assertEqual(row.item_descr, "Conference Dinner at City Hall on Saturday 15th September dinner ticket")
         self.assertEqual(row.item_descr_extra, '')
 
         ticket = row.item
         self.assertEqual(ticket.owner, order.purchaser)
         self.assertEqual(ticket.item.dinner, 'CD')
-        self.assertEqual(ticket.item.starter, 'SSSE')
-        self.assertEqual(ticket.item.main, 'SSSS')
-        self.assertEqual(ticket.item.dessert, 'ENB')
+        self.assertEqual(ticket.item.starter, 'RORS')
+        self.assertEqual(ticket.item.main, 'RSBL')
+        self.assertEqual(ticket.item.dessert, 'TLT')
 
 
 class UpdateExistingDinnerTicketTests(TestCase):
@@ -146,9 +146,9 @@ class UpdateExistingDinnerTicketTests(TestCase):
             ticket,
             details={
                 'dinner': 'CD',
-                'starter': 'SSSE',
-                'main': 'SSSS',
-                'dessert': 'ENB',
+                'starter': 'RORS',
+                'main': 'RSBL',
+                'dessert': 'TLT',
             }
         )
 
@@ -159,11 +159,11 @@ class UpdateExistingDinnerTicketTests(TestCase):
         self.assertEqual(order.billing_name, 'Sirius Cybernetics Corp.')
         self.assertEqual(order.billing_addr, 'Eadrax, Sirius Tau')
 
-        self.assertEqual(row.cost_excl_vat, 30)
+        self.assertEqual(row.cost_excl_vat, 34)
         self.assertEqual(row.item_descr, "Conference Dinner at City Hall on Saturday 15th September dinner ticket")
         self.assertEqual(row.item_descr_extra, '')
 
         self.assertEqual(ticket.dinner, 'CD')
-        self.assertEqual(ticket.starter, 'SSSE')
-        self.assertEqual(ticket.main, 'SSSS')
-        self.assertEqual(ticket.dessert, 'ENB')
+        self.assertEqual(ticket.starter, 'RORS')
+        self.assertEqual(ticket.main, 'RSBL')
+        self.assertEqual(ticket.dessert, 'TLT')

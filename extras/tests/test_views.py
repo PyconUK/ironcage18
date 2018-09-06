@@ -228,9 +228,9 @@ class NewDinnerTicketOrderTests(TestCase):
         self.client.force_login(self.alice)
         form_data = {
             'dinner': 'CLSA',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
             'billing_name': 'Puff Dragon',
             'billing_addr': 'By The Sea, Honalee',
         }
@@ -258,9 +258,9 @@ class NewDinnerTicketOrderTests(TestCase):
 
         form_data = {
             'dinner': 'CLSA',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
             'billing_name': 'Puff Dragon',
             'billing_addr': 'By The Sea, Honalee',
         }
@@ -282,9 +282,9 @@ class NewDinnerTicketOrderTests(TestCase):
 
         form_data = {
             'dinner': 'CLSA',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
             'billing_name': 'Puff Dragon',
             'billing_addr': 'By The Sea, Honalee',
         }
@@ -328,9 +328,9 @@ class DinnerTicketOrderEditTests(TestCase):
         self.client.force_login(self.order.purchaser)
         form_data = {
             'dinner': 'CLSU',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
             'billing_name': 'Puff Dragon',
             'billing_addr': 'By The Sea, Honalee',
         }
@@ -371,9 +371,9 @@ class DinnerTicketOrderEditTests(TestCase):
         self.client.force_login(self.order.purchaser)
         form_data = {
             'dinner': 'CLSU',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
             'billing_name': 'Puff Dragon',
             'billing_addr': 'By The Sea, Honalee',
         }
@@ -387,9 +387,9 @@ class DinnerTicketOrderEditTests(TestCase):
         self.client.force_login(self.order.purchaser)
         form_data = {
             'dinner': 'CLSU',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
             'billing_name': 'Puff Dragon',
             'billing_addr': 'By The Sea, Honalee',
         }
@@ -459,9 +459,9 @@ class DinnerTicketEditTests(TestCase):
         self.client.force_login(self.ticket.order.purchaser)
         form_data = {
             'dinner': 'CD',
-            'starter': 'SSSE',
-            'main': 'LTAC',
-            'dessert': 'ESB',
+            'starter': 'RORS',
+            'main': 'RGBR',
+            'dessert': 'TLT',
         }
         rsp = self.client.post(self.url, form_data, follow=True)
 
@@ -471,9 +471,9 @@ class DinnerTicketEditTests(TestCase):
         self.client.force_login(self.ticket.order.purchaser)
         form_data = {
             'dinner': 'CLSU',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
         }
         rsp = self.client.post(self.url, form_data, follow=True)
 
@@ -483,9 +483,9 @@ class DinnerTicketEditTests(TestCase):
         self.client.force_login(self.clink_ticket.order.purchaser)
         form_data = {
             'dinner': 'CLSU',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
         }
         rsp = self.client.post(self.clink_url, form_data, follow=True)
 
@@ -495,9 +495,9 @@ class DinnerTicketEditTests(TestCase):
         self.client.force_login(self.ticket.order.purchaser)
         form_data = {
             'dinner': 'CD',
-            'starter': 'ESB',
+            'starter': 'STRC',
             'main': 'LTAC',
-            'dessert': 'ESB',
+            'dessert': 'STRC',
         }
         rsp = self.client.post(self.url, form_data, follow=True)
 
@@ -533,9 +533,9 @@ class DinnerTicketEditTests(TestCase):
 
         form_data = {
             'dinner': 'CLSU',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
             'billing_name': 'Puff Dragon',
             'billing_addr': 'By The Sea, Honalee',
         }
@@ -557,9 +557,9 @@ class DinnerTicketEditTests(TestCase):
 
         form_data = {
             'dinner': 'CLSU',
-            'starter': 'ESB',
-            'main': 'EBS',
-            'dessert': 'SBSS',
+            'starter': 'STRC',
+            'main': 'FMP',
+            'dessert': 'RPPP',
             'billing_name': 'Puff Dragon',
             'billing_addr': 'By The Sea, Honalee',
         }
