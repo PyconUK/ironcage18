@@ -1,0 +1,15 @@
+Hi!
+
+We wanted to remind you that you have an unclaimed ticket invitation for
+PyCon UK 2018! In order to attend the conference, you'll need to click the link
+below and sign up for an account. This will activate your ticket and add it to
+your account.
+
+Your ticket invitation link is: {{url}}
+
+If you need any assistance or have any further questions, please reply to this
+email and let us know.
+
+All the best
+
+~ The PyCon UK 2018 Committee
