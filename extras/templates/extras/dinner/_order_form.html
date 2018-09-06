@@ -40,7 +40,11 @@
       </div>
       <div class="row">
         <div class="col">
-          <input type="submit" value="Place my order" class="btn btn-primary" />
+          {% if user_dinners == 0 and request.user.is_contributor %}
+            <input type="submit" value="Claim my free ticket" class="btn btn-primary" />
+          {% else %}
+            <input type="submit" value="Place my order" class="btn btn-primary" />
+          {% endif %}
         </div>
       </div>
     </div>

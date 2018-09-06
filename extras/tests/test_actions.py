@@ -1,9 +1,9 @@
 from django.test import TestCase
-from datetime import datetime
 from . import factories
 
 from extras import actions
 from orders import actions as order_actions
+from orders.models import OrderRow
 
 
 class CreatePendingChildrenTicketOrderTests(TestCase):
@@ -167,3 +167,71 @@ class UpdateExistingDinnerTicketTests(TestCase):
         self.assertEqual(ticket.starter, 'RORS')
         self.assertEqual(ticket.main, 'RSBL')
         self.assertEqual(ticket.dessert, 'TLT')
+
+
+class CreateFreeDinnerTicketOrderTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user()
+
+    def test_order_fails_if_not_contributor(self):
+        self.alice.is_contributor = False
+        self.alice.save()
+
+        with self.assertRaises(AssertionError):
+            actions.create_free_dinner_ticket_order(
+                purchaser=self.alice,
+                details={
+                    'dinner': 'CD',
+                    'starter': 'HTRP',
+                    'main': 'RVTT',
+                    'dessert': 'APS',
+                }
+            )
+
+        self.assertEqual(self.alice.orders.count(), 0)
+        self.assertEqual(self.alice.extras.count(), 0)
+        self.assertIsNone(self.alice.get_ticket())
+
+    def test_order_for_contributor(self):
+        self.alice.is_contributor = True
+        self.alice.save()
+
+        item = actions.create_free_dinner_ticket_order(
+            purchaser=self.alice,
+            details={
+                'dinner': 'CD',
+                'starter': 'HTRP',
+                'main': 'RVTT',
+                'dessert': 'APS',
+            }
+        )
+
+        self.assertEqual(self.alice.orders.count(), 0)
+        self.assertEqual(self.alice.extras.count(), 1)
+
+        self.assertEqual(item.owner, self.alice)
+
+        with self.assertRaises(OrderRow.DoesNotExist):
+            item.order
+
+    def test_order_for_contributor_who_already_has_a_ticket(self):
+        self.alice.is_contributor = True
+        self.alice.save()
+
+        order = factories.create_pending_dinner_ticket_order(self.alice)
+        order_actions.confirm_order(order, 'id', 12345678)
+
+        with self.assertRaises(AssertionError):
+            actions.create_free_dinner_ticket_order(
+                purchaser=self.alice,
+                details={
+                    'dinner': 'CD',
+                    'starter': 'HTRP',
+                    'main': 'RVTT',
+                    'dessert': 'APS',
+                }
+            )
+
+        self.assertEqual(self.alice.orders.count(), 1)
+        self.assertEqual(self.alice.extras.count(), 1)

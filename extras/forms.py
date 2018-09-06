@@ -1,5 +1,7 @@
 from django import forms
 
+from orders.models import OrderRow
+
 from .models import (CITY_HALL_DESSERTS, CITY_HALL_DINNERS, CITY_HALL_MAINS,
                      CITY_HALL_STARTERS, CLINK_DESSERTS, CLINK_DINNERS,
                      CLINK_MAINS, CLINK_STARTERS, ChildrenTicket, DinnerTicket)
@@ -96,7 +98,10 @@ class DinnerTicketForm(forms.ModelForm):
 
     @classmethod
     def from_item(cls, item):
-        assert not item.order.payment_required()
+        try:
+            assert not item.order.payment_required()
+        except OrderRow.DoesNotExist:
+            assert item.owner.is_contributor
 
         data = {
             'dinner': item.item.dinner,

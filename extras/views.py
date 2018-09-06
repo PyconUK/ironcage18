@@ -162,6 +162,14 @@ def children_ticket(request):
 def new_dinner_order(request, location_id):
     ticket_cost = Decimal(DINNER_LOCATIONS[location_id]['price']) * Decimal('1.2')
 
+    user_dinners = 0
+    if request.user.is_authenticated:
+        dinner_ticket_content_type = ContentType.objects.get(app_label="extras", model="dinnerticket")
+        user_dinners = ExtraItem.objects.filter(
+            owner=request.user,
+            content_type=dinner_ticket_content_type
+        ).count()
+
     if request.method == 'POST':
         if location_id == 'CL':
             form = ClinkDinnerTicketForm(request.POST)
@@ -191,13 +199,21 @@ def new_dinner_order(request, location_id):
                         'dessert': form.cleaned_data['dessert'],
                     }
 
-                    order = actions.create_pending_dinner_ticket_order(
-                        purchaser=request.user,
-                        billing_details=billing_details,
-                        unconfirmed_details=unconfirmed_details
-                    )
+                    if user_dinners == 0 and request.user.is_contributor:
+                        # Free dinner route
+                        actions.create_free_dinner_ticket_order(
+                            purchaser=request.user,
+                            details=unconfirmed_details
+                        )
+                        return redirect('extras:dinner_ticket')
+                    else:
+                        order = actions.create_pending_dinner_ticket_order(
+                            purchaser=request.user,
+                            billing_details=billing_details,
+                            unconfirmed_details=unconfirmed_details
+                        )
 
-                    return redirect(order)
+                        return redirect(order)
     else:
         if datetime.now(timezone.utc) > settings.TICKET_SALES_CLOSE_AT:
             if request.GET.get('deadline-bypass-token', '') != settings.TICKET_DEADLINE_BYPASS_TOKEN:
@@ -221,6 +237,7 @@ def new_dinner_order(request, location_id):
         'form': form,
         'billing_details_form': billing_details_form,
         'ticket_cost': ticket_cost,
+        'user_dinners': user_dinners
     }
 
     return render(request, 'extras/dinner/new_order.html', context)
@@ -307,7 +324,7 @@ def dinner_order_edit(request, order_id):
 def dinner_ticket_edit(request, item_id):
     item = ExtraItem.objects.get_by_item_id_or_404(item_id)
 
-    if request.user != item.order.purchaser:
+    if request.user != item.owner:
         messages.warning(request, 'Only the purchaser of an order can update the order')
         return redirect('index')
 

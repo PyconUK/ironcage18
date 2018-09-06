@@ -84,14 +84,14 @@
           <a href="{% url 'extras:new_dinner_order' 'CL' %}">Order more Clink Dinner tickets</a>
         {% endif %}
 
-        {% if childrensday or dinner %}
+        {% if childrensday_orders or dinner_orders %}
           <hr>
           View your orders:
           <ul>
-            {% for order in dinner %}
+            {% for order in dinner_orders %}
               <li><a href="{% url 'orders:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
             {% endfor %}
-            {% for order in childrensday %}
+            {% for order in childrensday_orders %}
               <li><a href="{% url 'orders:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
             {% endfor %}
           </ul>
