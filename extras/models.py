@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from decimal import Decimal
 from django.conf import settings
 from django.contrib.contenttypes.fields import (GenericForeignKey,
                                                 GenericRelation)
@@ -90,7 +91,7 @@ class ExtraItem(models.Model):
 
     @property
     def cost_incl_vat(self):
-        return int(self.cost_excl_vat * 1.2)
+        return Decimal(self.cost_excl_vat) * Decimal('1.2')
 
 
 class ChildrenTicket(models.Model):

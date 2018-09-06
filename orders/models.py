@@ -1,5 +1,6 @@
 from collections import Counter
 from datetime import datetime, timezone
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -10,9 +11,9 @@ from django.db.models import Max
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
+from extras.models import ExtraItem
 from ironcage.utils import Scrambler
 from tickets.models import Ticket
-from extras.models import ExtraItem
 
 
 class SalesRecord:
@@ -147,7 +148,7 @@ class Order(models.Model, SalesRecord):
 
     @property
     def cost_pence_incl_vat(self):
-        return 100 * self.cost_incl_vat
+        return int(100 * self.cost_incl_vat)
 
     @property
     def full_invoice_number(self):
@@ -355,11 +356,11 @@ class OrderRow(models.Model):
 
     @property
     def cost_incl_vat(self):
-        return int(self.cost_excl_vat * 1.2)
+        return Decimal(self.cost_excl_vat) * Decimal('1.2')
 
     @property
     def cost_pence_incl_vat(self):
-        return 100 * self.cost_incl_vat
+        return int(100 * self.cost_incl_vat)
 
     @property
     def owner_name(self):

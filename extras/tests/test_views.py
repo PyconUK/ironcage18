@@ -189,6 +189,7 @@ class NewDinnerTicketOrderTests(TestCase):
     def setUpTestData(cls):
         cls.alice = factories.create_user()
         cls.url = '/extras/dinner/orders/new/CL'
+        cls.conference_url = '/extras/dinner/orders/new/CH'
 
     def test_get(self):
         self.client.force_login(self.alice)
@@ -224,7 +225,7 @@ class NewDinnerTicketOrderTests(TestCase):
         self.assertContains(rsp, 'ticket sales have closed')
         self.assertRedirects(rsp, '/')
 
-    def test_post(self):
+    def test_post_clink(self):
         self.client.force_login(self.alice)
         form_data = {
             'dinner': 'CLSA',
@@ -237,6 +238,22 @@ class NewDinnerTicketOrderTests(TestCase):
         rsp = self.client.post(self.url, form_data, follow=True)
 
         self.assertContains(rsp, 'You are ordering 1 item')
+        self.assertContains(rsp, '£36')
+
+    def test_post_conference(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'dinner': 'CD',
+            'starter': 'HTRP',
+            'main': 'RSBL',
+            'dessert': 'APS',
+            'billing_name': 'Puff Dragon',
+            'billing_addr': 'By The Sea, Honalee',
+        }
+        rsp = self.client.post(self.conference_url, form_data, follow=True)
+
+        self.assertContains(rsp, 'You are ordering 1 item')
+        self.assertContains(rsp, '£40.80')
 
     def test_get_when_not_authenticated(self):
         rsp = self.client.get(self.url)
