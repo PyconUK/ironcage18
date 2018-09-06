@@ -1,0 +1,52 @@
+{% load bootstrap4 %}
+
+<form method="post" id="order-form">
+  {% csrf_token %}
+  {% include './_dinner_order_form.html' %}
+
+  <div class="card bg-primary text-dark">
+    <div class="card-header"><h2>Billing details</h2></div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <label>Billing name</label>
+        </div>
+        <div class="col-12 col-md-9">
+          {{ billing_details_form.billing_name }}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <label>Billing address</label>
+        </div>
+        <div class="col-12 col-md-9">
+          {{ billing_details_form.billing_addr }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-primary text-dark">
+    <div class="card-header"><h2>Summary</h2></div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col col-3 col-md-3">
+          <b>Total cost (incl. VAT)</b>
+        </div>
+        <div class="col col-9 col-md-9">
+          &pound;{{ ticket_cost|floatformat:2 }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          {% if user_dinners == 0 and request.user.is_contributor %}
+            <input type="submit" value="Claim my complimentary ticket" class="btn btn-primary" />
+          {% else %}
+            <input type="submit" value="Place my order" class="btn btn-primary" />
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

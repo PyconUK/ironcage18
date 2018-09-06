@@ -1,6 +1,10 @@
 from django import forms
 
-from .models import ChildrenTicket
+from orders.models import OrderRow
+
+from .models import (CITY_HALL_DESSERTS, CITY_HALL_DINNERS, CITY_HALL_MAINS,
+                     CITY_HALL_STARTERS, CLINK_DESSERTS, CLINK_DINNERS,
+                     CLINK_MAINS, CLINK_STARTERS, ChildrenTicket, DinnerTicket)
 
 
 class ChildrenTicketForm(forms.ModelForm):
@@ -62,3 +66,66 @@ class ChildrenTicketForm(forms.ModelForm):
         }
 
         return cls(data)
+
+
+class DinnerTicketForm(forms.ModelForm):
+
+    class Meta:
+        model = DinnerTicket
+        fields = [
+            'dinner',
+            'starter',
+            'main',
+            'dessert',
+        ]
+
+    @classmethod
+    def from_pending_order(cls, order):
+        assert order.payment_required()
+        unconfirmed_details = order.unconfirmed_details
+
+        data = {
+            'dinner': unconfirmed_details['dinner'],
+            'starter': unconfirmed_details['starter'],
+            'main': unconfirmed_details['main'],
+            'dessert': unconfirmed_details['dessert'],
+        }
+
+        if data['dinner'] in ['CD']:
+            return CityHallDinnerTicketForm(data)
+        else:
+            return ClinkDinnerTicketForm(data)
+
+    @classmethod
+    def from_item(cls, item):
+        try:
+            assert not item.order.payment_required()
+        except OrderRow.DoesNotExist:
+            assert item.owner.is_contributor
+
+        data = {
+            'dinner': item.item.dinner,
+            'starter': item.item.starter,
+            'main': item.item.main,
+            'dessert': item.item.dessert,
+        }
+
+        if item.item.dinner in ['CD']:
+            return CityHallDinnerTicketForm(data)
+        else:
+            return ClinkDinnerTicketForm(data)
+
+
+class ClinkDinnerTicketForm(DinnerTicketForm):
+
+    dinner = forms.ChoiceField(label='Event', choices=CLINK_DINNERS)
+    starter = forms.ChoiceField(help_text='v: vegetarian, vg: vegan', choices=CLINK_STARTERS)
+    main = forms.ChoiceField(label='Main Course', help_text='vg: vegan', choices=CLINK_MAINS)
+    dessert = forms.ChoiceField(help_text='vg: vegan', choices=CLINK_DESSERTS)
+
+
+class CityHallDinnerTicketForm(DinnerTicketForm):
+    dinner = forms.ChoiceField(label='Event', choices=CITY_HALL_DINNERS)
+    starter = forms.ChoiceField(help_text='gf: Gluten Free, vg: vegan', choices=CITY_HALL_STARTERS)
+    main = forms.ChoiceField(label='Main Course', help_text='vg: vegan', choices=CITY_HALL_MAINS)
+    dessert = forms.ChoiceField(help_text='gf: Gluten Free, vg: vegan', choices=CITY_HALL_DESSERTS)

@@ -32,17 +32,17 @@
 
       <tr>
         <th>Total (excl. VAT)</th>
-        <td>£{{ refund.cost_excl_vat }}</td>
+        <td>£{{ refund.cost_excl_vat|floatformat:2 }}</td>
       </tr>
 
       <tr>
         <th>VAT at 20%</th>
-        <td>£{{ refund.vat }}</td>
+        <td>£{{ refund.vat|floatformat:2 }}</td>
       </tr>
 
       <tr>
         <th>Total (incl. VAT)</th>
-        <td>£{{ refund.cost_incl_vat }}</td>
+        <td>£{{ refund.cost_incl_vat|floatformat:2 }}</td>
       </tr>
     </table>
   </div>
@@ -65,10 +65,10 @@
     <tr>
       <td>{{ record.item_descr }}</td>
       <td>{{ record.quantity }}</td>
-      <td>£{{ record.per_item_cost_excl_vat }}</td>
-      <td>£{{ record.per_item_cost_incl_vat }}</td>
-      <td>£{{ record.total_cost_excl_vat }}</td>
-      <td>£{{ record.total_cost_incl_vat }}</td>
+      <td>£{{ record.per_item_cost_excl_vat|floatformat:2 }}</td>
+      <td>£{{ record.per_item_cost_incl_vat|floatformat:2 }}</td>
+      <td>£{{ record.total_cost_excl_vat|floatformat:2 }}</td>
+      <td>£{{ record.total_cost_incl_vat|floatformat:2 }}</td>
     </tr>
     {% endfor %}
 
@@ -77,8 +77,8 @@
       <th></th>
       <th></th>
       <th></th>
-      <th>£{{ refund.cost_excl_vat }}</th>
-      <th>£{{ refund.cost_incl_vat }}</th>
+      <th>£{{ refund.cost_excl_vat|floatformat:2 }}</th>
+      <th>£{{ refund.cost_incl_vat|floatformat:2 }}</th>
     </tr>
   </tbody>
 </table>

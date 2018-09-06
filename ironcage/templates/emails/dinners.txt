@@ -1,0 +1,40 @@
+Dear {{ user.name }},
+
+It is now just over a week to the start of the event.
+
+Tickets are now on sale for the Grand Conference Dinner on Saturday 15th September.
+These always sell out, so order yours now to avoid disappointment: https://2018.pyconuk.org/evening-events/grand-conference-dinner/.
+
+So that you don't need to wander the streets of Cardiff in search of an excellent
+meal and enjoyable company, we've arranged additional dinners for every night of
+the event, at one of Cardiff's best restaurants, The Clink: https://2018.pyconuk.org/evening-events/dinners-clink/.
+
+All the conference dinners are offered to you at cost price or less - they are excellent value.
+
+{% if user.is_contributor %}
+To thank you for your contribution to PyCon UK, whether you are a speaker, workshop
+organiser or are putting something else into the event, we'd like to offer you a
+complimentary ticket to one of the dinners.
+
+To claim your ticket simply go to book a dinner ticket as normal, and at the bottom
+of the page you will see a button marked "Claim my complimentary ticket".
+You can book further tickets at the normal price after claiming your complimentary one.
+
+{% endif %}
+We've also arranged other activities for the evenings, and you're warmly invited
+to take part in them all.
+
+Sunday night is board games and manual technology night: https://2018.pyconuk.org/evening-events/board-games-and-manual-technology/
+
+On Monday night, there will be a Code Dojo, suitable for all levels of expertise: https://2018.pyconuk.org/evening-events/code-dojo/
+
+And Tuesday night is Python music night: https://2018.pyconuk.org/evening-events/python-music-night/.
+
+There's be a cash bar and a wood-fired pizza oven at City Hall on each of these nights.
+
+Please take this opportunity to check the final details of your tickets and registration.
+It will save us a great deal of time if everything is in order for you when you arrive.
+
+With best regards,
+
+The PyCon UK team

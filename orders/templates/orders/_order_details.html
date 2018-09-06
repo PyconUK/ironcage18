@@ -15,15 +15,15 @@
       </tr>
       <tr>
         <th>Total (excl. VAT)</th>
-        <td>£{{ order.cost_excl_vat }}</td>
+        <td>£{{ order.cost_excl_vat|floatformat:2 }}</td>
       </tr>
       <tr>
         <th>VAT</th>
-        <td>£{{ order.vat }}</td>
+        <td>£{{ order.vat|floatformat:2 }}</td>
       </tr>
       <tr>
         <th>Total (incl. VAT)</th>
-        <td>£{{ order.cost_incl_vat }}</td>
+        <td>£{{ order.cost_incl_vat|floatformat:2 }}</td>
       </tr>
     </table>
   </div>
@@ -39,7 +39,7 @@
         <td>{{ row.owner_name }}</td>
         <td>{{ row.item_descr }}</td>
         <td>{{ row.item_descr_extra }}</td>
-        <td>£{{ row.cost_incl_vat }}</td>
+        <td>£{{ row.cost_incl_vat|floatformat:2 }}</td>
       </tr>
       {% endfor %}
     </table>

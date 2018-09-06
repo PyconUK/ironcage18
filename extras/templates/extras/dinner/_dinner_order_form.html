@@ -1,0 +1,16 @@
+{% load bootstrap4 %}
+
+  <div class="card bg-primary text-dark">
+    <div class="card-header"><h2>About your order</h2></div>
+    <div class="card-body">
+
+      {% bootstrap_field form.dinner layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.starter layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.main layout='horizontal' %}
+      <hr>
+      {% bootstrap_field form.dessert layout='horizontal' %}
+
+    </div>
+  </div>
