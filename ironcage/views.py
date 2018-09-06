@@ -28,8 +28,10 @@ def index(request):
         context = {
             'ticket': user.get_ticket(),
             'orders': user.orders.filter(content_type=ticket_content_type).all(),
-            'childrensday': user.orders.filter(content_type=children_ticket_content_type).all(),
-            'dinner': user.orders.filter(content_type=dinner_ticket_content_type).all(),
+            'childrensday': user.extras.filter(content_type=children_ticket_content_type).all(),
+            'childrensday_orders': user.orders.filter(content_type=children_ticket_content_type).all(),
+            'dinner': user.extras.filter(content_type=dinner_ticket_content_type).all(),
+            'dinner_orders': user.orders.filter(content_type=dinner_ticket_content_type).all(),
             'proposals': user.proposals.all(),
             'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
             'grant_application': user.get_grant_application(),

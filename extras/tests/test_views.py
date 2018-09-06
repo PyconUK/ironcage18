@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from django.test import TestCase, override_settings
 
 from . import factories
+from orders.actions import confirm_order
 from extras.models import DINNERS
 
 
@@ -197,6 +198,32 @@ class NewDinnerTicketOrderTests(TestCase):
         self.assertContains(rsp, '<p>Please note that only one ticket can be purchased at a time, but multiple orders can be placed.</p>', html=True)
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'to buy a ticket')
+        self.assertContains(rsp, 'Place my order')
+        self.assertNotContains(rsp, 'Claim my free ticket')
+
+    def test_get_when_contributor_with_no_tickets(self):
+        self.client.force_login(self.alice)
+        self.alice.is_contributor = True
+        self.alice.save()
+        rsp = self.client.get(self.url)
+        self.assertContains(rsp, '<p>Please note that only one ticket can be purchased at a time, but multiple orders can be placed.</p>', html=True)
+        self.assertContains(rsp, '<form method="post" id="order-form">')
+        self.assertNotContains(rsp, 'to buy a ticket')
+        self.assertNotContains(rsp, 'Place my order')
+        self.assertContains(rsp, 'Claim my free ticket')
+
+    def test_get_when_contributor_with_one_ticket(self):
+        self.client.force_login(self.alice)
+        self.alice.is_contributor = True
+        self.alice.save()
+        order = factories.create_pending_dinner_ticket_order(self.alice)
+        confirm_order(order, 'id', 12345678)
+        rsp = self.client.get(self.url)
+        self.assertContains(rsp, '<p>Please note that only one ticket can be purchased at a time, but multiple orders can be placed.</p>', html=True)
+        self.assertContains(rsp, '<form method="post" id="order-form">')
+        self.assertNotContains(rsp, 'to buy a ticket')
+        self.assertContains(rsp, 'Place my order')
+        self.assertNotContains(rsp, 'Claim my free ticket')
 
     @override_settings(TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
     def test_get_when_ticket_sales_have_closed(self):

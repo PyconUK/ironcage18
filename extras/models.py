@@ -12,7 +12,7 @@ from ironcage.utils import Scrambler
 
 
 class ExtraItem(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name='extras')
 
     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING, null=True)
     object_id = models.PositiveIntegerField(null=True)
