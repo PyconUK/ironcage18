@@ -226,7 +226,7 @@ EMAIL_USE_TLS = True
 SLACK_TOKEN = os.environ.get('SLACK_TOKEN', ENVVAR_SENTINAL)
 SLACK_CHANNEL = '#ironcage-logs'
 SLACK_USERNAME = 'ironcage-log-bot'
-
+SLACK_SIGNUP_LINK = os.environ.get('SLACK_SIGNUP_LINK', ENVVAR_SENTINAL)
 
 # Admins for mailing errors to
 

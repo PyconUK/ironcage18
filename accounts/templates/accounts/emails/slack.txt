@@ -1,0 +1,25 @@
+Dear {{ user.name }},
+
+During the conference we use Slack as both as the official communication tool
+for announcements from the conference committee as well as allowing attendees
+to socialise with one another.
+
+We always have a friendly and helpful atmosphere on Slack, mirroring the tone
+of the conference itself.
+
+You can also get in touch with us - just look for people with the red snake
+icon next to their name.
+
+We'd love you to join us, which you can do using the signup link below:
+{{ slack_link }}
+
+Please remember that our code of conduct applies equally to Slack.
+https://2018.pyconuk.org/code-conduct/
+
+We look forward to seeing you in Cardiff!
+
+~ The PyCon UK committee
+
+--
+PyCon UK Society Ltd. Company Number: 10073469. Registered in England and Wales.
+Registered office: c/o Acconomy, Arena Business Centre, Holyrood Close, Poole BH17 7FJ, United Kingdom
