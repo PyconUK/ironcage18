@@ -1,23 +1,23 @@
-import re
-import random
 import csv
+import io
+import random
+import re
+
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
 from django.db.models import Q
+from django.db.models import Value as V
+from django.db.models.functions import StrIndex, Substr
 from django.template.loader import get_template
 
-from accounts.models import User, Badge
+from accounts.models import Badge, User
+from accounts.views import assign_a_snake
 from cfp.models import Proposal
+from extras.models import ExtraItem
 from grants.models import Application
-from ironcage.emails import send_mail
+from ironcage.emails import send_mail, send_mail_with_attachment
 from orders.models import Order
 from tickets.models import Ticket
-from accounts.views import assign_a_snake
-from extras.models import ExtraItem
-
-from django.db.models import Value as V
-from django.db.models.functions import StrIndex,  Substr
-
 
 STANDARD_SNAKES = [
     ('blue', 'deerstalker'),
@@ -183,8 +183,15 @@ class Command(BaseCommand):
         do_spare_badges(output)
         do_childrens_tickets(output)
 
-        with open('badges.csv', 'w') as f:
+        f = io.StringIO()
 
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(output)
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(output)
+
+        send_mail_with_attachment(
+            f'Badges',
+            'Here is your badge data',
+            User.objects.get(pk=1).email_addr,
+            [('badges.csv', f.read(), 'text/csv')]
+        )
