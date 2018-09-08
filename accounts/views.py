@@ -23,10 +23,6 @@ def assign_a_snake(user):
     user.badge_snake_colour = colour
     user.badge_snake_extras = extra
 
-    user_ticket = user.get_ticket()
-    if user_ticket and user_ticket.rate == "corporate":
-        user.badge_company = user_ticket.order_company_name()
-
     user.save()
 
 

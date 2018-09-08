@@ -106,7 +106,7 @@ def do_spare_badges(output):
             'type': 'spare'
         }
 
-        if i < (len(spare_badges) / 6):
+        if i < (len(spare_badges) / 12):
             user['background'] = 'blue'
         else:
             user['background'] = 'yellow'
@@ -174,8 +174,6 @@ class Command(BaseCommand):
             add_spare_badges(200 - number_spare_badges)
 
         do_claimed_tickets(output)
-        output = sorted(output, key=lambda x: x['last_bit_of_name'])
-
         do_childrens_tickets(output)
         do_spare_badges(output)
 
