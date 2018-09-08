@@ -246,11 +246,13 @@ EMAIL_REPLY_TO_ADDR = 'PyCon UK 2018 <pyconuk@uk.python.org>'
 CFP_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
 GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
 TICKET_SALES_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
+BADGE_EDITING_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
 
 # Uncomment these lines if you do want ticket sales etc to be closed
 # CFP_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
 # GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
 # TICKET_SALES_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
+# BADGE_EDITING_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
 
 CFP_DEADLINE_BYPASS_TOKEN = os.environ.get('CFP_DEADLINE_BYPASS_TOKEN')
 GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN = os.environ.get('GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN')

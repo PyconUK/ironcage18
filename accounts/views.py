@@ -1,8 +1,10 @@
 import random
+from datetime import datetime, timezone
 
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.shortcuts import redirect, render
 
 from .forms import ProfileForm, RegisterForm
@@ -62,6 +64,7 @@ def edit_profile(request):
         'is_contributor': request.user.is_contributor,
         'ticket_rate': user_ticket.rate if user_ticket else '',
         'form': form,
+        'badge_editing_closed': datetime.now(timezone.utc) > settings.BADGE_EDITING_CLOSE_AT,
         'js_paths': ['accounts/profile_form.js', 'accounts/badges.js'],
     }
 

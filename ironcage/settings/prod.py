@@ -25,3 +25,4 @@ EMAIL_REPLY_TO_ADDR = 'PyCon UK 2018 <pyconuk@uk.python.org>'
 bst = timezone(timedelta(hours=1))
 CFP_CLOSE_AT = datetime(2018, 6, 15, 12, 0, tzinfo=bst)
 GRANT_APPLICATIONS_CLOSE_AT = datetime(2018, 6, 15, 12, 0, tzinfo=bst)
+BADGE_EDITING_CLOSE_AT = datetime(2018, 9, 11, 12, 0, tzinfo=bst)
