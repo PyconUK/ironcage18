@@ -1,5 +1,4 @@
 import re
-from datetime import datetime
 
 from django.conf import settings
 from django.core.management import BaseCommand
