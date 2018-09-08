@@ -35,7 +35,7 @@ class Proposal(models.Model):
     title = models.CharField(max_length=60)
     subtitle = models.CharField(max_length=120, blank=True)
     copresenter_names = models.TextField(blank=True)
-    description = models.TextField(validators=[validate_max_300_words])
+    description = models.TextField()#validators=[validate_max_300_words])
     description_private = models.TextField(validators=[validate_max_300_words], blank=True)
     outline = models.TextField(blank=True)
     equipment = models.TextField(blank=True)

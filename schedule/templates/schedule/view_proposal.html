@@ -30,7 +30,7 @@ useful to have some extra formatting.  A proper Markdown formatter or similar
 would be nice, but for now this is a hacky fix to expose raw HTML on these
 specially approved sessions -- which can only be edited by a handful of people.
 {% endcomment %}
-{% if proposal.id == "0B96" %}
+{% if proposal.id == 238 %}
   <div>{{ proposal.description|safe }}
 {% else %}
   <div>{{ proposal.description|linebreaks }}</div>
