@@ -49,7 +49,7 @@ def do_claimed_tickets(output):
     claimed_tickets = Ticket.objects.filter(
         owner__isnull=False
     ).order_by(
-        'sat', 'sun', 'mon', 'tue', 'wed'
+        '-sat', '-sun', '-mon', '-tue', '-wed'
     ).all()
 
     for ticket in claimed_tickets:
@@ -133,6 +133,8 @@ def do_childrens_tickets(output):
     # All childrens ticket holders
     childrens_tickets = ExtraItem.objects.filter(
         content_type=children_ticket_content_type
+    ).order_by(
+        'item__name'
     ).all()
 
     for ticket in childrens_tickets:
@@ -174,14 +176,17 @@ class Command(BaseCommand):
         output = []
 
         assign_badges_to_tickets()
-        do_claimed_tickets(output)
 
         number_spare_badges = Badge.objects.filter(ticket=None).count()
-        if number_spare_badges < 100:
-            add_spare_badges(100 - number_spare_badges)
+        if number_spare_badges < 200:
+            add_spare_badges(200 - number_spare_badges)
 
-        do_spare_badges(output)
+        do_claimed_tickets(output)
+        output = sorted(output, key=lambda x: x['last_bit_of_name'])
+
         do_childrens_tickets(output)
+        do_spare_badges(output)
+
 
         f = io.StringIO()
 
