@@ -13,8 +13,8 @@ $(document).ready(function() {
 		updateBadge();
 	}
 
-	$(window).bind("load", function() {
-	 	setTimeout(badgeLoad, 500);
+	$("#badge").ready(function() {
+		setTimeout(badgeLoad, 500);
 	});
 
 	$("#id_name").on('change', function(e) {

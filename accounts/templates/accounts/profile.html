@@ -11,13 +11,13 @@
 {% endblock %}
 
 {% block json_data %}
-var isContributor = "{{ is_contributor|safe }}" == "True";
-var isOrganiser = "{{ is_organiser|safe }}" == "True";
-var name = "{{ request.user.name|safe }}";
-var snake = "{{ request.user.badge_snake_colour|safe }}";
-var extras = "{{ request.user.badge_snake_extras|safe }}";
-var company = "{% if request.user.badge_company %}{{ request.user.badge_company|safe }}{% endif %}";
-var twitter = "{% if request.user.badge_twitter %}{{ request.user.badge_twitter|safe }}{% endif %}";
-var pronoun = "{% if request.user.badge_pronoun %}{{ request.user.badge_pronoun|safe }}{% endif %}";
+var isContributor = "{{ is_contributor }}" == "True";
+var isOrganiser = "{{ is_organiser }}" == "True";
+var name = "{{ request.user.name }}";
+var snake = "{{ request.user.badge_snake_colour }}";
+var extras = "{{ request.user.badge_snake_extras }}";
+var company = "{% if request.user.badge_company %}{{ request.user.badge_company }}{% endif %}";
+var twitter = "{% if request.user.badge_twitter %}{{ request.user.badge_twitter }}{% endif %}";
+var pronoun = "{% if request.user.badge_pronoun %}{{ request.user.badge_pronoun }}{% endif %}";
 var ticketRate;
 {% endblock %}
