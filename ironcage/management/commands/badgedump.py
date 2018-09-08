@@ -189,6 +189,8 @@ class Command(BaseCommand):
         writer.writeheader()
         writer.writerows(output)
 
+        f.seek(0)
+
         send_mail_with_attachment(
             f'Badges',
             'Here is your badge data',
