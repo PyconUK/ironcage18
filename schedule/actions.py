@@ -50,7 +50,7 @@ def import_schedule(f, request):
                 ical_id=ical_id
             )
 
-            if activity.session_type == 'workshop':
+            if activity.session_type == 'workshop' and activity.length >= timedelta(minutes=90):
                 slot_time_plus_91_mins = datetime.strptime(slot_time, '%H:%M:%S') + timedelta(minutes=91)
                 slot = Slot.objects.filter(room=room, date=slot_date, time__gt=slot_time_plus_91_mins).first()
                 SlotEvent.objects.get_or_create(
@@ -63,7 +63,7 @@ def import_schedule(f, request):
             messages.add_message(request, messages.ERROR, f"Couldn't find {room} on {slot_date} at {slot_time}")
 
     try:
-        Cache.objects.get(key='schedule').delete()
+        Cache.objects.all().delete()
     except Cache.DoesNotExist:
         pass
 
@@ -238,7 +238,7 @@ def generate_ical(slot_events, token):
             if slot_event.activity.break_event:
                 event.add('uid', f'{slot_event.ical_id}-{slot_event.slot.time.hour}')
             else:
-                event.add('uid', f'{slot_event.ical_id}')
+                event.add('uid', f'{slot_event.ical_id}-{slot_event.slot.id}')
                 event.add('location', slot_event.slot.room.name)
 
             if not slot_event.activity.conference_event:
