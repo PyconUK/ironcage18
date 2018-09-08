@@ -1,22 +1,14 @@
 import csv
 import io
 import random
-import re
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
-from django.db.models import Q
-from django.db.models import Value as V
-from django.db.models.functions import StrIndex, Substr
-from django.template.loader import get_template
 
 from accounts.models import Badge, User
 from accounts.views import assign_a_snake
-from cfp.models import Proposal
 from extras.models import ExtraItem
-from grants.models import Application
-from ironcage.emails import send_mail, send_mail_with_attachment
-from orders.models import Order
+from ironcage.emails import send_mail_with_attachment
 from tickets.models import Ticket
 
 STANDARD_SNAKES = [
@@ -133,9 +125,9 @@ def do_childrens_tickets(output):
     # All childrens ticket holders
     childrens_tickets = ExtraItem.objects.filter(
         content_type=children_ticket_content_type
-    ).order_by(
-        'item__name'
     ).all()
+
+    childrens_tickets = sorted(childrens_tickets, key=lambda x: x.item.name)
 
     for ticket in childrens_tickets:
 
@@ -186,7 +178,6 @@ class Command(BaseCommand):
 
         do_childrens_tickets(output)
         do_spare_badges(output)
-
 
         f = io.StringIO()
 
