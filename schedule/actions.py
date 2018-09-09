@@ -97,17 +97,17 @@ def import_timetable(timetable_f, unbounded_f, request):
             # Add unbounded slots
             for item in unbounded:
                 for slot_name, slot in item.items():
+                    if not Slot.objects.filter(room=room, date=day, time=get_time(slot['starts_at'])).count():
+                        slot = Slot(
+                            room=room,
+                            date=day,
+                            time=get_time(slot['starts_at']),
+                            duration=timedelta(minutes=slot['duration']),
+                            visible=True,
+                            scheduler_linked=True
+                        )
 
-                    slot = Slot(
-                        room=room,
-                        date=day,
-                        time=get_time(slot['starts_at']),
-                        duration=timedelta(minutes=slot['duration']),
-                        visible=True,
-                        scheduler_linked=True
-                    )
-
-                    slot.save()
+                        slot.save()
 
 
 def generate_schedule_page_data():
@@ -125,6 +125,7 @@ def generate_schedule_page_data():
         )
 
         rooms_for_day = [x.room for x in rooms_for_day_query]
+        rooms_for_day = sorted(rooms_for_day, key=lambda x: x.name)
         room_names_for_day = [x.name for x in rooms_for_day]
 
         times_for_day_query = Slot.objects.filter(
@@ -132,6 +133,8 @@ def generate_schedule_page_data():
         ).distinct(
             'time'
         ).values(
+            'time'
+        ).order_by(
             'time'
         )
         times_for_day = [x['time'] for x in times_for_day_query]
