@@ -19,6 +19,14 @@ from .models import DINNER_LOCATIONS, DINNERS, ExtraItem
 
 
 def new_children_order(request):
+    children_ticket_content_type = ContentType.objects.get(app_label="extras", model="childrenticket")
+    tickets_sold = ExtraItem.objects.filter(
+        content_type=children_ticket_content_type
+    ).count()
+    if tickets_sold >= 75:
+        messages.warning(request, "We're sorry, Young Coders Day has now sold out.")
+        return redirect('index')
+
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return redirect(settings.LOGIN_URL)
@@ -75,6 +83,14 @@ def new_children_order(request):
 @login_required
 def children_order_edit(request, order_id):
     order = Order.objects.get_by_order_id_or_404(order_id)
+
+    children_ticket_content_type = ContentType.objects.get(app_label="extras", model="childrenticket")
+    tickets_sold = ExtraItem.objects.filter(
+        content_type=children_ticket_content_type
+    ).count()
+    if tickets_sold >= 75:
+        messages.warning(request, "We're sorry, Young Coders Day has now sold out.")
+        return redirect('index')
 
     if request.user != order.purchaser:
         messages.warning(request, 'Only the purchaser of an order can update the order')
