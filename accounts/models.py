@@ -108,6 +108,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f'{self.name} ({self.user_id})'
 
+    class Meta:
+        permissions = [
+            ('reg_desk_assistant', 'Registration Desk Assistant'),
+        ]
+
     @property
     def user_id(self):
         if self.id is None:
