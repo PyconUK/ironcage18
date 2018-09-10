@@ -4,15 +4,6 @@
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-8">
-    <div class="card bg-warning text-dark">
-      <div class="card-header">
-        <h2>Subject to change</h2>
-      </div>
-      <div class="card-body">
-        <p>The schedule is subject to change. However, we aim to keep this to a minimum and to avoid day changes.</p>
-        <p>{% if request.user.is_anonymous %}When logged in, y{% else %}Y{% endif %}ou can use the calendar icon on each session to indicate which ones you’re particularly interested in attending. This will help us improve the scheduling and room allocations.</p>
-      </div>
-    </div>
     {% if not request.user.is_anonymous %}
     <div class="card bg-danger text-dark">
       <div class="card-header">
