@@ -1,15 +1,25 @@
-Hi!
+You have not yet registered the PyCon UK ticket allocated to you {{url}}.
+If your ticket is no longer required, please contact us immediately to let us know.
 
-We wanted to remind you that you have an unclaimed ticket invitation for
-PyCon UK 2018! In order to attend the conference, you'll need to click the link
-below and sign up for an account. This will activate your ticket and add it to
-your account.
+You need to do this with urgency. Unless you register this ticket online within
+the next few hours, you will not receive a badge for the conference, and your
+access to the event itself on the day will be delayed.
 
-Your ticket invitation link is: {{url}}
+If your registration is not completed in time, you may find that meals you require
+are not available, and that you are not able to attend the conference dinner.
 
-If you need any assistance or have any further questions, please reply to this
-email and let us know.
+Access to other conference events and facilities may also be limited.
 
-All the best
+{% if invite.ticket.free_reason == "Financial Assistance" %}
+If you do not claim your ticket within the next 24 hours, it will be withdrawn and
+you will not be able to attend the conference.
 
-~ The PyCon UK 2018 Committee
+{% endif %}
+If you have any questions or problems registering the ticket, please contact us
+immediately by email.
+
+~ The PyCon UK committee
+
+--
+PyCon UK Society Ltd. Company Number: 10073469. Registered in England and Wales.
+Registered office: c/o Acconomy, Arena Business Centre, Holyrood Close, Poole BH17 7FJ, United Kingdom

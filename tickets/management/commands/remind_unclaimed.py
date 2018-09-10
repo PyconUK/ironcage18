@@ -26,7 +26,7 @@ class Command(BaseCommand):
             body = re.sub('\n\n\n+', '\n\n', body_raw)
 
             send_mail(
-                f'Your unclaimed PyCon UK 2018 Ticket ({invite.ticket.ticket_id})',
+                f'PyCon UK - urgent, action required to claim ticket ({invite.ticket.ticket_id})',
                 body,
                 invite.email_addr,
             )
