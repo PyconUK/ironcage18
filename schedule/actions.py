@@ -167,6 +167,7 @@ def generate_schedule_page_data():
                             'time': session.slot.time.strftime('%H:%M'),
                             'end_time': session.end_time,
                             'id': session.activity.proposal_id,
+                            'description': session.activity.description,
                             'ical_id': session.ical_id,
                             'rowspan': 1,
                             'colspan': 1,

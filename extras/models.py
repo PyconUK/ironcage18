@@ -162,7 +162,7 @@ DINNERS = {
     'CD': {
         'location': 'CH',
         'date': '2018-09-15',
-        'capacity': 200,
+        'capacity': 300,
     },
     'CLSA': {
         'location': 'CL',
@@ -221,5 +221,8 @@ class DinnerTicket(models.Model):
 
     @property
     def is_editable(self):
-        beginning_of_dinner_day = datetime.strptime(DINNERS[self.dinner]['date'], '%Y-%m-%d')
-        return datetime.now() < beginning_of_dinner_day
+        if self.dinner == 'CD':
+            return False
+        else:
+            two_thirty_on_dinner_day = datetime.strptime(DINNERS[self.dinner]['date'] + ' 13:30:00', '%Y-%m-%d %H:%M:%S')
+            return datetime.now() < two_thirty_on_dinner_day

@@ -12,6 +12,8 @@ class ChildrenTicketAdmin(OurActionsOnlyMixin, admin.ModelAdmin):
                                 'adult_phone_number', 'accessibility_reqs',
                                 'dietary_reqs', 'name', 'age']
 
+    list_display = ['name', 'age', 'adult_name', 'accessibility_reqs', 'dietary_reqs']
+
 
 @admin.register(DinnerTicket)
 class DinnerTicketAdmin(OurActionsOnlyMixin, admin.ModelAdmin):

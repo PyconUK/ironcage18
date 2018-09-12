@@ -1,12 +1,14 @@
 import json
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from cfp.models import Proposal
 from django.db.models import Q
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
 from django.shortcuts import render
 
 from accounts.models import User
+from cfp.models import Proposal
 from schedule.models import Cache, SlotEvent
 
 from .actions import (generate_ical, generate_schedule_page_data,
@@ -34,6 +36,16 @@ def schedule(request):
         'js_paths': ['schedule/schedule.js'],
     }
     return render(request, 'schedule/schedule.html', context)
+
+
+def schedule_json(request):
+    try:
+        schedule_cache = Cache.objects.get(key='schedule')
+        all_sessions = json.loads(schedule_cache.value)
+    except Cache.DoesNotExist:
+        all_sessions = generate_schedule_page_data()
+
+    return JsonResponse(all_sessions)
 
 
 @staff_member_required(login_url='login')
