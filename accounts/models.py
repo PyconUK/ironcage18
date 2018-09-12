@@ -169,6 +169,13 @@ class Badge(models.Model):
 
     id_scrambler = Scrambler(7000)
 
+    class Manager(models.Manager):
+        def get_by_badge_id_or_404(self, badge_id):
+            id = self.model.id_scrambler.backward(badge_id)
+            return get_object_or_404(self.model, pk=id)
+
+    objects = Manager()
+
     @property
     def badge_id(self):
         if self.id is None:

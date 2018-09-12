@@ -21,4 +21,5 @@ urlpatterns = [
     path('log/', ironcage.views.log, name='log'),
     path('schedule/', include('schedule.urls')),
     path('admin/', admin.site.urls),
+    path('regdesk/', accounts.views.registration_desk, name='regdesk'),
 ]
