@@ -26,23 +26,23 @@ class Command(BaseCommand):
             owner__isnull=False
         ).all().values_list('owner', flat=True)
 
-        # All ticket orderers
-        ticket_orderers = Order.objects.filter(
-            status='successful'
-        ).all().values_list('purchaser', flat=True)
+        # # All ticket orderers
+        # ticket_orderers = Order.objects.filter(
+        #     status='successful'
+        # ).all().values_list('purchaser', flat=True)
 
-        # All accepted speakers
-        accepted_speakers = Proposal.objects.filter(
-            state__in=['accept', 'confirm']
-        ).all().values_list('proposer', flat=True)
+        # # All accepted speakers
+        # accepted_speakers = Proposal.objects.filter(
+        #     state__in=['accept', 'confirm']
+        # ).all().values_list('proposer', flat=True)
 
-        # All accepted Financial Assistance
-        accepted_finaid = Application.objects.filter(
-            Q(ticket_awarded=True) | Q(amount_awarded__gt=0)
-        ).all().values_list('applicant', flat=True)
+        # # All accepted Financial Assistance
+        # accepted_finaid = Application.objects.filter(
+        #     Q(ticket_awarded=True) | Q(amount_awarded__gt=0)
+        # ).all().values_list('applicant', flat=True)
 
-        all_emailees = set(list(ticket_holders) + list(ticket_orderers) +
-                           list(accepted_speakers) + list(accepted_finaid))
+        all_emailees = set(list(ticket_holders))# + list(ticket_orderers) +
+                           #list(accepted_speakers) + list(accepted_finaid))
 
         users_to_email = User.objects.filter(pk__in=all_emailees).all()
 
