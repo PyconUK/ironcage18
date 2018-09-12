@@ -344,7 +344,7 @@ def dinner_ticket_edit(request, item_id):
         messages.warning(request, 'Only the purchaser of an order can update the order')
         return redirect('index')
 
-    if request.method == 'POST' and item.ticket.is_editable:
+    if request.method == 'POST' and item.item.is_editable:
         if not request.user.is_authenticated:
             return redirect(settings.LOGIN_URL)
 
