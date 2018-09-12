@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import permission_required
 
 from .forms import ProfileForm, RegisterForm
 
@@ -101,3 +102,8 @@ def register(request):
 
 def legal(request):
     return render(request, 'registration/legal.html')
+
+
+@permission_required('accounts.reg_desk_assistant', raise_exception=True)
+def registration_desk(request):
+    return render(request, 'accounts/regdesk.html')
