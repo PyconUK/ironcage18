@@ -1,25 +1,25 @@
 from datetime import datetime, timezone
 
+import pyqrcode
+
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.html import mark_safe
 
-import pyqrcode
-from accounts.models import Badge
-from orders.models import Order
-
 from . import actions
 from .constants import DAYS
-from .forms import (BillingDetailsForm, EducatorTicketForm, FreeTicketForm,
-                    FreeTicketUpdateForm, TicketForm,
-                    TicketForOthersEducatorFormSet, TicketForOthersFormSet,
-                    TicketForSelfEducatorForm, TicketForSelfForm)
+from .forms import (
+    BillingDetailsForm, TicketForm, TicketForSelfForm,
+    TicketForOthersFormSet, EducatorTicketForm, TicketForSelfEducatorForm,
+    TicketForOthersEducatorFormSet, FreeTicketForm, FreeTicketUpdateForm
+)
 from .models import Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
+from orders.models import Order
 
 
 def new_order(request):
@@ -282,14 +282,6 @@ def order_edit(request, order_id):
 
 @login_required
 def ticket(request, ticket_id):
-    QUEUES = {
-        '<ABCD': 'A-D',
-        'EFGHIJ': 'E-J',
-        'KLMN': 'K-N',
-        'OPQRSŞ': 'O-S',
-        'TUVWXYZ': 'T-Z & Spare',
-    }
-
     ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
 
     if request.user != ticket.owner:
@@ -305,18 +297,7 @@ def ticket(request, ticket_id):
     code = pyqrcode.create(ticket.ticket_id)
     png_base64 = code.png_as_base64_str(scale=5)
 
-    try:
-        badge = ticket.badge.get()
-        first_letter = badge.name.upper().split(' ')[-1][0]
-        for queue in QUEUES:
-            if first_letter in queue:
-                queue_to_join = QUEUES[queue]
-                break
-    except Badge.DoesNotExist:
-        queue_to_join = QUEUES['TUVWXYZ']
-
     context = {
-        'queue': queue_to_join,
         'ticket': ticket,
         'qr_code_base64': png_base64
     }
