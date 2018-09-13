@@ -1,25 +1,26 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta, date
 
 import pyqrcode
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
-from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.html import mark_safe
 
+from orders.models import Order
+from accounts.models import Badge
 from . import actions
 from .constants import DAYS
-from .forms import (
-    BillingDetailsForm, TicketForm, TicketForSelfForm,
-    TicketForOthersFormSet, EducatorTicketForm, TicketForSelfEducatorForm,
-    TicketForOthersEducatorFormSet, FreeTicketForm, FreeTicketUpdateForm
-)
+from .forms import (BillingDetailsForm, EducatorTicketForm, FreeTicketForm,
+                    FreeTicketUpdateForm, TicketForm,
+                    TicketForOthersEducatorFormSet, TicketForOthersFormSet,
+                    TicketForSelfEducatorForm, TicketForSelfForm)
 from .models import Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
-from orders.models import Order
 
 
 def new_order(request):
@@ -375,6 +376,95 @@ def new_free_ticket(request):
     }
 
     return render(request, 'tickets/new_free_ticket.html', context)
+
+
+@permission_required('accounts.reg_desk_assistant', raise_exception=True)
+def ticket_info(request, ticket_id):
+    ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
+    dates = {
+        'Saturday': date(2018, 9, 11),
+        'Sunday': date(2018, 9, 12),
+        'Monday': date(2018, 9, 17),
+        'Tuesday': date(2018, 9, 18),
+        'Wednesday': date(2018, 9, 19),
+    }
+
+    if request.method == 'POST':
+        response = {}
+
+        badge_id = request.POST.get('badge_id')
+        badge = Badge.objects.get_by_badge_id_or_404(badge_id)
+
+        if badge_id and badge and not badge.collected and badge.ticket.ticket_id == ticket_id:
+            # Ticket OK, Correct Badge Scanned
+            badge.collected = datetime.now()
+            badge.save()
+        elif badge_id and badge and not badge.collected and badge.ticket.ticket_id != ticket_id:
+            # Ticket OK, Wrong Badge Scanned
+            response = {
+                'error': 'Badge is assigned to a different ticket! Check the top ID code for the correct ticket ID!',
+                'scan_next': 'badge'
+            }
+        elif badge_id and badge and not badge.collected and ticket.badge is None and badge.ticket is None:
+            # Ticket OK, badge never assigned as too late, need to assign one
+            badge.ticket = ticket
+            badge.collected = datetime.now()
+            badge.save()
+        elif badge_id and badge and not badge.collected and ticket.badge is not None and badge.ticket is None:
+            # Ticket OK, Can’t find badge, need to assign one.
+            if request.user.is_staff():
+                badge.ticket = ticket
+                badge.collected = datetime.now()
+                badge.save()
+            else:
+                response = {
+                    'error': 'Only committee members can assign a blank badge to a user with a printed one',
+                    'scan_next': 'ticket'
+                }
+        else:
+            print('bad')
+
+    else:
+        if ticket.owner is None:
+            response = {
+                'error': 'Ticket has no owner',
+                'scan_next': 'ticket'
+            }
+        elif dates[ticket.days()[0]] > datetime.now().date():
+            response = {
+                'error': f'Ticket not yet valid - only valid for {ticket.days_sentence}',
+                'scan_next': 'ticket'
+            }
+        elif dates[ticket.days()[-1]] < datetime.now().date():
+            response = {
+                'error': f'Ticket no longer valid - only valid for {ticket.days_sentence}',
+                'scan_next': 'ticket'
+            }
+        else:
+            badge = ticket.badge.first()
+
+            if badge.collected:
+                # Ticket has already collected badge - go away
+                response = {
+                    'error': f'Already collected: {ticket.owner.name} at {badge.collected.strftime("%Y-%m-%d %H:%M:%S")}',
+                    'scan_next': 'ticket'
+                }
+            else:
+                response = {
+                    'id': ticket.ticket_id,
+                    'name': ticket.owner.name,
+                    'company': ticket.owner.badge_company,
+                    'badge': badge.badge_id,
+                    'is_contributor': ticket.owner.is_contributor,
+                    'is_organiser': ticket.owner.is_organiser,
+                    'snake': ticket.owner.badge_snake_colour,
+                    'extras': ticket.owner.badge_snake_extras,
+                    'accessibility': ticket.owner.accessibility_reqs,
+                    'dietary': ticket.owner.dietary_reqs,
+                    'childcare': ticket.owner.childcare_reqs,
+                }
+
+    return JsonResponse(response)
 
 
 def _rates_data():
