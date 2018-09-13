@@ -312,7 +312,7 @@ def ticket(request, ticket_id):
             if first_letter in queue:
                 queue_to_join = QUEUES[queue]
                 break
-    except Badge.DoesNotExist:
+    except Exception:
         queue_to_join = QUEUES['TUVWXYZ']
 
     context = {
