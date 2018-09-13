@@ -147,7 +147,7 @@ DINNER_LOCATIONS = {
     'CH': {
         'name': 'Conference Dinner at City Hall',
         'location': 'Lower Hall, Cardiff City Hall, Cathays Park, Cardiff',
-        'capacity': 300,
+        'capacity': 153,
         'price': 34,
     },
     'CL': {
@@ -162,7 +162,7 @@ DINNERS = {
     'CD': {
         'location': 'CH',
         'date': '2018-09-15',
-        'capacity': 300,
+        'capacity': 153,
     },
     'CLSA': {
         'location': 'CL',
