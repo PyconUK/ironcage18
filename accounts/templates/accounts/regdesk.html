@@ -1,0 +1,286 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <script src="{% static 'jquery-3.1.0/js/jquery.js' %}"></script>
+        <script src="{% static 'jquery-plugins/js/jquery.formset.js' %}"></script>
+        <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0/css/bootstrap.min.css' %}" />
+
+        <style>
+            #loadingMessage {
+                text-align: center;
+                padding: 40px;
+                background-color: #eee;
+            }
+
+            #canvas {
+                top: 50px;
+                width: 100%;
+                position: absolute;
+                z-index: -1;
+                left: 0;
+            }
+
+            #output {
+                margin-top: 20px;
+                background: #eee;
+                padding: 10px;
+                padding-bottom: 0;
+            }
+
+            #output div {
+                padding-bottom: 10px;
+                word-wrap: break-word;
+            }
+
+            #noQRFound {
+                text-align: center;
+            }
+
+            #details {
+                background-color: white;
+            }
+        </style>
+    </head>
+    <body id="body">
+        <div class="container-fluid">
+            <div class="row fixed-top">
+                <div class="col">
+                    <h2 id="command">Scan Ticket</h2>
+                    <div id="details">
+                        <div id="detailText"></div>
+                        <div id="ticketText"></div>
+                        <button type="button" id="badgeConfirm" class="btn btn-success btn-lg float-right">&#x2714; OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+
+                    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
+                    <canvas id="canvas" hidden></canvas>
+                    <div id="output" hidden>
+                        <div id="outputMessage">No QR code detected.</div>
+                        <div hidden>
+                            <b>Data:</b>
+                            <span id="outputData"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row fixed-bottom">
+                <div class="col">
+                    <button type="button" id="new-badge" class="btn btn-primary btn-lg btn-block">Issue New Badge</button>
+                    <button type="button" id="stop-scan" onclick="stopCamera()" class="btn btn-danger btn-lg btn-block">Stop Scanning</button>
+                    <button type="button" id="start-scan" onclick="startScanning()" class="btn btn-success btn-lg btn-block">Start Scanning</button>
+                    <button type="button" id="find-ticket" class="btn btn-primary btn-lg btn-block">Find Ticket</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Elements
+            var video = document.createElement("video");
+            var canvasElement = document.getElementById("canvas");
+            var canvas = canvasElement.getContext("2d");
+            var loadingMessage = document.getElementById("loadingMessage");
+            var detailText = document.getElementById("detailText");
+            var command = document.getElementById("command");
+            var stopScan = document.getElementById("stop-scan");
+            var startScan = document.getElementById("start-scan");
+            var newBadge = document.getElementById("new-badge");
+            var findTicket = document.getElementById("find-ticket");
+            var body = document.getElementById("body");
+            var badgeConfirm = document.getElementById("badgeConfirm");
+            var ticketText = document.getElementById("ticketText");
+            var details = document.getElementById("details");
+
+            // Other variables
+            var isPlaying = false;
+            var scan = 'ticket';
+            var ticketData = null;
+            var scannedBadgeId = null;
+            var csrfToken = "{{ csrf_token }}";
+
+            // Hide buttons we don't need yet
+            stopScan.style.display = "none";
+            newBadge.style.display = "none";
+            findTicket.style.display = "none";
+            badgeConfirm.style.display = "none";
+
+            // Start the camera
+            startScanning();
+
+            if (typeof csrfToken !== 'undefined') {
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                        }
+                    }
+                });
+            }
+
+
+            $(badgeConfirm).click(function() {
+                $.ajax(
+                    {
+                        url: '/tickets/ticket_info/' + ticketData.id + '/',
+                        method: 'POST',
+                        data: {
+                            'badge_id': scannedBadgeId
+                        },
+                        success: function(data) {
+                            console.log(data);
+
+                            scanNext('ticket');
+                        },
+                        error: function() {
+                            setError('Error collecting badge - try scanning badge again');
+                            scanNext('badge');
+                        }
+                    }
+                );
+            })
+
+            function startScanning() {
+                ticketData = null;
+                scanNext('ticket')
+            }
+
+            function startCamera() {
+                // Use facingMode: environment to attemt to get the front camera on phones
+                navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "environment"
+                    }
+                }).then(function (stream) {
+                    console.log(scan);
+                    video.srcObject = stream;
+                    video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+                    video.play();
+                    isPlaying = true;
+                    stopScan.style.display = "block";
+                    startScan.style.display = "none";
+                    requestAnimationFrame(tick);
+                });
+            }
+
+            function stopCamera() {
+                video.pause();
+                isPlaying = false;
+                stopScan.style.display = "none";
+                startScan.style.display = "block";
+            }
+
+            function setError(text) {
+                details.style.background = "red";
+                details.style.color = "white";
+                detailText.innerText = text;
+            }
+
+            function setSuccess(text) {
+                details.style.background = "green";
+                details.style.color = "black";
+                detailText.innerText = text;
+            }
+
+            function setNormal(text) {
+                details.style.background = "white";
+                details.style.color = "black";
+                detailText.innerText = text;
+            }
+
+            function scanNext(next_scan) {
+                if (next_scan == 'badge') {
+                    command.innerText = 'Scan Badge 🐍';
+                } else if (next_scan == 'ticket') {
+                    command.innerText = 'Scan Ticket 🎟';
+                    ticketText.innerText = '';
+                }
+                scan = next_scan;
+                setTimeout(startCamera, 1000);
+            }
+
+            function getTicketData(code) {
+                $.ajax(
+                    {
+                        url: '/tickets/ticket_info/' + code.data + '/',
+                        success: function(data) {
+                            console.log(data);
+                            ticketData = data;
+
+                            if(data.error != undefined) {
+                                setError(data.error);
+                                scanNext(data.scan_next);
+                            } else {
+                                ticketText.innerText = 'name: ' + data.name +
+                                ' company: ' + data.company +
+                                ' badge: ' + data.badge +
+                                ' is_contributor: ' + data.is_contributor +
+                                ' is_organiser: ' + data.is_organiser +
+                                ' snake: ' + data.snake +
+                                ' extras: ' + data.extras;
+                                setNormal('');
+                                scanNext('badge');
+                            }
+                        },
+                        error: function() {
+                            setError('Ticket with id ' + code.data + ' could not be found');
+                            scanNext('ticket');
+                        }
+                    }
+                )
+            }
+
+            function checkBadge(code) {
+                scannedBadgeId = code.data;
+                if (ticketData && ticketData.badge && ticketData.badge == scannedBadgeId) {
+                    setSuccess("Correct Badge");
+                    badgeConfirm.style.display = "block";
+                } else {
+                    setNormal("Incorrect Badge");
+                    badgeConfirm.style.display = "none";
+                    setTimeout(startCamera, 500);
+                }
+            }
+
+            function tick() {
+                loadingMessage.innerText = "⌛ Loading video..."
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    loadingMessage.hidden = true;
+                    canvasElement.hidden = false;
+
+                    canvasElement.height = video.videoHeight;
+                    canvasElement.width = video.videoWidth;
+                    canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+                    var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                    var code = jsQR(imageData.data, imageData.width, imageData.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+                    if (code && code.data) {
+                        stopCamera();
+                        if (scan == 'ticket') {
+                            getTicketData(code);
+                        } else if (scan == 'badge') {
+                            checkBadge(code);
+                        }
+
+                    } else {
+                        outputMessage.hidden = false;
+                        outputData.parentElement.hidden = true;
+                    }
+                }
+                if(isPlaying) {
+                    requestAnimationFrame(tick);
+                }
+            }
+        </script>
+    </body>
+</html>
