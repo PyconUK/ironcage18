@@ -75,12 +75,12 @@
         {% endif %}
         <hr>
         {% if dinner|length == 0 %}
-          <a href="{% url 'extras:new_dinner_order' 'CH' %}">Order Conference Dinner tickets</a><br>
+          <!-- <a href="{% url 'extras:new_dinner_order' 'CH' %}">Order Conference Dinner tickets</a><br> -->
           <a href="{% url 'extras:new_dinner_order' 'CL' %}">Order Clink Dinner tickets</a>
         {% else %}
           <a href="{% url 'extras:dinner_ticket' %}">View your Dinner ticket{{ dinner|pluralize }}</a>
           <hr>
-          <a href="{% url 'extras:new_dinner_order' 'CH' %}">Order more Conference Dinner tickets</a><br>
+          <!-- <a href="{% url 'extras:new_dinner_order' 'CH' %}">Order more Conference Dinner tickets</a><br> -->
           <a href="{% url 'extras:new_dinner_order' 'CL' %}">Order more Clink Dinner tickets</a>
         {% endif %}
 
