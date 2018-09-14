@@ -1,0 +1,342 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <script src="{% static 'jquery-3.1.0/js/jquery.js' %}"></script>
+        <script src="{% static 'jquery-plugins/js/jquery.formset.js' %}"></script>
+        <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0/css/bootstrap.min.css' %}" />
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+        <style>
+            #loadingMessage {
+                text-align: center;
+                padding: 40px;
+                background-color: #eee;
+            }
+
+            #canvas {
+                top: 50px;
+                width: 100%;
+                position: absolute;
+                z-index: -1;
+                left: 0;
+            }
+
+            #output {
+                margin-top: 20px;
+                background: #eee;
+                padding: 10px;
+                padding-bottom: 0;
+            }
+
+            #output div {
+                padding-bottom: 10px;
+                word-wrap: break-word;
+            }
+
+            #noQRFound {
+                text-align: center;
+            }
+
+            #details {
+                background-color: white;
+            }
+
+            #ticketText, #detailText {
+                font-weight: bold;
+                font-size: 2em;
+            }
+        </style>
+    </head>
+    <body id="body">
+        <div class="container-fluid">
+            <div class="row fixed-top">
+                <div class="col">
+                    <h2 id="command">Scan Ticket</h2>
+                    <div id="details">
+                        <div class="row">
+                            <div class="col-9">
+                                <div id="detailText"></div>
+                                <div id="ticketText"></div>
+                            </div>
+                            <div class="col-3">
+                                <button type="button" id="badgeConfirm" class="btn btn-success btn-lg float-right">&#x2714; OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+
+                    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
+                    <canvas id="canvas" hidden></canvas>
+                    <div id="output" hidden>
+                        <div id="outputMessage">No QR code detected.</div>
+                        <div hidden>
+                            <b>Data:</b>
+                            <span id="outputData"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row fixed-bottom">
+                <div class="col">
+                    <button type="button" id="new-badge" class="btn btn-primary btn-lg btn-block">Issue New Badge</button>
+                    <button type="button" id="stop-scan" onclick="stopCamera()" class="btn btn-danger btn-lg btn-block">Stop Scanning</button>
+                    <button type="button" id="start-scan" onclick="startScanning()" class="btn btn-success btn-lg btn-block">Start Scanning</button>
+                    <button type="button" id="find-ticket" class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#findTicketModal">Find Ticket</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" tabindex="-1" id="findTicketModal" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Find Ticket</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="ticketId" type="text" maxlength=4 placeholder="Ticket ID" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="actuallyFindTicket">Find Ticket</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Elements
+            var video = document.createElement("video");
+            var canvasElement = document.getElementById("canvas");
+            var canvas = canvasElement.getContext("2d");
+            var loadingMessage = document.getElementById("loadingMessage");
+            var detailText = document.getElementById("detailText");
+            var command = document.getElementById("command");
+            var stopScan = document.getElementById("stop-scan");
+            var startScan = document.getElementById("start-scan");
+            var newBadge = document.getElementById("new-badge");
+            var findTicket = document.getElementById("find-ticket");
+            var actuallyFindTicket = document.getElementById("actuallyFindTicket");
+            var ticketId = document.getElementById("ticketId");
+            var body = document.getElementById("body");
+            var badgeConfirm = document.getElementById("badgeConfirm");
+            var ticketText = document.getElementById("ticketText");
+            var details = document.getElementById("details");
+
+            // Other variables
+            var isPlaying = false;
+            var scan = 'ticket';
+            var ticketData = null;
+            var scannedBadgeId = null;
+            var csrfToken = "{{ csrf_token }}";
+            var isStaff = "{{ request.user.is_staff }}" == "True"
+
+            // Hide buttons we don't need yet
+            stopScan.style.display = "none";
+            newBadge.style.display = "none";
+            findTicket.style.display = "none";
+            badgeConfirm.style.display = "none";
+
+            // Start the camera
+            startScanning();
+
+            if (typeof csrfToken !== 'undefined') {
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                        }
+                    }
+                });
+            }
+
+
+            function markCollected() {
+                $.ajax(
+                    {
+                        url: '/tickets/ticket_info/' + ticketData.id + '/',
+                        method: 'POST',
+                        data: {
+                            'badge_id': scannedBadgeId
+                        },
+                        success: function(data) {
+                            if (ticketData.badge === null) {
+                                setSuccess('Badge Assigned!')
+                                setTimeout(setNormal, 1000);
+                            } else {
+                                setSuccess('Badge Collected!')
+                                setTimeout(setNormal, 1000);
+                            }
+                            scanNext('ticket');
+                            badgeConfirm.style.display = "none";
+                        },
+                        error: function() {
+                            setError('Error collecting badge - try scanning badge again');
+                            scanNext('badge');
+                        }
+                    }
+                );
+            };
+
+            $(badgeConfirm).click(markCollected);
+            $(newBadge).click(markCollected);
+            $(actuallyFindTicket).click(function() {
+                $('#findTicketModal').modal('hide')
+                getTicketData(ticketId.value);
+            })
+
+            function startScanning() {
+                ticketData = null;
+                scanNext('ticket')
+            }
+
+            function startCamera() {
+                // Use facingMode: environment to attemt to get the front camera on phones
+                navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "environment"
+                    }
+                }).then(function (stream) {
+                    video.srcObject = stream;
+                    video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+                    video.play();
+                    isPlaying = true;
+                    stopScan.style.display = "block";
+                    startScan.style.display = "none";
+                    requestAnimationFrame(tick);
+                });
+            }
+
+            function stopCamera() {
+                video.pause();
+                isPlaying = false;
+                stopScan.style.display = "none";
+                startScan.style.display = "block";
+            }
+
+            function setError(text) {
+                details.style.background = "red";
+                details.style.color = "white";
+                detailText.innerText = text;
+            }
+
+            function setSuccess(text) {
+                details.style.background = "green";
+                details.style.color = "black";
+                detailText.innerText = text;
+            }
+
+            function setNormal(text) {
+                text = text || ''
+                details.style.background = "white";
+                details.style.color = "black";
+                detailText.innerText = text;
+            }
+
+            function scanNext(next_scan) {
+                if (next_scan == 'badge') {
+                    command.innerText = 'Scan Badge 🐍';
+                    findTicket.style.display = "none";
+                } else if (next_scan == 'ticket') {
+                    command.innerText = 'Scan Ticket 🎟';
+                    newBadge.style.display = "none";
+                    findTicket.style.display = "block";
+                    ticketText.innerText = '';
+                }
+                scan = next_scan;
+                setTimeout(startCamera, 1000);
+            }
+
+            function getTicketData(id) {
+                $.ajax(
+                    {
+                        url: '/tickets/ticket_info/' + id + '/',
+                        success: function(data) {
+                            ticketData = data;
+
+                            if(data.error != undefined) {
+                                setError(data.error);
+                                scanNext(data.scan_next);
+                            } else {
+                                if(data.badge) {
+                                    ticketText.innerText = data.name + " (" + data.snake + " " + data.extras+ ")";
+                                } else {
+                                    ticketText.innerText = data.name + " (Scan Blank Badge)";
+                                }
+                                setNormal('');
+                                scanNext('badge');
+                            }
+                        },
+                        error: function() {
+                            setError('Ticket with id ' + id + ' could not be found');
+                            scanNext('ticket');
+                        }
+                    }
+                )
+            }
+
+            function checkBadge(code) {
+                scannedBadgeId = code.data;
+                if (ticketData && ticketData.badge === null) {
+                    markCollected();
+                }
+                else if (ticketData && ticketData.badge && ticketData.badge == scannedBadgeId) {
+                    setSuccess("Correct Badge");
+                    badgeConfirm.style.display = "block";
+                    newBadge.style.display = "none";
+                    ticketText.innerText = '';
+                } else {
+                    setNormal("Incorrect Badge");
+                    badgeConfirm.style.display = "none";
+                    if (isStaff) {
+                        newBadge.style.display = "block";
+                    }
+                    setTimeout(startCamera, 500);
+                }
+            }
+
+            function tick() {
+                loadingMessage.innerText = "⌛ Loading video..."
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    loadingMessage.hidden = true;
+                    canvasElement.hidden = false;
+
+                    canvasElement.height = video.videoHeight;
+                    canvasElement.width = video.videoWidth;
+                    canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+                    var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                    var code = jsQR(imageData.data, imageData.width, imageData.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+                    if (code && code.data) {
+                        stopCamera();
+                        if (scan == 'ticket') {
+                            getTicketData(code.data);
+                        } else if (scan == 'badge') {
+                            checkBadge(code);
+                        }
+
+                    } else {
+                        outputMessage.hidden = false;
+                        outputData.parentElement.hidden = true;
+                    }
+                }
+                if(isPlaying) {
+                    requestAnimationFrame(tick);
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from accounts.models import User
+from accounts.models import User, Badge
 from cfp.models import Proposal
 from grants.models import Application
 from ironcage.admin import OurActionsOnlyMixin, RequirementsListFilter
@@ -65,6 +65,8 @@ class ApplicationInline(OurActionsOnlyMixin, admin.TabularInline):
 
     fields = readonly_fields = ('link_to_application', 'ticket_awarded', 'amount_awarded', 'application_declined')
 
+
+admin.site.register(Badge)
 
 @admin.register(User)
 class UserAdmin(OurActionsOnlyMixin, admin.ModelAdmin):

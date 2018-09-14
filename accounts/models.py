@@ -108,6 +108,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f'{self.name} ({self.user_id})'
 
+    class Meta:
+        permissions = [
+            ('reg_desk_assistant', 'Registration Desk Assistant'),
+        ]
+
     @property
     def user_id(self):
         if self.id is None:
@@ -161,8 +166,16 @@ class Badge(models.Model):
 
     ticket = models.ForeignKey(Ticket, related_name='badge', on_delete=models.CASCADE, null=True)
     collected = models.DateTimeField(null=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
 
     id_scrambler = Scrambler(7000)
+
+    class Manager(models.Manager):
+        def get_by_badge_id_or_404(self, badge_id):
+            id = self.model.id_scrambler.backward(badge_id)
+            return get_object_or_404(self.model, pk=id)
+
+    objects = Manager()
 
     @property
     def badge_id(self):
