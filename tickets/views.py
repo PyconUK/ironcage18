@@ -385,7 +385,7 @@ def new_free_ticket(request):
 def ticket_info(request, ticket_id):
     ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
     dates = {
-        'Saturday': date(2018, 9, 14),
+        'Saturday': date(2018, 9, 15),
         'Sunday': date(2018, 9, 16),
         'Monday': date(2018, 9, 17),
         'Tuesday': date(2018, 9, 18),
