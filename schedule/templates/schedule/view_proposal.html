@@ -10,7 +10,7 @@
 {% endif %}
 <p class="proposal-slots">
     {% for slot_event in slots %}
-        {{ slot_event.slot.date|date:"l dS" }}, {{ slot_event.slot.time|time:"H:i" }}<br>
+        {{ slot_event.slot.date|date:"l dS" }}, {{ slot_event.slot.time|time:"H:i" }} ({{ slot_event.slot.room }})<br>
     {% endfor %}
 </p>
 
