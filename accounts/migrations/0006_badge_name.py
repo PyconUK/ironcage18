@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0006_add_reg_desk_permission'),
+        ('accounts', '0005_badge'),
     ]
 
     operations = [

@@ -10,6 +10,7 @@
         <script src="{% static 'jquery-plugins/js/jquery.formset.js' %}"></script>
         <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
         <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0/css/bootstrap.min.css' %}" />
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
         <style>
             #loadingMessage {
@@ -45,6 +46,11 @@
             #details {
                 background-color: white;
             }
+
+            #ticketText, #detailText {
+                font-weight: bold;
+                font-size: 2em;
+            }
         </style>
     </head>
     <body id="body">
@@ -53,9 +59,15 @@
                 <div class="col">
                     <h2 id="command">Scan Ticket</h2>
                     <div id="details">
-                        <div id="detailText"></div>
-                        <div id="ticketText"></div>
-                        <button type="button" id="badgeConfirm" class="btn btn-success btn-lg float-right">&#x2714; OK</button>
+                        <div class="row">
+                            <div class="col-9">
+                                <div id="detailText"></div>
+                                <div id="ticketText"></div>
+                            </div>
+                            <div class="col-3">
+                                <button type="button" id="badgeConfirm" class="btn btn-success btn-lg float-right">&#x2714; OK</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -79,7 +91,27 @@
                     <button type="button" id="new-badge" class="btn btn-primary btn-lg btn-block">Issue New Badge</button>
                     <button type="button" id="stop-scan" onclick="stopCamera()" class="btn btn-danger btn-lg btn-block">Stop Scanning</button>
                     <button type="button" id="start-scan" onclick="startScanning()" class="btn btn-success btn-lg btn-block">Start Scanning</button>
-                    <button type="button" id="find-ticket" class="btn btn-primary btn-lg btn-block">Find Ticket</button>
+                    <button type="button" id="find-ticket" class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#findTicketModal">Find Ticket</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" tabindex="-1" id="findTicketModal" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Find Ticket</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="ticketId" type="text" maxlength=4 placeholder="Ticket ID" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="actuallyFindTicket">Find Ticket</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
                 </div>
             </div>
         </div>
@@ -96,6 +128,8 @@
             var startScan = document.getElementById("start-scan");
             var newBadge = document.getElementById("new-badge");
             var findTicket = document.getElementById("find-ticket");
+            var actuallyFindTicket = document.getElementById("actuallyFindTicket");
+            var ticketId = document.getElementById("ticketId");
             var body = document.getElementById("body");
             var badgeConfirm = document.getElementById("badgeConfirm");
             var ticketText = document.getElementById("ticketText");
@@ -107,6 +141,7 @@
             var ticketData = null;
             var scannedBadgeId = null;
             var csrfToken = "{{ csrf_token }}";
+            var isStaff = "{{ request.user.is_staff }}" == "True"
 
             // Hide buttons we don't need yet
             stopScan.style.display = "none";
@@ -128,7 +163,7 @@
             }
 
 
-            $(badgeConfirm).click(function() {
+            function markCollected() {
                 $.ajax(
                     {
                         url: '/tickets/ticket_info/' + ticketData.id + '/',
@@ -137,9 +172,15 @@
                             'badge_id': scannedBadgeId
                         },
                         success: function(data) {
-                            console.log(data);
-
+                            if (ticketData.badge === null) {
+                                setSuccess('Badge Assigned!')
+                                setTimeout(setNormal, 1000);
+                            } else {
+                                setSuccess('Badge Collected!')
+                                setTimeout(setNormal, 1000);
+                            }
                             scanNext('ticket');
+                            badgeConfirm.style.display = "none";
                         },
                         error: function() {
                             setError('Error collecting badge - try scanning badge again');
@@ -147,6 +188,13 @@
                         }
                     }
                 );
+            };
+
+            $(badgeConfirm).click(markCollected);
+            $(newBadge).click(markCollected);
+            $(actuallyFindTicket).click(function() {
+                $('#findTicketModal').modal('hide')
+                getTicketData(ticketId.value);
             })
 
             function startScanning() {
@@ -161,7 +209,6 @@
                         facingMode: "environment"
                     }
                 }).then(function (stream) {
-                    console.log(scan);
                     video.srcObject = stream;
                     video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
                     video.play();
@@ -192,6 +239,7 @@
             }
 
             function setNormal(text) {
+                text = text || ''
                 details.style.background = "white";
                 details.style.color = "black";
                 detailText.innerText = text;
@@ -200,39 +248,39 @@
             function scanNext(next_scan) {
                 if (next_scan == 'badge') {
                     command.innerText = 'Scan Badge 🐍';
+                    findTicket.style.display = "none";
                 } else if (next_scan == 'ticket') {
                     command.innerText = 'Scan Ticket 🎟';
+                    newBadge.style.display = "none";
+                    findTicket.style.display = "block";
                     ticketText.innerText = '';
                 }
                 scan = next_scan;
                 setTimeout(startCamera, 1000);
             }
 
-            function getTicketData(code) {
+            function getTicketData(id) {
                 $.ajax(
                     {
-                        url: '/tickets/ticket_info/' + code.data + '/',
+                        url: '/tickets/ticket_info/' + id + '/',
                         success: function(data) {
-                            console.log(data);
                             ticketData = data;
 
                             if(data.error != undefined) {
                                 setError(data.error);
                                 scanNext(data.scan_next);
                             } else {
-                                ticketText.innerText = 'name: ' + data.name +
-                                ' company: ' + data.company +
-                                ' badge: ' + data.badge +
-                                ' is_contributor: ' + data.is_contributor +
-                                ' is_organiser: ' + data.is_organiser +
-                                ' snake: ' + data.snake +
-                                ' extras: ' + data.extras;
+                                if(data.badge) {
+                                    ticketText.innerText = data.name + " (" + data.snake + " " + data.extras+ ")";
+                                } else {
+                                    ticketText.innerText = data.name + " (Scan Blank Badge)";
+                                }
                                 setNormal('');
                                 scanNext('badge');
                             }
                         },
                         error: function() {
-                            setError('Ticket with id ' + code.data + ' could not be found');
+                            setError('Ticket with id ' + id + ' could not be found');
                             scanNext('ticket');
                         }
                     }
@@ -241,12 +289,20 @@
 
             function checkBadge(code) {
                 scannedBadgeId = code.data;
-                if (ticketData && ticketData.badge && ticketData.badge == scannedBadgeId) {
+                if (ticketData && ticketData.badge === null) {
+                    markCollected();
+                }
+                else if (ticketData && ticketData.badge && ticketData.badge == scannedBadgeId) {
                     setSuccess("Correct Badge");
                     badgeConfirm.style.display = "block";
+                    newBadge.style.display = "none";
+                    ticketText.innerText = '';
                 } else {
                     setNormal("Incorrect Badge");
                     badgeConfirm.style.display = "none";
+                    if (isStaff) {
+                        newBadge.style.display = "block";
+                    }
                     setTimeout(startCamera, 500);
                 }
             }
@@ -267,7 +323,7 @@
                     if (code && code.data) {
                         stopCamera();
                         if (scan == 'ticket') {
-                            getTicketData(code);
+                            getTicketData(code.data);
                         } else if (scan == 'badge') {
                             checkBadge(code);
                         }

@@ -166,6 +166,7 @@ class Badge(models.Model):
 
     ticket = models.ForeignKey(Ticket, related_name='badge', on_delete=models.CASCADE, null=True)
     collected = models.DateTimeField(null=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
 
     id_scrambler = Scrambler(7000)
 

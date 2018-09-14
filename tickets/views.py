@@ -385,8 +385,8 @@ def new_free_ticket(request):
 def ticket_info(request, ticket_id):
     ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
     dates = {
-        'Saturday': date(2018, 9, 11),
-        'Sunday': date(2018, 9, 12),
+        'Saturday': date(2018, 9, 14),
+        'Sunday': date(2018, 9, 16),
         'Monday': date(2018, 9, 17),
         'Tuesday': date(2018, 9, 18),
         'Wednesday': date(2018, 9, 19),
@@ -397,25 +397,29 @@ def ticket_info(request, ticket_id):
 
         badge_id = request.POST.get('badge_id')
         badge = Badge.objects.get_by_badge_id_or_404(badge_id)
+        try:
+            ticket_badge = ticket.badge.get()
+        except Badge.DoesNotExist:
+            ticket_badge = None
 
-        if badge_id and badge and not badge.collected and badge.ticket.ticket_id == ticket_id:
+        if badge_id and badge and not badge.collected and badge.ticket and badge.ticket.ticket_id == ticket_id:
             # Ticket OK, Correct Badge Scanned
             badge.collected = datetime.now()
             badge.save()
-        elif badge_id and badge and not badge.collected and badge.ticket.ticket_id != ticket_id:
+        elif badge_id and badge and not badge.collected and badge.ticket and badge.ticket.ticket_id != ticket_id:
             # Ticket OK, Wrong Badge Scanned
             response = {
                 'error': 'Badge is assigned to a different ticket! Check the top ID code for the correct ticket ID!',
                 'scan_next': 'badge'
             }
-        elif badge_id and badge and not badge.collected and ticket.badge is None and badge.ticket is None:
+        elif badge_id and badge and not badge.collected and ticket_badge is None and badge.ticket is None:
             # Ticket OK, badge never assigned as too late, need to assign one
             badge.ticket = ticket
             badge.collected = datetime.now()
             badge.save()
-        elif badge_id and badge and not badge.collected and ticket.badge is not None and badge.ticket is None:
+        elif badge_id and badge and not badge.collected and ticket_badge is not None and badge.ticket is None:
             # Ticket OK, Can’t find badge, need to assign one.
-            if request.user.is_staff():
+            if request.user.is_staff:
                 badge.ticket = ticket
                 badge.collected = datetime.now()
                 badge.save()
@@ -444,9 +448,12 @@ def ticket_info(request, ticket_id):
                 'scan_next': 'ticket'
             }
         else:
-            badge = ticket.badge.first()
+            try:
+                badge = ticket.badge.get()
+            except Badge.DoesNotExist:
+                badge = None
 
-            if badge.collected:
+            if badge and badge.collected:
                 # Ticket has already collected badge - go away
                 response = {
                     'error': f'Already collected: {ticket.owner.name} at {badge.collected.strftime("%Y-%m-%d %H:%M:%S")}',
@@ -455,9 +462,9 @@ def ticket_info(request, ticket_id):
             else:
                 response = {
                     'id': ticket.ticket_id,
-                    'name': ticket.owner.name,
+                    'name': badge.name if badge and badge.name else ticket.owner.name,
                     'company': ticket.owner.badge_company,
-                    'badge': badge.badge_id,
+                    'badge': badge.badge_id if badge else None,
                     'is_contributor': ticket.owner.is_contributor,
                     'is_organiser': ticket.owner.is_organiser,
                     'snake': ticket.owner.badge_snake_colour,
