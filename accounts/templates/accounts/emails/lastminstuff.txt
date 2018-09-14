@@ -1,0 +1,43 @@
+Dear {{ user.name }},
+
+PyCon UK 2018 starts tomorrow. Here are some last-minute information and instructions for you.
+
+Please check the conference schedule https://2018.hq.pyconuk.org/schedule/, and make sure that you
+know when and where your talk is.
+
+The schedule won't change now without a very good reason, and if we do have to move your session,
+we'll let you know.
+
+When you give your talk there will be a session chair who will introduce you, help you keep to
+time, and help you with questions (if you choose to take them). For workshops one of the team will
+help you get set up and will check in from time to time.
+
+Unless the schedule says otherwise will have twenty five minutes for your session, which may
+include questions if you would like to take them.
+
+We will be filming almost all the talks, and will put the videos online. If you do not want your
+talk to be filmed, please let us know in advance.
+
+We have an array of adaptors to connect to the projectors and screens. The projector in the
+Assembly Room is widescreen; others may be widescreen or 4:3.
+
+If you are speaking in the Assembly Room: your session will have live captions, provided by our
+STTR team, Sheryll, Mirella and Hilary.
+
+You can help them, and improve the captions and the transcript, by alerting them in advance to
+terms that might not be immediately obvious.
+
+Please do that by creating a page for your Assembly Room session at
+https://docs.google.com/document/d/1HOMochIhTUXG43tFuxE8GcclWh3cutKZqtv6Wgi8MmM/edit#.
+
+Room 136 (downstairs) is our speaker preparation room ("Green room"). Please make use of it if you
+need somewhere to prepare.
+
+Thank you, on behalf of the whole Python community in the UK, for the work you're doing to make the
+conference a success.
+
+The PyCon UK 2018 organising team
+
+--
+PyCon UK Society Ltd. Company Number: 10073469. Registered in England and Wales.
+Registered office: c/o Acconomy, Arena Business Centre, Holyrood Close, Poole BH17 7FJ, United Kingdom
