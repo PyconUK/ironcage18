@@ -52,7 +52,7 @@
         <svg class="breadcrumb-python" xmlns="http://www.w3.org/2000/svg" width="55" height="82"><g fill="none" fill-rule="evenodd"><path fill="#ed1c24" fill-rule="nonzero" d="M54.4 12.1v12.6H27.6v57.2H1V14.6S-1.2 0 28 0c28.1 0 26.4 12.1 26.4 12.1z"></path><path fill="#FFF" d="M42.9 8.4a4.9 4.9 0 1 0 0 9.7 4.9 4.9 0 0 0 0-9.7z" class="blink"></path></g></svg>
         <ol class="breadcrumb" style="background-color: #ed1c24">
           <li class="breadcrumb-item">
-            {% if perms.accounts.reg_desk_assistant %}
+            {% if perms.accounts.reg_desk_assistant or request.user.is_staff %}
             <span><a href="{% url 'regdesk' %}">Reg Desk</a></span> &bull;
             {% endif %}
             {% if user.is_staff %}
