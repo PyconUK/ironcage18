@@ -231,11 +231,6 @@ def new_dinner_order(request, location_id):
 
                         return redirect(order)
     else:
-        if datetime.now(timezone.utc) > settings.TICKET_SALES_CLOSE_AT:
-            if request.GET.get('deadline-bypass-token', '') != settings.TICKET_DEADLINE_BYPASS_TOKEN:
-                messages.warning(request, "We're sorry, ticket sales have closed")
-                return redirect('index')
-
         if location_id == 'CL':
             form = ClinkDinnerTicketForm()
         else:
