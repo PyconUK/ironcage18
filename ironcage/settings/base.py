@@ -45,6 +45,7 @@ DEBUG = False
 
 INSTALLED_APPS = [
     'accounts',
+    'botany',
     'reports',
     'orders',
     'tickets',
@@ -257,3 +258,8 @@ BADGE_EDITING_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
 CFP_DEADLINE_BYPASS_TOKEN = os.environ.get('CFP_DEADLINE_BYPASS_TOKEN')
 GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN = os.environ.get('GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN')
 TICKET_DEADLINE_BYPASS_TOKEN = os.environ.get('TICKET_DEADLINE_BYPASS_TOKEN')
+
+# Botany stuff
+
+BOTANY_SECRET_KEY = os.environ.get('BOTANY_SECRET_KEY', ENVVAR_SENTINAL)
+BOTANY_LOGIN_URL = "https://botany18.pyconuk.org/login/{}/"

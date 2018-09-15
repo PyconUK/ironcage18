@@ -22,4 +22,5 @@ urlpatterns = [
     path('schedule/', include('schedule.urls')),
     path('admin/', admin.site.urls),
     path('regdesk/', accounts.views.registration_desk, name='regdesk'),
+    path('botany/', include('botany.urls')),
 ]
