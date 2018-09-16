@@ -162,6 +162,7 @@ def generate_schedule_page_data():
                         sessions[i] = {
                             'break_event': session.activity.break_event,
                             'title': session.activity.title,
+                            'subtitle': session.activity.subtitle,
                             'conference_event': session.activity.conference_event,
                             'name': session.activity.all_presenter_names,
                             'time': session.slot.time.strftime('%H:%M'),
@@ -174,6 +175,9 @@ def generate_schedule_page_data():
                             'spanned': False,
                             'room': session.slot.room.name,
                             'track': session.activity.track,
+                            'aimed_at_new_programmers': session.activity.aimed_at_new_programmers,
+                            'aimed_at_teachers': session.activity.aimed_at_teachers,
+                            'aimed_at_data_scientists': session.activity.aimed_at_data_scientists,
                         }
             matrix.append(sessions)
 
