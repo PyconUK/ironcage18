@@ -99,7 +99,7 @@ def check_available_dinners(location_id):
     for dinner in DINNERS:
         if DINNERS[dinner]['location'] == location_id:
             if (dinner_counts.get(dinner, 0) < DINNERS[dinner]['capacity'] and
-                    datetime.now() < datetime.strptime('%s 15:15:00' % DINNERS[dinner]['date'], '%Y-%m-%d %H:%M:%S')):
+                    datetime.now() < datetime.strptime('%s 13:30:00' % DINNERS[dinner]['date'], '%Y-%m-%d %H:%M:%S')):
                 ret_val.append(dinner)
 
     return ret_val
