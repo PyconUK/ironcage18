@@ -1,0 +1,18 @@
+Dear {{ user.name }},
+
+Thank you for coming to PyCon UK 2018. We hope you enjoyed it as much as we did.
+
+In order to process your financial assistance funds, we need to collect some further
+information from you. Therefore, please could we ask you to fill out the following form.
+
+https://goo.gl/forms/k6N4QWOtYBKa9cPj2
+
+As previously communicated, we also need copies of your receipts, emailed to us at pyconuk@uk.python.org.
+
+Thank you again for coming to PyCon UK 2018, and we hope to see you again next year!
+
+~ The PyCon UK 2018 Committee
+
+--
+PyCon UK Society Ltd. Company Number: 10073469. Registered in England and Wales.
+Registered office: c/o Acconomy, Arena Business Centre, Holyrood Close, Poole BH17 7FJ, United Kingdom
