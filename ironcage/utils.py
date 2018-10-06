@@ -1,3 +1,6 @@
+from django.http import Http404
+
+
 class Scrambler:
     '''This class provides a reversible bijective mapping between the numbers
     in range(2**16) and strings representing hex values of the numbers in the
@@ -34,4 +37,7 @@ class Scrambler:
         return self.inp_to_outp[inp]
 
     def backward(self, outp):
-        return self.outp_to_inp[outp]
+        try:
+            return self.outp_to_inp[outp]
+        except KeyError:
+            raise Http404
