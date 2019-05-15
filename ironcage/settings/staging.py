@@ -5,10 +5,6 @@ ALLOWED_HOSTS = ['staging.hq.pyconuk.org']
 # A custom setting for creating full URLs in links in emails
 DOMAIN = f'http://{ALLOWED_HOSTS[0]}'
 
-# SSL
-SECURE_SSL_REDIRECT = False
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
 # Misc. security settings
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
